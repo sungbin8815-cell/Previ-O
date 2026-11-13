@@ -1100,8 +1100,9 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
 .etab{width:100%;border-collapse:collapse;font-size:12px}
 .etab th,.etab td{padding:6px 6px;border-bottom:1px solid var(--line2);text-align:left;vertical-align:top}
 .etab td{font-family:var(--f-mono);color:var(--ink)} .etab th{color:var(--muted);font-weight:600} .etab thead th{color:var(--ink2)}
-.etab small{color:var(--muted)}
+.etab small{color:var(--muted)} .etab td,.etab th{white-space:nowrap}
 .escroll{overflow-x:auto;max-width:100%}
+.ephys a{color:var(--accent);word-break:break-word} .ephys b{color:var(--ink);font-weight:600}
 .ekey{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
 .ekey.k0{background:var(--accent)} .ekey.k1{background:var(--accent2)} .ekey.k2{background:var(--caution)}
 .bdg{font-style:normal;font:600 9.5px var(--f-mono);padding:2px 5px;border-radius:5px;letter-spacing:.02em;white-space:nowrap}
@@ -1127,9 +1128,10 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
 .esvg.inc .nrm{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3} .esvg.inc .ray{stroke:var(--caution);stroke-width:2} .esvg.inc .src{fill:var(--caution);stroke:none}
 .echips{display:flex;flex-wrap:wrap;gap:6px} .echips button{min-width:48px}
 .engopen{width:100%;min-height:40px;margin-top:4px}
+.engback{display:none;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 4px;flex:none} .engback .i{width:20px;height:20px}
 @media (pointer:coarse){ .engopen{min-height:44px} }
-@media (max-width:560px){ .engsheet{height:100%;max-height:none;border-radius:0;padding:12px} #engModal{padding:0} .eform{grid-template-columns:1fr 1fr} .egrid{grid-template-columns:1fr 1fr} .er b{font-size:13.5px} }
-@media (orientation:landscape) and (max-height:520px){ .engsheet{height:100%;max-height:none;padding:10px;gap:6px} .esvg{max-height:160px} }
+@media (max-width:560px){ .engsheet{height:100%;max-height:none;border-radius:0;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))} #engModal{padding:0} .engback{display:inline-flex} #engTitle small{display:none} .eform{grid-template-columns:1fr 1fr} .egrid{grid-template-columns:1fr 1fr} .er b{font-size:13.5px} }
+@media (orientation:landscape) and (max-height:520px){ .engsheet{height:100%;max-height:none;padding:10px;gap:6px} .engback{display:inline-flex} .esvg{max-height:160px} }
 
 /* focus game: four difficulties, the part to keep sharp, the take analysis */
 .fp-diff{grid-template-columns:repeat(4,1fr)}
@@ -1165,7 +1167,7 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
     <button id="copyBtn" role="menuitem">샷 리스트 복사</button><button id="csvBtn" role="menuitem">CSV 저장</button><button id="printBtn" role="menuitem">콘티 인쇄 · PDF</button><button id="techMenuBtn" role="menuitem" data-pro>테크비즈 시트 (현장용) · PDF</button>
     <hr><button id="shareLinkBtn" role="menuitem">링크로 공유</button><button id="expFileBtn" role="menuitem">프로젝트 파일 저장</button><button id="shareFileBtn" role="menuitem">파일 공유</button><button id="impFileBtn" role="menuitem">파일 가져오기</button>
     <hr><button id="uiModeBtn" role="menuitem"></button><button id="tourBtn" role="menuitem">튜토리얼</button><button id="fpMenuBtn" role="menuitem">포커스 연습 (팔로우 포커스)</button><button role="menuitem" data-engtab="cam">촬영 계산기 (센서 · 렌즈 · 심도 · 조명)</button><button id="keysBtn" role="menuitem">조작키 보기 (?)</button><button id="resetBtn" role="menuitem">처음부터 새로 시작</button>
-    <hr><button id="updBtn" role="menuitem">최신 버전 확인</button><p class="ver">버전 2026.11.13 14:51</p>
+    <hr><button id="updBtn" role="menuitem">최신 버전 확인</button><p class="ver">버전 2026.11.13 15:49</p>
     <div id="copyFallback" hidden></div>
   </div>
 
@@ -1404,7 +1406,7 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
   <div class="lookfoot"><button class="btn sm" id="lookSaved" aria-pressed="false" title="지금 모습을 저장하거나 저장해 둔 모습을 불러와요">내 캐릭터</button><button class="btn sm ghost" id="lookVrm" title="VRoid 등에서 만든 .vrm 캐릭터를 대신 입혀요">VRM 불러오기</button><button class="btn primary" id="lookDone">완료</button></div>
 </div></div>
 <div class="modal" id="engModal" hidden role="dialog" aria-labelledby="engTitle"><div class="msheet engsheet">
-  <div class="lookhead"><h2 id="engTitle">촬영 계산기 <small>Cinematography Engine</small></h2><button class="xbtn" id="engClose" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="lookhead"><button class="btn sm ghost engback" id="engBack" aria-label="뒤로 가기"><svg class="i" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>뒤로</button><h2 id="engTitle">촬영 계산기 <small>Cinematography Engine</small></h2><button class="xbtn" id="engClose" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="looktabs" id="engTabs" role="tablist"></div>
   <div class="engbody" id="engBody"></div>
 </div></div>
@@ -1456,7 +1458,7 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
     <div class="mc-row"><button class="sbtn center" id="mcCopy"><b>주소 복사</b></button><a class="sbtn primary center" id="mcSend" target="_blank" rel="noopener"><b>메일 앱으로 보내기</b></a></div>
     <div class="mc-row"><button class="sbtn center" data-back><b>돌아가기</b></button></div>
   </div>
-  <div class="mc-foot"><span id="mcStat"></span><span class="ver">버전 2026.11.13 14:51</span></div>
+  <div class="mc-foot"><span id="mcStat"></span><span class="ver">버전 2026.11.13 15:49</span></div>
 </div>
 
 <div class="keyhelp" id="keyHelp" role="dialog" aria-modal="true" aria-labelledby="keyHelpT" hidden><div class="kh-box glass">
@@ -1689,6 +1691,67 @@ const isPro = () => uiMode !== 'simple';
 document.documentElement.classList.toggle('simple', uiMode === 'simple');
 // 간편 모드 lens choices: views by name (full-frame focal lengths)
 const F_PRESETS = [[18, '초광각'], [24, '광각'], [35, '표준'], [50, '눈과 비슷'], [85, '인물'], [135, '망원']];
+// Lens mount, weight (kg) and length (mm) as each maker publishes them, read from the maker's own pages / manuals on 2026-11-13.
+// f: focal length → [kg, mm]; "z" = the one figure of a zoom; "all" = one figure given for the whole set. null = the maker gives none.
+// len: how the maker measures length — mf: mount (flange) to the front, all: overall length as listed, cap: without caps, na: not stated.
+// Kits missing here (K35, Samyang VDSLR, SIRUI Nightwalker, DZOFilm Pavo, Tokina Vista, the generic fisheye) had no readable maker figures.
+const LENS_PHYS = {
+  master: { m: "PL (LDS)", len: 'mf', f: { 28: [2.5, 183.0], 35: [2.6, 183.0], 40: [2.7, 183.0], 50: [2.6, 183.0], 60: [2.7, 183.0], 75: [2.6, 183.0], 100: [3.1, 210.0], 135: [3.8, 226.0], 180: [3.2, 226.0] }, src: "ARRI Master Anamorphic technical data", url: "https://www.arri.com/en/cine-lenses/arri-zeiss-fujinon-lenses/master-anamorphics/arri-master-anamorphic-technical-data" },
+  sig: { m: "LPL", len: 'mf', f: { 12: [2.8, 239.0], 15: [2.8, 197.0], 18: [2.0, 178.0], 21: [1.9, 178.0], 25: [1.9, 178.0], 29: [1.8, 178.0], 35: [1.7, 178.0], 40: [1.8, 178.0], 47: [1.8, 178.0], 58: [2.0, 178.0], 75: [1.9, 178.0], 95: [1.9, 178.0], 125: [2.3, 178.0], 150: [3.25, 208.0], 200: [3.1, 218.0], 280: [4.3, 278.0] }, src: "ARRI Signature Prime technical data", url: "https://www.arri.com/en/cine-lenses/signature-lenses/signature-primes-zooms/signature-primes/technical-data-signature-prime" },
+  ultra: { m: "PL", len: 'mf', f: { 8: [2.0, 130.0], 12: [2.0, 140.0], 14: [1.8, 112.0], 16: [1.2, 94.0], 20: [1.2, 91.0], 24: [1.0, 91.0], 28: [1.0, 91.0], 32: [1.1, 91.0], 40: [1.0, 91.0], 50: [1.0, 91.0], 65: [1.1, 91.0], 85: [1.2, 91.0], 100: [1.2, 91.0], 135: [1.6, 119.0], 180: [2.6, 166.0] }, src: "ARRI Ultra Prime technical data (10mm not listed)", url: "https://www.arri.com/en/cine-lenses/arri-zeiss-fujinon-lenses/legacy/ultra-prime-lenses/arri-ultra-prime-lenses-technical-data" },
+  masterp: { m: "PL (LDS)", len: 'mf', f: { 12: [2.9, 197.0], 14: [2.4, 172.0], 16: [2.2, 153.0], 18: [2.2, 153.0], 21: [2.4, 153.0], 25: [2.6, 153.0], 27: [2.2, 153.0], 32: [2.3, 153.0], 35: [2.2, 153.0], 40: [2.3, 153.0], 50: [2.7, 153.0], 65: [2.6, 153.0], 75: [2.8, 153.0], 100: [2.9, 153.0], 135: [2.8, 172.0], 150: [4.0, 210.0] }, src: "ARRI Master Prime technical data", url: "https://www.arri.com/en/cine-lenses/arri-zeiss-fujinon-lenses/master-primes/master-primes/arri-master-prime-technical-data" },
+  supreme: { m: "PL", len: 'mf', f: { 15: [2.24, 149.0], 18: [2.27, 163.0], 21: [1.61, 120.0], 25: [1.42, 119.0], 29: [1.61, 121.0], 35: [1.4, 119.0], 50: [1.22, 119.0], 65: [1.63, 121.0], 85: [1.42, 119.0], 100: [1.7, 119.0], 135: [2.27, 146.0], 150: [2.27, 146.0], 200: [2.87, 183.0] }, src: "ZEISS Supreme Prime technical data", url: "https://www.zeiss.com/photonics-and-optics/en/cinematography/lenses/supreme-prime-lenses.html" },
+  cp3: { m: "PL (교환식: EF·F·E·MFT)", len: 'mf', f: { 15: [0.87, 83.7], 18: [0.86, 83.7], 21: [0.82, 83.7], 25: [0.82, 83.7], 28: [0.84, 83.7], 35: [0.8, 83.7], 50: [0.77, 83.7], 85: [0.88, 83.7], 100: [1.01, 126.5], 135: [1.15, 126.5] }, src: "ZEISS CP.3 technical data", url: "https://www.zeiss.com/photonics-and-optics/en/cinematography/lenses/compact-prime-cp-3-lenses.html" },
+  nano: { m: "Sony E (교환식: RF·Z·L)", len: 'mf', f: { 18: [1.19, 112.0], 24: [0.87, 89.0], 35: [0.87, 89.0], 50: [0.92, 89.0], 100: [1.26, 112.0] }, src: "ZEISS Nano Prime technical data (85mm은 제조사 목록에 없음 — 실제 라인업은 75mm)", url: "https://www.zeiss.com/photonics-and-optics/en/cinematography/lenses/nano-prime-lenses.html" },
+  batis: { m: "Sony E", len: 'cap', f: { 18: [0.33, 80.0], 25: [0.335, 78.0], 40: [0.361, 93.0], 85: [0.452, 92.0], 135: [0.614, 120.0] }, src: "ZEISS Batis specs (length without caps)", url: "https://www.zeiss.com/consumer-products/int/photography/batis.html" },
+  s4: { m: "PL", len: 'mf', f: { 12: [3.0, 126.0], 14: [2.2, 127.0], 16: [2.45, 127.0], 18: [1.75, 113.0], 21: [2.0, 113.0], 25: [1.6, 113.0], 27: [1.6, 113.0], 32: [1.85, 129.0], 35: [1.9, 129.0], 40: [2.0, 141.0], 50: [1.5, 125.0], 65: [1.6, 125.0], 75: [1.75, 125.0], 100: [2.0, 141.0], 135: [2.25, 184.0], 150: [3.5, 157.0], 180: [4.3, 185.0], 300: [4.7, 202.0] }, src: "Cooke S4/i specification", url: "https://cookeoptics.com/lens/s4-i/" },
+  s7: { m: "PL / LPL", len: 'mf', f: { 16: [4.0, 197.0], 18: [3.5, 200.0], 21: [3.3, 189.0], 25: [3.3, 189.0], 27: [3.3, 189.0], 32: [3.4, 189.0], 40: [3.5, 189.0], 50: [3.4, 189.0], 65: [3.0, 189.0], 75: [3.0, 189.0], 100: [3.3, 189.0], 135: [3.7, 189.0], 180: [3.6, 198.0], 300: [4.4, 256.0] }, src: "Cooke S7/i FF specification", url: "https://cookeoptics.com/lens/cooke-s7-i-ff/" },
+  s8: { m: "PL / LPL", len: 'mf', f: { 18: [3.4, 200.0], 21: [3.5, 195.0], 25: [2.4, 162.0], 27: [2.6, 162.0], 32: [2.4, 157.0], 40: [2.3, 157.0], 50: [2.1, 157.0], 65: [2.6, 157.0], 75: [2.4, 157.0], 100: [2.4, 157.0], 135: [3.2, 200.0] }, src: "Cooke S8/i FF specification", url: "https://cookeoptics.com/lens/s8-i-ff/" },
+  panchro: { m: "PL", len: 'mf', f: { 18: [2.2, 127.0], 21: [1.9, 127.0], 25: [2.0, 125.0], 32: [1.9, 110.0], 40: [1.5, 92.0], 50: [1.4, 113.0], 65: [2.8, 197.0], 75: [1.8, 155.0], 100: [1.8, 155.0], 135: [2.1, 167.0], 152: [2.1, 167.0] }, src: "Cooke Panchro/i Classic FF specification (65mm = Macro)", url: "https://cookeoptics.com/lens/panchro-i-classic-ff/" },
+  cookeana: { m: "PL", len: 'mf', f: { 25: [4.2, 203.0], 32: [3.2, 195.0], 40: [3.4, 195.0], 50: [3.6, 195.0], 65: [5.2, 258.0], 75: [3.2, 195.0], 100: [3.4, 195.0], 135: [4.2, 195.0], 180: [5.8, 296.0], 300: [9.4, 378.0] }, src: "Cooke Anamorphic/i S35 specification (65mm = Macro)", url: "https://cookeoptics.com/lens/anamorphic-i-s35/" },
+  sigma: { m: "PL (EF·E 버전 있음)", len: 'mf', f: { 14: [1.4, 111.5], 20: [1.3, 110.0], 24: [1.1, 87.0], 28: [1.3, 99.7], 35: [1.1, 87.0], 40: [1.5, 123.0], 50: [1.2, 94.0], 85: [1.4, 118.9], 105: [1.7, 126.2], 135: [1.5, 106.9] }, src: "Sigma Cine FF High Speed (PL 기준)", url: "https://www.sigma-global.com/en/cine-lenses/" },
+  sig1835: { m: "PL (EF·E 버전 있음)", len: 'mf', f: { "z": [1.4, 121.5] }, src: "Sigma Cine 18-35 T2 (PL)", url: "https://www.sigma-global.com/en/cine-lenses/high-speed-zoom/18_35_2/" },
+  sig50100: { m: "PL (EF·E 버전 있음)", len: 'mf', f: { "z": [1.9, 167.2] }, src: "Sigma Cine 50-100 T2 (PL)", url: "https://www.sigma-global.com/en/cine-lenses/high-speed-zoom/50_100_2/" },
+  sig2435: { m: "EF / E (PL 없음)", len: 'mf', f: { "z": [1.5, 122.7] }, src: "Sigma Cine 24-35 T2.2 FF (EF 기준; E는 1.6kg·148.7mm)", url: "https://www.sigma-global.com/en/cine-lenses/ff-zoom/24_35_22/" },
+  art: { m: "Sony E / L", len: 'mf', f: { 14: [1.16, 151.9], 20: [0.63, 113.2], 24: [0.51, 97.5], 35: [0.745, 113.4], 50: [0.66, 111.5], 85: [0.625, 96.1], 105: [1.72, 157.5], 135: [1.42, 137.5] }, src: "Sigma Art (Sony E 기준; 35=F1.2 DG II, 105=DG HSM)", url: "https://www.sigma-global.com/en/lenses/" },
+  art1835: { m: "(마운트별 수치 없음)", len: 'na', f: { "z": [0.81, 121.0] }, src: "Sigma 18-35 F1.8 DC HSM Art", url: "https://www.sigmaphoto.com/18-35mm-f1-8-dc-hsm-a-1" },
+  zs: { m: "Nikon Z", len: 'mf', f: { 20: [0.505, 108.5], 24: [0.45, 96.5], 35: [1.06, 150.0], 50: [1.09, 150.0], 85: [1.16, 141.5], 135: [0.995, 139.5] }, src: "Nikon NIKKOR Z S specifications", url: "https://imaging.nikon.com/imaging/lineup/lens/z-mount/" },
+  xf: { m: "Fujifilm X", len: 'mf', f: { 16: [0.375, 73.0], 23: [0.375, 77.8], 33: [0.36, 73.5], 56: [0.445, 76.0], 90: [0.54, 105.0] }, src: "Fujifilm XF specifications", url: "https://www.fujifilm-x.com/global/products/lenses/" },
+  summilux: { m: "PL", len: 'na', f: { 16: [1.7, 142.0], 18: [1.6, 142.0], 21: [1.6, 142.0], 25: [1.8, 142.0], 29: [1.7, 142.0], 35: [1.6, 142.0], 40: [1.6, 142.0], 50: [1.8, 142.0], 65: [1.7, 142.0], 75: [1.6, 142.0], 100: [1.6, 142.0], 135: [3.4, 142.0] }, src: "Leitz Summilux-C specifications", url: "https://www.leitz-cine.com/product/summilux-c" },
+  summicron: { m: "PL", len: 'na', f: { 15: [1.8, 118.0], 18: [1.3, 101.0], 21: [1.3, 101.0], 25: [1.5, 101.0], 29: [1.3, 101.0], 35: [1.3, 101.0], 40: [1.3, 101.0], 50: [1.5, 101.0], 75: [1.2, 101.0], 100: [1.2, 101.0], 135: [1.8, 118.0] }, src: "Leitz Summicron-C specifications", url: "https://www.leitz-cine.com/product/summicron-c" },
+  xeen: { m: "PL (EF·E 버전 있음)", len: 'na', f: { 16: [0.9, 82.3], 24: [0.9, 90.5], 35: [1.1, 113.7], 50: [0.9, 90.5], 85: [1.0, 90.5] }, src: "XEEN CF specifications (PL 기준)", url: "https://xeenglobal.com/en/xeen-cf.php" },
+  primo: { m: "Panavision (PV)", len: 'na', f: { 14.5: [1.7, 111.0], 17.5: [1.5, 106.0], 21: [1.8, 134.0], 27: [2.4, 157.0], 35: [2.4, 157.0], 40: [2.1, 116.0], 50: [2.7, 152.0], 75: [1.6, 129.0], 100: [1.8, 134.0] }, src: "Panavision Primo product detail (10·150mm 수치 판독 불가)", url: "https://www.panavision.com/camera-and-optics/optics/product-detail/sl-primo" },
+  primo70: { m: "Panavision 70", len: 'na', f: { 24: [1.3, 119.0], 27: [2.4, 185.0], 35: [2.1, 172.0], 40: [2.1, 172.0], 50: [2.3, 180.0], 65: [2.3, 172.0], 80: [2.2, 172.0], 100: [2.3, 172.0], 125: [2.2, 180.0], 150: [2.6, 180.0], 200: [2.5, 200.0], 250: [3.1, 215.0] }, src: "Panavision Primo 70 product detail", url: "https://www.panavision.com/camera-and-optics/optics/product-detail/4p-primo-70" },
+  s5: { m: "PL", len: 'mf', f: { 18: [3.03, 171.0], 25: [2.89, 171.0], 32: [2.7, 177.0], 40: [2.7, 177.0], 50: [3.2, 177.0], 65: [3.0, 177.0], 75: [2.9, 177.0], 100: [2.8, 177.0], 135: [5.1, 219.0] }, src: "Cooke 5/i specification (제조사 라인업은 18–135mm 9개)", url: "https://cookeoptics.com/lens/5-i/" },
+  nanomorph: { m: "PL / EF (교환식)", len: 'na', f: { "all": [0.32, 90.0] }, src: "Laowa Nanomorph 1.5x S35 (세트 공통 수치, 렌즈별 표기 없음)", url: "https://laowacine.com/product/laowa-1-5x-nanomorph-27mm-t2-8-35mm-t2-4-50mm-t2-4-pl-ef/" },
+  gecko: { m: "PL·EF·RF·FE·Z (시네)", len: 'na', f: { 24: [0.474, 408.0] }, src: "Laowa 24mm f/14 2X Macro Probe (치수 38×408mm)", url: "https://www.venuslens.net/product/laowa-24mm-f-14-2x-macro-probe/" },
+  optimo: { m: "PL (EF·PV 마운트 별매)", len: 'na', f: { "z": [11.0, 440.0] }, src: "Angénieux Optimo 24-290 (legacy)", url: "https://www.angenieux.com/lenses/legacy-series/optimo-long-lens-zoom-24-290/" },
+  style: { m: "PL (EF·PV 마운트 별매)", len: 'na', f: { "z": [7.3, 377.4] }, src: "Angénieux Optimo Style 25-250 (legacy)", url: "https://www.angenieux.com/lenses/legacy-series/long-lens-zoom-optimo-style-25-250/" },
+  ultra12: { m: "PL (LPL 호환)", len: 'na', f: { "z": [12.75, 523.0] }, src: "Angénieux Optimo Ultra 12x 36-435 (FF/VV 구성)", url: "https://www.angenieux.com/lenses/optimo-ultra-12x/" },
+  eanam: { m: "PL (RF·EF·E 교환 가능)", len: 'na', f: { "z": [2.1, 226.0] }, src: "Angénieux Type EZ-1 30-90 (S35 구성)", url: "https://www.angenieux.com/lenses/type-ez-series/" },
+  uc2156: { m: "PL", len: 'mf', f: { "z": [2.6, 247.0] }, src: "Angénieux Optimo Ultra Compact 21-56", url: "https://www.angenieux.com/lenses/optimo-ultra-compact/" },
+  uc37102: { m: "PL", len: 'mf', f: { "z": [2.5, 235.0] }, src: "Angénieux Optimo Ultra Compact 37-102", url: "https://www.angenieux.com/lenses/optimo-ultra-compact/" },
+  sumire: { m: "PL (EF로 교환 가능, 서비스센터)", len: 'na', f: { 14: [1.2, 86.0], 20: [1.2, 93.5], 24: [1.2, 93.5], 35: [1.1, 93.5], 50: [1.1, 93.5], 85: [1.3, 93.5], 135: [1.4, 107.6] }, src: "Canon CN-E…FP X (Sumire Prime) operation manual specifications", url: "https://global.canon/ja/c-museum/wp-content/uploads/2020/07/cesl480_en.pdf" },
+  cne: { m: "Canon EF", len: 'na', f: { 14: [1.2, 94.0], 20: [1.2, 101.5], 24: [1.2, 101.5], 35: [1.1, 101.5], 50: [1.1, 101.5], 85: [1.3, 101.5], 135: [1.4, 115.6] }, src: "Canon CN-E…L F operation manual specifications", url: "https://global.canon/ja/c-museum/wp-content/uploads/2020/07/cesl480_en.pdf" },
+  cne30105: { m: "EF (S) / PL (SP)", len: 'na', f: { "z": [2.2, 210.0] }, src: "Canon CN-E30-105mm T2.8 L SP (PL; EF판 218mm)", url: "https://global.canon/en/c-museum/product/cesl444.html" },
+  cne1460: { m: "EF (S) / PL (SP)", len: 'all', f: { "z": [4.5, 318.0] }, src: "Canon CN-E14.5-60mm T2.6 L SP (PL; EF판 326mm)", url: "https://global.canon/en/c-museum/product/cesl439.html" },
+  cn7: { m: "EF (E1) / PL (P1)", len: 'all', f: { "z": [2.9, 254.9] }, src: "Canon CN7x17 KAS S/P1 (PL; EF판 262.9mm)", url: "https://global.canon/en/c-museum/product/cesl449.html" },
+  rfl: { m: "Canon RF", len: 'all', f: { 24: [0.515, 99.3], 35: [0.555, 99.3], 50: [0.95, 108.0], 85: [1.195, 117.3], 100: [0.685, 148.0], 135: [0.935, 130.3] }, src: "Canon Camera Museum (RF24·35 = F1.4 L VCM, 100 = F2.8 L Macro)", url: "https://global.canon/en/c-museum/lens.html?s=rf" },
+  rf70200: { m: "Canon RF", len: 'all', f: { "z": [1.07, 146.0] }, src: "Canon RF70-200mm F2.8 L IS USM (Camera Museum)", url: "https://global.canon/en/c-museum/product/rf486.html" },
+  rf2470: { m: "Canon RF", len: 'all', f: { "z": [0.9, 125.7] }, src: "Canon RF24-70mm F2.8 L IS USM (Camera Museum)", url: "https://global.canon/en/c-museum/product/rf485.html" },
+  gm: { m: "Sony E", len: 'all', f: { 14: [0.46, 99.8], 20: [0.373, 84.7], 24: [0.445, 92.4], 35: [0.524, 96.0], 50: [0.778, 108.0], 85: [0.642, 107.3], 135: [0.95, 127.0] }, src: "Sony specifications (14 F1.8 GM, 20 F1.8 G, 24 F1.4 GM, 35 F1.4 GM, 50 F1.2 GM, 85 F1.4 GM II, 135 F1.8 GM)", url: "https://www.sony-asia.com/electronics/support/lenses-e-mount-lenses/" },
+  gm2470: { m: "Sony E", len: 'all', f: { "z": [0.695, 119.9] }, src: "Sony FE 24-70mm F2.8 GM II specifications", url: "https://www.sony-asia.com/electronics/support/lenses-e-mount-lenses/sel2470gm2/specifications" },
+  gm1635: { m: "Sony E", len: 'all', f: { "z": [0.547, 111.5] }, src: "Sony FE 16-35mm F2.8 GM II specifications", url: "https://www.sony-asia.com/electronics/support/lenses-e-mount-lenses/sel1635gm2/specifications" },
+  gm70200: { m: "Sony E", len: 'all', f: { "z": [1.045, 200.0] }, src: "Sony FE 70-200mm F2.8 GM OSS II specifications", url: "https://www.sony-asia.com/electronics/support/lenses-e-mount-lenses/sel70200gm2/specifications" },
+  premista: { m: "PL", len: 'all', f: { "z": [3.8, 255.0] }, src: "Fujinon Premista 28-100mm T2.9", url: "https://www.fujifilm.com/us/en/business/cine-and-broadcast/cine-lens/premista" },
+  prem1945: { m: "PL", len: 'all', f: { "z": [3.3, 228.0] }, src: "Fujinon Premista 19-45mm T2.9", url: "https://www.fujifilm.com/us/en/business/cine-and-broadcast/cine-lens/premista" },
+  prem80: { m: "PL", len: 'all', f: { "z": [3.8, 255.0] }, src: "Fujinon Premista 80-250mm T2.9-3.5", url: "https://www.fujifilm.com/us/en/business/cine-and-broadcast/cine-lens/premista" },
+  zk: { m: "PL", len: 'all', f: { "z": [2.3, 226.0] }, src: "Fujinon ZK 19-90mm (서보 유닛 제외; 포함 시 2.8kg)", url: "https://www.fujifilm.com/us/en/business/cine-and-broadcast/cine-lens/zk" },
+  orion: { m: "PL (EF 어댑터 가능)", len: 'na', f: { 25: [2.8, 187.0], 32: [2.1, 189.0], 40: [2.4, 178.0], 50: [2.3, 184.0], 65: [2.3, 212.0], 80: [2.7, 250.0], 100: [3.0, 305.0] }, src: "Atlas Orion Series anamorphic", url: "https://atlaslensco.com/products/orion-series-anamorphic-lenses" },
+  vespid: { m: "PL / EF (교환식)", len: 'na', f: { 12: [0.725, null], 16: [0.93, null], 21: [0.88, null], 25: [1.021, null], 35: [0.962, null], 40: [0.905, null], 50: [0.857, null], 75: [0.887, null], 90: [0.839, null], 100: [0.945, null], 125: [0.981, null] }, src: "DZOFilm Vespid (길이는 렌즈별 대응이 불분명해 비움)", url: "https://www.dzofilm.com/lens/prime/vespid-prime" },
+};
+// the published figure for one focal length of a kit: { kg, mm } (either may be null), or null when the maker lists nothing for it
+function lensPhys(k, f) { const d = LENS_PHYS[k && k.id]; if (!d) return null; const v = d.f.z || d.f.all || d.f[f]; return v ? { kg: v[0], mm: v[1] } : null; }
 /* ---------- state ---------- */
 let uid = 1;
 const mkId = () => 's' + Date.now().toString(36) + (uid++);
@@ -4462,7 +4525,7 @@ async function vrmImport(file, k) {
 // Stages 2–5 of the character system: bodies, faces, hair (07d-hair.js) and clothes (07e-wear.js), behind ?base=1 until it is tested through. Without the
 // flag, or while a file is loading or missing, the built-in figure is drawn. The body is posed by aiming each bone along the same
 // joint table the built-in figure uses (skeleton()), so every existing pose works and the eyes stay where the camera maths expects.
-const HUMAN_BASE = /[?&]base=1\b/.test(location.search);
+const HUMAN_BASE = !/[?&]base=0\b/.test(location.search); // on by default since 2026-11-13; ?base=0 shows the older built-in figures
 // raise CHARS_V whenever the files in assets/chars are rebuilt: browsers keep the old ones under the same address otherwise
 const CHARS_V = '?v=3', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
 // [bone, the bone its length runs to, joint table from, to]; the table's L side is −x, which is the model's right
@@ -7498,7 +7561,7 @@ if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]
 }
 $('#updBtn').onclick = () => { xMenu(false);
   if (!swReg) { location.reload(); return; }
-  toast('최신 버전을 확인하는 중…'); swReg.update().then(() => { if (!swReg.installing && !swReg.waiting) toast('지금이 최신 버전이에요 · 2026.11.13 14:51'); }).catch(() => toast('인터넷 연결을 확인해 주세요')); };
+  toast('최신 버전을 확인하는 중…'); swReg.update().then(() => { if (!swReg.installing && !swReg.waiting) toast('지금이 최신 버전이에요 · 2026.11.13 15:49'); }).catch(() => toast('인터넷 연결을 확인해 주세요')); };
 readColors();
 // three.js is an ES module, so it lands after this script has run: start on the canvas renderer and switch when it arrives
 gl = initGL();
@@ -7837,8 +7900,12 @@ function engFixRef() { const fx = FIXTURES.find(x => x.id === eng.fx), m = LIGHT
   if (!fx) { eng.src = 'user'; return; }
   const b = fx.beam[0] >= 360 ? 360 : clamp(eng.beam || fx.beam[1], fx.beam[0], fx.beam[1]); eng.beam = b;
   eng.E1 = Math.round(ENG.luxFromCd(ENG.cdOfCone(fx.lm, b), 1)); eng.d1 = 1; eng.src = 'model'; }
-function engOpen(tab) { engLoad(); if (tab && ENG_TABS[tab]) eng.tab = tab; $('#engModal').hidden = false; engRender(); $('#engBody').scrollTop = 0; }
-function engClose() { $('#engModal').hidden = true; engSave(); }
+function engOpen(tab) { engLoad(); if (tab && ENG_TABS[tab]) eng.tab = tab; const was = !$('#engModal').hidden; $('#engModal').hidden = false; engRender(); $('#engBody').scrollTop = 0;
+  // a history entry, so the phone's back gesture / button closes the calculator instead of leaving the app
+  if (!was) try { history.pushState({ eng: 1 }, '', location.href); } catch (e) {} }
+function engClose(fromHistory) { if ($('#engModal').hidden) return; $('#engModal').hidden = true; engSave();
+  if (!fromHistory && history.state && history.state.eng) try { history.back(); } catch (e) {} }
+addEventListener('popstate', () => engClose(true));
 const ef = (k, lab, unit = '', o = {}) => `<label class="ef"><span>${lab}</span><span class="efi"><input type="number" inputmode="decimal" data-ek="${k}" value="${+(+eng[k]).toFixed(o.d ?? 3)}" step="${o.step || 'any'}" min="${o.min ?? 0}"${o.max ? ` max="${o.max}"` : ''}><i>${unit}</i></span></label>`;
 const es = (k, lab, opts) => `<label class="ef"><span>${lab}</span><select data-ek="${k}">${opts.map(([v, t]) => `<option value="${v}"${String(eng[k]) === String(v) ? ' selected' : ''}>${t}</option>`).join('')}</select></label>`;
 const engSensOpts = (none) => (none ? [['', '비교 안 함']] : []).concat(SENSORS.map(x => [x.id, `${x.name} · ${x.mode}`]));
@@ -7875,13 +7942,21 @@ function engCamOut() { const A = engCamInfo(engSensor(eng.camA)), B = eng.camB ?
   return `${svg}${tab}${same}<p class="enote">화각 = 2·atan(크기 / 2f), 무한대 초점 기준 (초점을 가까이 두면 렌즈가 늘어나 화각이 조금 좁아져요 — 브리딩). 해상도·기록 영역은 제조사 사양, 없는 칸은 비워 둬요.</p>
     <div class="eacts">${engAct('applyCam', 'A 카메라를 프로젝트에 적용', true)}${engAct('applyF', `${f}mm를 이 샷에 적용`)}${ak ? engAct('applyAsp', `${ak.k} 화면비 적용`) : ''}</div>`; }
 /* ---- lens & optics ---- */
+// a maker's weight / length figure for the lens table, or a dash where the maker lists none
+const physCell = (p, q) => p && p[q] != null ? (q === 'kg' ? `${engNum(p.kg, p.kg < 1 ? 3 : 2)} kg` : `${engNum(p.mm, p.mm % 1 ? 1 : 0)} mm`) : '—';
+const PHYS_LEN = { mf: '마운트면에서 렌즈 앞까지', all: '제조사 표기 전체 길이', cap: '캡을 뺀 길이', na: '제조사가 측정 기준을 밝히지 않음' };
+function lensPhysNote(k) { const d = LENS_PHYS[k.id]; if (k.id === 'free') return '';
+  if (!d) return '<p class="enote">마운트 · 무게 · 길이: 제조사 공개 자료에서 읽을 수 있는 수치를 찾지 못해 비워 뒀어요.</p>';
+  const one = d.f.z || d.f.all, p = one ? { kg: one[0], mm: one[1] } : null;
+  return `<p class="enote ephys"><b>마운트</b> ${esc(d.m)}${p ? ` · <b>무게</b> ${physCell(p, 'kg')} · <b>길이</b> ${physCell(p, 'mm')}${d.f.all ? ' (세트 공통)' : ''}` : ''} · 길이 기준: ${PHYS_LEN[d.len]}<br>출처: <a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.src)}</a> ${bdg('meas', '제조사')}</p>`; }
 function engLensOut() { const k = engKit(), S = engSensor(eng.camA), fs = k.type === 'prime' ? k.f : k.type === 'zoom' ? [...new Set([k.range[0], 24, 35, 50, 85, 135, 200, k.range[1]].filter(f => f >= k.range[0] && f <= k.range[1]))].sort((a, b) => a - b) : [k.f || 50], diag = ENG.diagMm(S.w, S.h);
   if (!eng.cmp.length || eng.cmp.some(f => !fs.includes(f))) eng.cmp = [fs[0], fs[Math.floor(fs.length / 2)], fs[fs.length - 1]].filter((v, i, a) => a.indexOf(v) === i);
-  const rows = fs.map(f => { const L = lensSpec(k, f); return `<tr><td>${f}mm</td><td>${stopTxt(maxT(k, f), k)}</td><td>${engNum(L.mod)} m ${L.modKnown ? bdg('meas', '제조사') : bdg('est', '추정')}</td><td>${Math.round(L.throw)}° ${L.throwKnown ? bdg('meas', '공칭') : bdg('est', '기본값')}</td><td>${engNum(FOPT.fovDeg(S.w, f), 1)}°</td></tr>`; }).join('');
+  const ph = LENS_PHYS[k.id], perLens = !!(ph && !ph.f.z && !ph.f.all);
+  const rows = fs.map(f => { const L = lensSpec(k, f); return `<tr><td>${f}mm</td><td>${stopTxt(maxT(k, f), k)}</td><td>${engNum(L.mod)} m ${L.modKnown ? bdg('meas', '제조사') : bdg('est', '추정')}</td><td>${Math.round(L.throw)}° ${L.throwKnown ? bdg('meas', '공칭') : bdg('est', '기본값')}</td><td>${engNum(FOPT.fovDeg(S.w, f), 1)}°</td>${perLens ? `<td>${physCell(lensPhys(k, f), 'kg')}</td><td>${physCell(lensPhys(k, f), 'mm')}</td>` : ''}</tr>`; }).join('');
   const cov = k.circle ? (k.circle >= diag - 0.05 ? `이미지 서클 ${k.circle}mm (공칭) ≥ 센서 대각선 ${engNum(diag, 1)}mm — 덮어요` : `<b class="warn">이미지 서클 ${k.circle}mm (공칭) &lt; 센서 대각선 ${engNum(diag, 1)}mm — 모서리가 어두워질 수 있어요</b>`) : '';
   const db = `<div class="ebox"><h4>${esc(k.name)} <small>${k.cover || ''}${k.sq > 1 ? ` · ${k.sq}× 아나모픽` : ''}</small></h4><p class="enote">${cov}</p>
-    <div class="escroll"><table class="etab"><thead><tr><th>초점거리</th><th>최대</th><th>최소 초점</th><th>링 회전</th><th>가로 화각</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="enote">마운트 · 무게 · 길이는 확인한 제조사 자료가 아직 없어 비워 뒀어요. ${(LENS_DATA[k.id] || {}).src ? '출처: ' + esc(LENS_DATA[k.id].src) : '최소 초점이 \'추정\'인 렌즈는 같은 계열의 전형적인 배율로 계산한 값이에요.'}</p></div>`;
+    <div class="escroll"><table class="etab"><thead><tr><th>초점거리</th><th>최대</th><th>최소 초점</th><th>링 회전</th><th>가로 화각</th>${perLens ? '<th>무게</th><th>길이</th>' : ''}</tr></thead><tbody>${rows}</tbody></table></div>
+    ${lensPhysNote(k)}<p class="enote">${(LENS_DATA[k.id] || {}).src ? '출처: ' + esc(LENS_DATA[k.id].src) : '최소 초점이 \'추정\'인 렌즈는 같은 계열의 전형적인 배율로 계산한 값이에요.'}</p></div>`;
   // the same camera position, different lenses: the frame each one sees around a 1.75 m person
   const d = Math.max(0.3, +eng.dist), fr = eng.cmp.map(f => ({ f, w: ENG.fieldM(S.w, f, d), h: ENG.fieldM(S.h, f, d) })), Wm = Math.min(14, Math.max(2.2, ...fr.map(x => x.w)) * 1.06), Hm = Wm * 0.62;
   const cx = Wm / 2, cy = 1.3, y0 = cy + Hm / 2, R = x => x.toFixed(3);
@@ -7956,7 +8031,7 @@ $('#engModal').addEventListener('input', e => { const t = e.target, k = t.datase
 $('#engModal').addEventListener('change', e => { const t = e.target, k = t.dataset && t.dataset.ek; if (!k || t.tagName !== 'SELECT') return; eng[k] = t.value;
   if (k === 'fx') { eng.beam = 0; engFixRef(); } engRender(); });
 $('#engModal').addEventListener('click', e => { if (e.target.id === 'engModal') return engClose(); const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
-  if (b.id === 'engClose') return engClose();
+  if (b.id === 'engClose' || b.id === 'engBack') return engClose();
   if (d.etab) { eng.tab = d.etab; engRender(); $('#engBody').scrollTop = 0; return; }
   if (d.cmpf) { const f = +d.cmpf, i = eng.cmp.indexOf(f); if (i >= 0) { if (eng.cmp.length > 1) eng.cmp.splice(i, 1); } else { eng.cmp.push(f); if (eng.cmp.length > 3) eng.cmp.shift(); } eng.cmp.sort((a, b) => a - b); return engOut(); }
   const s = cur(), done = m => { toast(m, { label: '되돌리기', action: undo }); engLoad(); engRender(); };
