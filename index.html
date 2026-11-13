@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0A0D11">
 <meta name="description" content="버튼과 드래그만으로 샷별 카메라·렌즈·장비·조명·세트·인물을 짜는 3D 콘티 앱">
 <link rel="manifest" href="manifest.webmanifest">
@@ -1425,6 +1425,49 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
   .meta{flex:none}
 }
 @media (min-width:720px){ .hm-tgrid{grid-template-columns:repeat(5,minmax(0,1fr))} }
+
+/* ---------- 촬영 계산기: folding result boxes; phones held sideways put the results first and the inputs in a slim column ---------- */
+.ebox.fold > h4{cursor:pointer;min-height:32px;user-select:none;-webkit-user-select:none}
+.ebox.fold > h4::after{content:"";width:7px;height:7px;margin-left:auto;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(-135deg);transition:transform .15s}
+.ebox.fold.shut > h4::after{transform:rotate(45deg)}
+.ebox.fold.shut{gap:0;padding-top:8px;padding-bottom:8px} .ebox.fold.shut > :not(h4){display:none!important}
+.ebox{background:var(--raise);border:0}
+.ef select,.efi{border:1px solid transparent;background:var(--raise)}
+@media (orientation:landscape) and (max-height:520px){
+  .engsheet .lookhead{min-height:0} .engsheet .lookhead h2{font-size:15px}
+  #engTabs button{min-height:36px;padding:0 10px;font-size:13px}
+  .engbody{display:grid;grid-template-columns:minmax(150px,26%) minmax(0,1fr);gap:10px;overflow:hidden;padding-right:0}
+  .engbody > .eform{grid-template-columns:1fr;align-content:start;gap:5px;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+  .engbody > .eout{overflow-y:auto;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px;padding-right:2px}
+  .ef{gap:1px;font-size:11px}
+  .ef select,.efi{min-height:34px;border-radius:8px;font-size:14px!important}
+  .ef select{font-size:14px!important;padding:0 6px}
+  .efi{padding:0 8px} .efi input{height:32px;font-size:14px!important}
+  .ebox .eform{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:5px}
+  .egrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:5px}
+  .er{padding:6px 9px} .er b{font-size:15px}
+  .ebox{padding:8px 10px;gap:6px}
+  .esvg{max-height:150px}
+  .eacts .btn{min-height:40px}
+}
+
+/* ---------- 3D workspace on phones: slimmer toolbar; the shot strip folds away to a single arrow ---------- */
+@media (max-width:719px) and (orientation:portrait),(orientation:landscape) and (max-height:520px){
+  .bar{padding-top:3px;padding-bottom:3px;min-height:0}
+  .title-in{padding-top:0;padding-bottom:0;line-height:1.25}
+  .logo{width:28px;height:28px} .scene{gap:0}
+  .hist .btn.icon,#exportBtn{min-height:40px;min-width:40px}
+  .shots{min-height:52px;padding-top:3px;padding-bottom:3px}
+  .card{height:44px}
+  .shots.folded{min-height:0;height:24px;padding:0;gap:0;border-top:1px solid var(--line);justify-content:center}
+  .shots.folded > :not(.stog){display:none!important}
+  .shots.folded .stog{width:100%;height:24px;min-height:0;border-radius:0;background:transparent;justify-content:center;padding:0;color:var(--ink2)}
+  .shots.folded .stog span{display:none}
+  .shots.folded .stog svg{width:18px;height:18px}
+}
+/* first-run guide: skip and next side by side */
+.coach-btns{display:flex;justify-content:flex-end;gap:6px} .coach-btns [hidden]{display:none}
+@media (orientation:landscape) and (max-height:520px){ .engbody > .eout > *{flex-shrink:0} #engTitle small{display:none} }
 </style>
 </head>
 <body>
@@ -1447,7 +1490,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
     <button id="copyBtn" role="menuitem">샷 리스트 복사</button><button id="csvBtn" role="menuitem">CSV 저장</button><button id="printBtn" role="menuitem">콘티 인쇄 · PDF</button><button id="techMenuBtn" role="menuitem" data-pro>테크비즈 시트 (현장용) · PDF</button>
     <hr><button id="shareLinkBtn" role="menuitem">링크로 공유</button><button id="expFileBtn" role="menuitem">프로젝트 파일 저장</button><button id="shareFileBtn" role="menuitem">파일 공유</button><button id="impFileBtn" role="menuitem">파일 가져오기</button>
     <hr><button id="uiModeBtn" role="menuitem"></button><button id="tourBtn" role="menuitem">튜토리얼</button><button id="fpMenuBtn" role="menuitem">포커스 연습 (팔로우 포커스)</button><button role="menuitem" data-engtab="cam">촬영 계산기 (센서 · 렌즈 · 심도 · 조명)</button><button id="keysBtn" role="menuitem">조작키 보기 (?)</button><button id="resetBtn" role="menuitem">처음부터 새로 시작</button>
-    <hr><button id="updBtn" role="menuitem">최신 버전 확인</button><p class="ver">버전 2026.11.13 17:31</p>
+    <hr><button id="updBtn" role="menuitem">최신 버전 확인</button><p class="ver">버전 2026.11.13 22:02</p>
     <div id="copyFallback" hidden></div>
   </div>
 
@@ -1521,7 +1564,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
       <span class="crg" id="crLen"><small>암</small><button class="fab" id="crIn" data-cr="len" data-d="-0.25" aria-label="암 줄이기">−</button><button class="fab" id="crOut" data-cr="len" data-d="0.25" aria-label="암 늘리기">+</button></span>
       <button class="fab" id="crClose" title="크레인 조작 끝내기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div></div>
     <div class="tring" id="tourRing" hidden></div><div class="coach glass" id="coach" hidden role="dialog" aria-labelledby="coachT"><div class="coach-h"><span class="dots" id="coachN"></span><b id="coachT"></b></div><p id="coachP"></p><p class="coach-do" id="coachDo" hidden aria-live="polite"></p>
-      <button class="btn sm primary" id="coachAct" hidden></button></div>
+      <div class="coach-btns"><button class="btn sm ghost" id="coachSkip" hidden>건너뛰기</button><button class="btn sm primary" id="coachAct" hidden></button></div></div>
     <canvas class="pip" id="pip" role="button" tabindex="0" aria-label="카메라 모니터 미리보기. 누르면 모니터 화면으로 바뀝니다."></canvas>
   </div>
 
@@ -1703,21 +1746,17 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
       <div class="hm-pop" id="mcMenu" role="menu" hidden>
         <button class="hm-link" id="mcModeBtn" role="menuitem"></button>
         <button class="hm-link" id="mcAsk" role="menuitem">문의하기</button>
-        <p class="hm-ver">버전 2026.11.13 17:31</p>
+        <p class="hm-ver">버전 2026.11.13 22:02</p>
       </div>
     </header>
     <section class="hm-actions" aria-label="시작">
-      <button class="hm-act primary" id="mcNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><b>새 프로젝트</b><small id="mcNewT">템플릿 4가지</small></button>
+      <button class="hm-act primary" id="mcNew"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><b>새 프로젝트</b><small id="mcNewT">템플릿 · 세트 프리셋</small></button>
       <button class="hm-act" id="mcLoad"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><b>불러오기</b><small id="mcLoadT">저장한 프로젝트</small></button>
     </section>
     <section class="hm-sec" id="mcRecentS">
       <div class="hm-sec-h"><h2>최근 프로젝트</h2><button class="hm-more" id="mcAll">모두 보기</button></div>
       <button class="hm-resume" id="mcResume" hidden>이어서 작업 · <b id="mcResumeT"></b></button>
       <div class="hm-rows" id="mcRecent"></div>
-    </section>
-    <section class="hm-sec">
-      <div class="hm-sec-h"><h2>템플릿</h2></div>
-      <div class="hm-tgrid" id="mcTplQuick"><button class="hm-tile" id="mcSetsBtn"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10.5L12 4l9 6.5V20H3z"/><path d="M9 20v-6h6v6"/></svg></i><b>세트 프리셋</b><small>공간 17가지</small></button></div>
     </section>
     <section class="hm-sec">
       <div class="hm-sec-h"><h2>도구</h2></div>
@@ -1739,6 +1778,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
   <div class="mc-panel wide" id="mcNewP" hidden>
     <h2>새 프로젝트</h2><p class="mc-note">어떤 작업인지 고르면 그에 맞는 세트와 첫 샷이 준비돼요. 이름은 나중에 위에서 바꿔요.</p>
     <div class="hm-tpls" id="mcTpls"></div>
+    <div class="hm-tpls hm-tpls2"><button class="hm-tpl" id="mcSetsBtn"><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10.5L12 4l9 6.5V20H3z"/><path d="M9 20v-6h6v6"/></svg></i><b>세트 프리셋</b><small>공간 17가지</small></button></div>
     <div class="mc-row"><button class="sbtn center" id="mcImport2"><b>파일에서 가져오기</b></button><button class="sbtn center" data-back><b>돌아가기</b></button></div>
   </div>
   <div class="mc-panel wide" id="mcSetP" hidden>
@@ -1761,7 +1801,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
     <div class="mc-row"><button class="sbtn center" id="mcCopy"><b>주소 복사</b></button><a class="sbtn primary center" id="mcSend" target="_blank" rel="noopener"><b>메일 앱으로 보내기</b></a></div>
     <div class="mc-row"><button class="sbtn center" data-back><b>돌아가기</b></button></div>
   </div>
-  <div class="mc-foot"><span id="mcStat"></span><span class="ver">버전 2026.11.13 17:31</span></div>
+  <div class="mc-foot"><span id="mcStat"></span><span class="ver">버전 2026.11.13 22:02</span></div>
 </div>
 
 <div class="moresheet" id="moreSheet" hidden><div class="ms-back" data-msclose></div><div class="ms-box" role="dialog" aria-modal="true" aria-labelledby="msTitle">
@@ -7804,8 +7844,6 @@ function panoFrame(now) {
 const TPL_ICON = { blank: '<path d="M12 5v14M5 12h14"/>', film: '<rect x="3" y="8" width="18" height="12" rx="2"/><path d="M3 8l3-4h4l-3 4M10 8l3-4h4l-3 4M17 8l2-4"/>',
   ad: '<path d="M12 3l1.9 4.6L19 9l-4 3.3 1.2 5L12 14.8 7.8 17.3 9 12.3 5 9l5.1-1.4z"/>', mv: '<path d="M9 18V6l11-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>' };
 $('#mcTpls').innerHTML = Object.entries(TEMPLATES).map(([k, t]) => `<button class="hm-tpl" data-tpl="${k}"><i aria-hidden="true"><svg viewBox="0 0 24 24">${TPL_ICON[k]}</svg></i><b>${t.name}</b><small>${t.desc}</small></button>`).join('');
-$('#mcTplQuick').insertAdjacentHTML('afterbegin', Object.entries(TEMPLATES).map(([k, t]) => `<button class="hm-tile" data-tpl="${k}"><i aria-hidden="true"><svg viewBox="0 0 24 24">${TPL_ICON[k]}</svg></i><b>${t.name}</b><small>${esc(t.desc)}</small></button>`).join(''));
-$('#mcTplQuick').addEventListener('click', e => { const b = e.target.closest('[data-tpl]'); if (b) newProject(null, b.dataset.tpl); });
 $('#mcTpls').addEventListener('click', e => { const b = e.target.closest('[data-tpl]'); if (b) newProject(null, b.dataset.tpl); });
 $('#mcSets').innerHTML = SET_PRESETS.map(pr => `<button class="hm-card" data-set="${pr.k}"><span class="hm-noimg" data-pthumb="${pr.k}" aria-hidden="true"></span><b>${pr.name}</b><small>${pr.desc}</small></button>`).join('');
 $('#mcSets').addEventListener('click', e => { const b = e.target.closest('[data-set]'); if (b) newProject(null, 'set:' + b.dataset.set); });
@@ -7900,7 +7938,7 @@ if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]
 }
 $('#updBtn').onclick = () => { xMenu(false);
   if (!swReg) { location.reload(); return; }
-  toast('최신 버전을 확인하는 중…'); swReg.update().then(() => { if (!swReg.installing && !swReg.waiting) toast('지금이 최신 버전이에요 · 2026.11.13 17:31'); }).catch(() => toast('인터넷 연결을 확인해 주세요')); };
+  toast('최신 버전을 확인하는 중…'); swReg.update().then(() => { if (!swReg.installing && !swReg.waiting) toast('지금이 최신 버전이에요 · 2026.11.13 22:02'); }).catch(() => toast('인터넷 연결을 확인해 주세요')); };
 readColors();
 // three.js is an ES module, so it lands after this script has run: start on the canvas renderer and switch when it arrives
 gl = initGL();
@@ -8167,9 +8205,17 @@ const fpTurn = d => { if (!fp || !fp.lv || (fp.lv.speed && fp.run && !fp.run.sta
   fpSync(FOCUS_IN.move(fp.lens, fp.ring, d, dt));
   if ((fp.ring === 0 || fp.ring === fp.lens.throw) && before !== fp.ring) try { navigator.vibrate && navigator.vibrate(12); } catch (e) {} if (!fp.run) fpDraw(true); };
 { const w = $('#fpWheel'); let g = null;
-  const ang = e => { const r = w.getBoundingClientRect(); return Math.atan2(e.clientY - (r.top + r.height / 2), e.clientX - (r.left + r.width / 2)) / DEG; };
-  w.addEventListener('pointerdown', e => { e.preventDefault(); try { w.setPointerCapture(e.pointerId); } catch (x) {} g = { a: ang(e) }; });
-  w.addEventListener('pointermove', e => { if (!g) return; const a = ang(e); let d = a - g.a; if (d > 180) d -= 360; if (d < -180) d += 360; g.a = a; fpTurn(-d); }); // the disc's marks follow the finger: clockwise brings the farther marks to the index
+  // like a hand on a real focus knob: only movement ALONG the disc's rim turns it, by the arc it covers at the rim (arc ÷ rim radius),
+  // so a finger near the centre or a stray sideways drag no longer spins the ring; the marks on the disc stay under the finger at the rim
+  w.addEventListener('pointerdown', e => { e.preventDefault(); try { w.setPointerCapture(e.pointerId); } catch (x) {} g = { x: e.clientX, y: e.clientY }; });
+  w.addEventListener('pointermove', e => { if (!g) return; const r = w.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2, R = Math.min(r.width, r.height) * 0.46;
+    const rx = g.x - cx, ry = g.y - cy, rl = Math.hypot(rx, ry), mx = e.clientX - g.x, my = e.clientY - g.y; g.x = e.clientX; g.y = e.clientY;
+    if (rl < R * 0.12 || !R) return; // too close to the hub to tell which way it turns
+    const along = (rx * my - ry * mx) / rl; // px moved along the circle, clockwise positive
+    // on a phone the drawn disc is far smaller than a real follow-focus disc (about 70 mm across): scale the turn so the finger travels about
+    // as far as it would on the real one (1 CSS px ≈ 0.16 mm on phones — an estimate, screens differ)
+    const k = e.pointerType === 'mouse' ? 1 : clamp(R * 0.16 / 35, 0.45, 1);
+    fpTurn(-(along / R) / DEG * k); }); // clockwise brings the farther marks to the index
   const up = () => { g = null; }; w.addEventListener('pointerup', up); w.addEventListener('pointercancel', up); }
 $('#fp').addEventListener('wheel', e => { if (!fp || !fp.lv || e.target.closest('#fpList,#fpRes')) return; e.preventDefault(); fpTurn((e.deltaY > 0 ? 1 : -1) * Math.min(12, Math.abs(e.deltaY) * 0.08) * (e.shiftKey ? 0.25 : 1)); }, { passive: false });
 document.addEventListener('keydown', e => { if (!fp) return; const k = e.key; if (e.target.closest && e.target.closest('select')) return; e.stopImmediatePropagation();
@@ -8260,7 +8306,13 @@ function engRender() { const t = eng.tab;
     light: `<div class="eform">${es('fx', '조명', FIXTURES.map(x => [x.id, x.name]).concat([['user', '직접 입력 (측정값)']]))}${(() => { const fx = FIXTURES.find(x => x.id === eng.fx); return fx && fx.beam[0] < 360 && fx.beam[0] < fx.beam[1] && eng.src === 'model' ? ef('beam', `빔 각도 (${fx.beam[0]}–${fx.beam[1]}°)`, '°', { min: fx.beam[0], max: fx.beam[1] }) : ''; })()}${ef('E1', '기준 조도', 'lux')}${ef('d1', '기준 거리', 'm', { min: 0.05 })}${ef('out', '출력', '%', { min: 0, max: 100 })}${ef('d2', '바꾼 거리', 'm', { min: 0.05 })}</div>`,
   }[t];
   $('#engBody').innerHTML = form + '<div id="engOut" class="eout"></div>'; engOut(); }
-function engOut() { const o = $('#engOut'); if (!o) return; o.innerHTML = ({ cam: engCamOut, lens: engLensOut, focus: engFocusOut, light: engLightOut })[eng.tab](); engSave(); }
+const engFold = {}; // tab:box title → open or shut, for this session
+function engOut() { const o = $('#engOut'); if (!o) return; o.innerHTML = ({ cam: engCamOut, lens: engLensOut, focus: engFocusOut, light: engLightOut })[eng.tab](); engFolds(o); engSave(); }
+// on phones the first result box stays open and the rest start folded; a tap on a box title opens or folds it
+function engFolds(o) { const small = phone.matches || shortH.matches;
+  o.querySelectorAll('.ebox').forEach((b, i) => { const h = b.querySelector('h4'); if (!h) return; const key = eng.tab + ':' + h.textContent.trim().slice(0, 24);
+    const open = key in engFold ? engFold[key] : !(small && (i > 0 || o.firstElementChild !== b));
+    b.classList.add('fold'); b.classList.toggle('shut', !open); h.setAttribute('role', 'button'); h.tabIndex = 0; h.setAttribute('aria-expanded', open); h.dataset.fold = key; }); }
 /* ---- camera & sensor ---- */
 function engCamInfo(S) { const f = +eng.f, r = SENSOR_RES[S.id], x = ENG.extract(S.w, S.h, engAsp());
   return { S, r, p: r ? ENG.pitchUm(S.w, r[0]) : NaN, v: ENG.fov(S.w, S.h, f), x, vx: ENG.fov(x.w, x.h, f) }; }
@@ -8278,14 +8330,14 @@ function engCamOut() { const A = engCamInfo(engSensor(eng.camA)), B = eng.camB ?
   const svg = `<svg class="esvg" viewBox="0 0 ${W} ${H}" role="img" aria-label="센서 크기 비교 (실제 비율)">${rc(36, 24, 'ff')}${rc(A.x.w, A.x.h, 'asp')}${rc(A.S.w, A.S.h, 'k0')}${B ? rc(B.S.w, B.S.h, 'k1') : ''}
     <text x="${W / 2}" y="${H - 1}" class="lab">점선: 36×24 · 채운 영역: A의 ${aspN}</text></svg>`;
   const ak = ASPECTS.find(a => Math.abs(a.v - engAsp()) < 0.005 && a.v >= 1);
-  return `${svg}${tab}${same}<p class="enote">화각 = 2·atan(크기 / 2f), 무한대 초점 기준 (초점을 가까이 두면 렌즈가 늘어나 화각이 조금 좁아져요 — 브리딩). 해상도·기록 영역은 제조사 사양, 없는 칸은 비워 둬요.</p>
+  return `${svg}${tab}${same}
     <div class="eacts">${engAct('applyCam', 'A 카메라를 프로젝트에 적용', true)}${engAct('applyF', `${f}mm를 이 샷에 적용`)}${ak ? engAct('applyAsp', `${ak.k} 화면비 적용`) : ''}</div>`; }
 /* ---- lens & optics ---- */
 // a maker's weight / length figure for the lens table, or a dash where the maker lists none
 const physCell = (p, q) => p && p[q] != null ? (q === 'kg' ? `${engNum(p.kg, p.kg < 1 ? 3 : 2)} kg` : `${engNum(p.mm, p.mm % 1 ? 1 : 0)} mm`) : '—';
 const PHYS_LEN = { mf: '마운트면에서 렌즈 앞까지', all: '제조사 표기 전체 길이', cap: '캡을 뺀 길이', na: '제조사가 측정 기준을 밝히지 않음' };
 function lensPhysNote(k) { const d = LENS_PHYS[k.id]; if (k.id === 'free') return '';
-  if (!d) return '<p class="enote">마운트 · 무게 · 길이: 제조사 공개 자료에서 읽을 수 있는 수치를 찾지 못해 비워 뒀어요.</p>';
+  if (!d) return '';
   const one = d.f.z || d.f.all, p = one ? { kg: one[0], mm: one[1] } : null;
   return `<p class="enote ephys"><b>마운트</b> ${esc(d.m)}${p ? ` · <b>무게</b> ${physCell(p, 'kg')} · <b>길이</b> ${physCell(p, 'mm')}${d.f.all ? ' (세트 공통)' : ''}` : ''} · 길이 기준: ${PHYS_LEN[d.len]}<br>출처: <a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.src)}</a> ${bdg('meas', '제조사')}</p>`; }
 function engLensOut() { const k = engKit(), S = engSensor(eng.camA), fs = k.type === 'prime' ? k.f : k.type === 'zoom' ? [...new Set([k.range[0], 24, 35, 50, 85, 135, 200, k.range[1]].filter(f => f >= k.range[0] && f <= k.range[1]))].sort((a, b) => a - b) : [k.f || 50], diag = ENG.diagMm(S.w, S.h);
@@ -8295,7 +8347,7 @@ function engLensOut() { const k = engKit(), S = engSensor(eng.camA), fs = k.type
   const cov = k.circle ? (k.circle >= diag - 0.05 ? `이미지 서클 ${k.circle}mm (공칭) ≥ 센서 대각선 ${engNum(diag, 1)}mm — 덮어요` : `<b class="warn">이미지 서클 ${k.circle}mm (공칭) &lt; 센서 대각선 ${engNum(diag, 1)}mm — 모서리가 어두워질 수 있어요</b>`) : '';
   const db = `<div class="ebox"><h4>${esc(k.name)} <small>${k.cover || ''}${k.sq > 1 ? ` · ${k.sq}× 아나모픽` : ''}</small></h4><p class="enote">${cov}</p>
     <div class="escroll"><table class="etab"><thead><tr><th>초점거리</th><th>최대</th><th>최소 초점</th><th>링 회전</th><th>가로 화각</th>${perLens ? '<th>무게</th><th>길이</th>' : ''}</tr></thead><tbody>${rows}</tbody></table></div>
-    ${lensPhysNote(k)}<p class="enote">${(LENS_DATA[k.id] || {}).src ? '출처: ' + esc(LENS_DATA[k.id].src) : '최소 초점이 \'추정\'인 렌즈는 같은 계열의 전형적인 배율로 계산한 값이에요.'}</p></div>`;
+    ${lensPhysNote(k)}</div>`;
   // the same camera position, different lenses: the frame each one sees around a 1.75 m person
   const d = Math.max(0.3, +eng.dist), fr = eng.cmp.map(f => ({ f, w: ENG.fieldM(S.w, f, d), h: ENG.fieldM(S.h, f, d) })), Wm = Math.min(14, Math.max(2.2, ...fr.map(x => x.w)) * 1.06), Hm = Wm * 0.62;
   const cx = Wm / 2, cy = 1.3, y0 = cy + Hm / 2, R = x => x.toFixed(3);
@@ -8311,9 +8363,9 @@ function engLensOut() { const k = engKit(), S = engSensor(eng.camA), fs = k.type
   if (eng.prep === 'dist') { const f = ENG.focalFor(X.h, Hf, +eng.pd), fk = kitF(f, k), fh = ENG.fieldM(X.h, fk, +eng.pd);
     res = er('필요한 초점거리', `${engNum(f, 1)} mm`) + er(`${esc(k.name.replace(/ \(.*\)/, ''))}에서 가장 가까운 것`, `${roundF(fk)} mm`, `그 렌즈로는 화면 높이 ${engNum(fh)} m`) + er('가로 · 세로 화각', `${engNum(FOPT.fovDeg(X.w, f), 1)}° · ${engNum(FOPT.fovDeg(X.h, f), 1)}°`); eng._prepF = fk; }
   else { const dd = ENG.distFor(X.h, +eng.pf, Hf); res = er('필요한 촬영 거리', engM(dd)) + er('가로 · 세로 화각', `${engNum(FOPT.fovDeg(X.w, +eng.pf), 1)}° · ${engNum(FOPT.fovDeg(X.h, +eng.pf), 1)}°`) + (dd < lensSpec(k, kitF(+eng.pf, k)).mod ? er('주의', '최소 초점보다 가까워요') : ''); eng._prepF = +eng.pf; }
-  const prep = `<div class="ebox"><h4>렌즈 준비 — 원하는 프레이밍에서 거꾸로</h4><div class="eform">${es('prep', '구할 값', [['dist', '거리를 정하고 → 초점거리'], ['focal', '초점거리를 정하고 → 거리']])}${es('frame', '프레이밍', Object.entries(ENG_FRAMES).map(([v, x]) => [v, x[0]]))}${eng.frame === 'c' ? ef('fieldC', '화면 높이', 'm', { min: 0.05 }) : ef('subjH', '인물 키', 'm', { min: 0.3 })}${eng.prep === 'dist' ? ef('pd', '촬영 거리', 'm', { min: 0.2 }) : ef('pf', '초점거리', 'mm', { min: 1 })}</div>
+  const prep = `<div class="ebox"><h4>렌즈 준비</h4><div class="eform">${es('prep', '구할 값', [['dist', '거리를 정하고 → 초점거리'], ['focal', '초점거리를 정하고 → 거리']])}${es('frame', '프레이밍', Object.entries(ENG_FRAMES).map(([v, x]) => [v, x[0]]))}${eng.frame === 'c' ? ef('fieldC', '화면 높이', 'm', { min: 0.05 }) : ef('subjH', '인물 키', 'm', { min: 0.3 })}${eng.prep === 'dist' ? ef('pd', '촬영 거리', 'm', { min: 0.2 }) : ef('pf', '초점거리', 'mm', { min: 1 })}</div>
     ${er('화면 높이 (목표)', `${engNum(Hf)} m`, eng.frame === 'c' ? '' : `인물 키의 ${Math.round((+eng.subjH || 1.75) / Hf * 100)}%가 화면 높이`)}${res}
-    <p class="enote">얇은 렌즈 근사, 거리는 렌즈 기준이에요 (실제 렌즈는 센서면 기준 표기라 렌즈 길이만큼 차이가 나요). 화면비 ${engNum(engAsp(), 2)}:1 사용 영역 기준.</p><div class="eacts">${engAct('applyPrep', `${roundF(eng._prepF)}mm를 이 샷에 적용`, true)}</div></div>`;
+    <div class="eacts">${engAct('applyPrep', `${roundF(eng._prepF)}mm를 이 샷에 적용`, true)}</div></div>`;
   return db + cmp + prep; }
 /* ---- focus & depth ---- */
 function engCoc(S) { const dg = ENG.diagMm(S.w, S.h); return eng.coc === 'c' ? Math.max(0.001, +eng.cocUm / 1000) : dg / (eng.coc === 'd1730' ? 1730 : 1500); }
@@ -8328,9 +8380,9 @@ function engFocusOut() { const S = engSensor(eng.camA), f = +eng.f, N = +eng.N, 
     ${er('초점 앞 / 뒤', `${engNum((s - near) * 100, 1)} cm / ${isFinite(far) ? engNum((far - s) * 100, 1) + ' cm' : '∞'}`)}${er('과초점 거리', engM(H), `여기에 맞추면 ${engNum(H / 2)} m부터 ∞까지`)}
     ${er('착란원', `${engNum(c * 1000, 1)} µm`, eng.coc === 'c' ? '직접 입력' : `대각선 ${engNum(ENG.diagMm(S.w, S.h), 1)}mm ÷ ${eng.coc === 'd1730' ? 1730 : 1500}`)}
     ${er('배율', `1 : ${engNum(-1 / FOPT.magnification(f, s * 1000), 1)}`)}</div>
-    <div class="ebox"><h4>회절 참고</h4>${er(`에어리 디스크 (${eng.lam}nm, f/${N})`, `${engNum(airy, 2)} µm`, 'd = 2.44 · λ · N')}${isFinite(p) ? er('픽셀 피치', `${engNum(p)} µm`, `에어리 디스크 = 픽셀 ${engNum(airy / p, 1)}개`) + er('회절이 보이기 시작 (경험칙: 픽셀 2개)', `f/${engNum(ENG.diffN(p, 2, +eng.lam), 1)} 부근`) : er('픽셀 피치', '—', '이 카메라는 해상도가 미입력이라 계산하지 않아요')}
-    <p class="enote">회절 한계는 이상적인 원형 조리개 한 파장 기준이고, 렌즈 자체의 해상력(수차)과는 다른 값이에요. 베이어 센서는 디모자이크 때문에 실제 경계가 더 넓어요.</p></div>
-    <p class="enote">얇은 렌즈 공식 (H = f²/(N·c) + f). 조리개는 f값을 넣어야 해요 — 시네 렌즈의 T값은 투과율이 반영돼 f값보다 조금 커서, T값을 그대로 넣으면 심도가 약간 깊게 나와요. 내부 초점·브리딩 렌즈의 실제 값은 제조사 표와 다를 수 있어요.</p>
+    <div class="ebox"><h4>회절 참고</h4>${er(`에어리 디스크 (${eng.lam}nm, f/${N})`, `${engNum(airy, 2)} µm`, '')}${isFinite(p) ? er('픽셀 피치', `${engNum(p)} µm`, `에어리 디스크 = 픽셀 ${engNum(airy / p, 1)}개`) + er('회절이 보이기 시작 (경험칙: 픽셀 2개)', `f/${engNum(ENG.diffN(p, 2, +eng.lam), 1)} 부근`) : er('픽셀 피치', '—', '이 카메라는 해상도가 미입력이라 계산하지 않아요')}
+    </div>
+    
     <div class="eacts">${engAct('applyFocus', `이 샷에 적용 (${roundF(kitF(f))}mm · ${stopTxt(Math.max(N, maxT(k, kitF(f))), k)} · MF ${engNum(s)} m)`, true)}${engAct('fromShot', '현재 샷 값 다시 불러오기')}</div>`; }
 /* ---- lighting & exposure ---- */
 // each light's direct contribution at the subject's face toward the camera (the app's point-source model), and the rest (sun, sky, bounce)
@@ -8341,35 +8393,37 @@ function engLightParts(s) { const k = afKey(s), sb = s[k]; if (!sb) return null;
 function engLightOut() { const fx = FIXTURES.find(x => x.id === eng.fx), E1 = +eng.E1, d1 = +eng.d1, out = clamp(+eng.out, 0, 100) / 100, d2 = +eng.d2, E2 = ENG.luxAt(E1, d1, d2, out);
   const srcB = eng.src === 'meas' ? bdg('meas', '내 측정값') : eng.src === 'model' ? bdg('est', '앱 모델 추정') : bdg('user', '직접 입력');
   const dists = [0.5, 1, 1.5, 2, 3, 4, 6, 8].map(d => { const e = ENG.luxAt(E1, d1, d, out); return `<tr><td>${d} m</td><td>${engNum(e, 0)}</td><td>${engNum(ENG.fcOfLux(e), 1)}</td><td>${engNum(ENG.stops(E1, e), 2)}</td></tr>`; }).join('');
-  const inv = `<div class="ebox"><h4>거리와 조도 — 역제곱 법칙 ${srcB}</h4>${fx && eng.src === 'model' ? `<p class="enote">${esc(fx.name)}: ${fx.lm.toLocaleString()} lm (등급 대표값, 특정 제품 측정값 아님) · 빔 ${eng.beam || fx.beam[1]}°로 퍼진다고 본 축 위 1 m 값이에요.</p>` : ''}
-    <div class="egrid">${er(`${d2} m에서 예상 조도`, `${engNum(E2, 0)} lux`, `${engNum(ENG.fcOfLux(E2), 1)} fc`)}${er('기준 대비 노출', `${engNum(ENG.stops(E1, E2), 2)} 스톱`, `E₂ = E₁ · 출력 · (d₁/d₂)²`)}
+  const inv = `<div class="ebox"><h4>거리와 조도 ${srcB}</h4>${fx && eng.src === 'model' ? `` : ''}
+    <div class="egrid">${er(`${d2} m에서 예상 조도`, `${engNum(E2, 0)} lux`, `${engNum(ENG.fcOfLux(E2), 1)} fc`)}${er('기준 대비 노출', `${engNum(ENG.stops(E1, E2), 2)} 스톱`, '')}
     ${er(`${d2} m에서 기준 ${engNum(E1, 0)} lux 유지에 필요한 출력`, (() => { const r = ENG.outFor(E1, d1, d2, E1); return r > 1 ? `<b class="warn">${Math.round(r * 100)}% — 불가</b>` : `${Math.round(r * 100)}%`; })())}</div>
     <div class="escroll"><table class="etab"><thead><tr><th>거리</th><th>lux</th><th>fc</th><th>스톱</th></tr></thead><tbody>${dists}</tbody></table></div>
     <div class="eacts">${fx ? engAct('saveMeas', '기준 조도를 이 조명의 내 측정값으로 저장') : ''}${LIGHT_MEAS[eng.fx] ? engAct('clearMeas', '측정값 지우기') : ''}</div></div>`;
   // angle of incidence
   const I = ENG.cdFromLux(E1 * out, d1), th = clamp(+eng.th, 0, 90), r = Math.max(0.05, +eng.r), Ei = ENG.luxFromCd(I, r, th), a = th * DEG;
   const fig = `<svg class="esvg inc" viewBox="0 0 60 30" role="img" aria-label="입사각 그림"><line class="floor" x1="6" x2="54" y1="26" y2="26"/><line class="nrm" x1="30" x2="30" y1="26" y2="6"/><line class="ray" x1="${30 + Math.sin(a) * 20}" y1="${26 - Math.cos(a) * 20}" x2="30" y2="26"/><circle class="src" cx="${30 + Math.sin(a) * 20}" cy="${26 - Math.cos(a) * 20}" r="1.6"/><text class="lab" x="33" y="12">θ ${Math.round(th)}°</text></svg>`;
-  const inc = `<div class="ebox"><h4>입사각 — E = I · cos θ / r²</h4><div class="eform">${ef('th', '입사각 θ (표면 법선과)', '°', { min: 0, max: 90 })}${ef('r', '광원 – 표면 거리', 'm', { min: 0.05 })}</div>${fig}
-    <div class="egrid">${er('광도 I (기준값에서)', `${engNum(I, 0)} cd`, 'I = E₁ · 출력 · d₁²')}${er('표면 조도', `${engNum(Ei, 0)} lux`, `${engNum(ENG.fcOfLux(Ei), 1)} fc · 정면의 ${Math.round(Math.cos(a) * 100)}%`)}${er('정면 대비', `${engNum(ENG.stops(ENG.luxFromCd(I, r, 0), Ei), 2)} 스톱`)}</div></div>`;
+  const inc = `<div class="ebox"><h4>입사각</h4><div class="eform">${ef('th', '입사각 θ (표면 법선과)', '°', { min: 0, max: 90 })}${ef('r', '광원 – 표면 거리', 'm', { min: 0.05 })}</div>${fig}
+    <div class="egrid">${er('광도 I (기준값에서)', `${engNum(I, 0)} cd`, '')}${er('표면 조도', `${engNum(Ei, 0)} lux`, `${engNum(ENG.fcOfLux(Ei), 1)} fc · 정면의 ${Math.round(Math.cos(a) * 100)}%`)}${er('정면 대비', `${engNum(ENG.stops(ENG.luxFromCd(I, r, 0), Ei), 2)} 스톱`)}</div></div>`;
   // several lights in the current shot
   const P = engLightParts(cur()), X = expo(cur());
-  const multi = !P ? '' : `<div class="ebox"><h4>이 샷의 조명 합산 — 인물 ${P.k} 얼굴 (카메라 쪽) ${bdg('est', '앱 모델 추정')}</h4>${P.parts.length ? `<div class="escroll"><table class="etab"><thead><tr><th>조명</th><th>거리</th><th>입사각</th><th>lux</th><th>비율</th></tr></thead><tbody>${P.parts.map((p, i) => `<tr><td>${esc(p.name)} <small>${p.K}K</small></td><td>${engNum(p.d)} m</td><td>${Math.round(p.th)}°</td><td>${engNum(p.E, 0)}</td><td>${Math.round(P.S.share[i] * 100)}%</td></tr>`).join('')}</tbody></table></div>` : '<p class="enote">이 샷에 놓인 조명이 없어요.</p>'}
+  const multi = !P ? '' : `<div class="ebox"><h4>이 샷의 조명 합산 — 인물 ${P.k} 얼굴 (카메라 쪽) ${bdg('est', '앱 모델 추정')}</h4>${P.parts.length ? `<div class="escroll"><table class="etab"><thead><tr><th>조명</th><th>거리</th><th>입사각</th><th>lux</th><th>비율</th></tr></thead><tbody>${P.parts.map((p, i) => `<tr><td>${esc(p.name)} <small>${p.K}K</small></td><td>${engNum(p.d)} m</td><td>${Math.round(p.th)}°</td><td>${engNum(p.E, 0)}</td><td>${Math.round(P.S.share[i] * 100)}%</td></tr>`).join('')}</tbody></table></div>` : ''}
     <div class="egrid">${er('조명 합 (E₁ + E₂ + …)', `${engNum(P.S.total, 0)} lux`, `${engNum(ENG.fcOfLux(P.S.total), 1)} fc`)}${er('해 · 하늘 · 반사광', `${engNum(P.rest, 0)} lux`)}${er('얼굴이 받는 전체', `${engNum(P.all, 0)} lux`)}</div>
-    <p class="enote">그림자(가림)와 빔 가장자리 감쇠까지 넣은 점광원 모델이에요. 큰 광원 · 디퓨전 · 반사는 실제와 차이가 나니 현장에선 노출계 값을 믿어요.</p></div>`;
+    </div>`;
   // exposure
   const tA = X.t, need = ENG.luxForF(cur().N, tA, X.S) * Math.pow(2, cur().nd ?? 0), B = { N: +eng.xN, t: ENG.shutterS(+eng.xSh, +eng.xFps), iso: +eng.xIso, nd: +eng.xNd };
   const xs = `<div class="ebox"><h4>노출 스톱 계산</h4><div class="egrid">${er('이 샷 설정', `${stopTxt(cur().N)} · 1/${Math.round(1 / tA)}초 · ISO ${X.S}${cur().nd ? ` · ND ${(cur().nd * 0.3).toFixed(1)}` : ''}`)}
-      ${er('18% 회색이 적정 노출이 되는 입사광', `${engNum(need, 0)} lux`, `${engNum(ENG.fcOfLux(need), 1)} fc · 입사식 노출계 C = ${METER_C}`)}${P ? er('얼굴 (모델) 대비', `${engNum(ENG.stops(need, P.all), 2)} 스톱`) : ''}</div>
+      ${er('18% 회색이 적정 노출이 되는 입사광', `${engNum(need, 0)} lux`, `${engNum(ENG.fcOfLux(need), 1)} fc`)}${P ? er('얼굴 (모델) 대비', `${engNum(ENG.stops(need, P.all), 2)} 스톱`) : ''}</div>
     <div class="eform">${ef('xN', '바꿀 조리개', '', { min: 0.7 })}${ef('xSh', '셔터 각도', '°', { min: 1, max: 360 })}${ef('xFps', '프레임레이트', 'fps', { min: 1 })}${ef('xIso', 'ISO', '', { min: 25 })}${ef('xNd', 'ND (스톱)', '', { min: 0 })}</div>
-    ${er('이 샷 → 바꾼 설정', `${engNum(ENG.expoStops({ N: cur().N, t: tA, iso: X.S, nd: cur().nd ?? 0 }, B), 2)} 스톱`, 'log₂ 비율: 셔터 시간 · ISO · 2^-ND / N²')}
+    ${er('이 샷 → 바꾼 설정', `${engNum(ENG.expoStops({ N: cur().N, t: tA, iso: X.S, nd: cur().nd ?? 0 }, B), 2)} 스톱`, '')}
     ${er('바꾼 설정의 적정 입사광', `${engNum(ENG.luxForF(B.N, B.t, B.iso) * Math.pow(2, B.nd), 0)} lux`)}</div>`;
-  return inv + inc + multi + xs + '<p class="enote">모든 조명 값은 이상적인 점광원 가정이에요. 광원 크기 · 빔 패턴 · 반사 · 디퓨전 · 입사각에 따라 실제 측정값과 달라요. 3D 화면의 밝기는 이 계산을 보여 주는 그림이지 lux 측정이 아니에요.</p>'; }
+  return inv + inc + multi + xs + ''; }
 /* ---- events ---- */
 $('#engModal').addEventListener('input', e => { const t = e.target, k = t.dataset && t.dataset.ek; if (!k || t.tagName === 'SELECT') return; const v = parseFloat(t.value); if (!isFinite(v)) return;
   eng[k] = v; if (k === 'E1' || k === 'd1') eng.src = 'user'; if (k === 'beam') engFixRef(); engOut(); });
 $('#engModal').addEventListener('change', e => { const t = e.target, k = t.dataset && t.dataset.ek; if (!k || t.tagName !== 'SELECT') return; eng[k] = t.value;
   if (k === 'fx') { eng.beam = 0; engFixRef(); } engRender(); });
-$('#engModal').addEventListener('click', e => { if (e.target.id === 'engModal') return engClose(); const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
+$('#engModal').addEventListener('keydown', e => { const h = e.target.closest && e.target.closest('h4[data-fold]'); if (h && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); h.click(); } });
+$('#engModal').addEventListener('click', e => { const h = e.target.closest('h4[data-fold]'); if (h) { const b = h.closest('.ebox'), open = b.classList.contains('shut'); b.classList.toggle('shut', !open); h.setAttribute('aria-expanded', open); engFold[h.dataset.fold] = open; return; }
+  if (e.target.id === 'engModal') return engClose(); const b = e.target.closest('button'); if (!b) return; const d = b.dataset;
   if (b.id === 'engClose' || b.id === 'engBack') return engClose();
   if (d.etab) { eng.tab = d.etab; engRender(); $('#engBody').scrollTop = 0; return; }
   if (d.cmpf) { const f = +d.cmpf, i = eng.cmp.indexOf(f); if (i >= 0) { if (eng.cmp.length > 1) eng.cmp.splice(i, 1); } else { eng.cmp.push(f); if (eng.cmp.length > 3) eng.cmp.shift(); } eng.cmp.sort((a, b) => a - b); return engOut(); }
@@ -8433,6 +8487,37 @@ document.addEventListener('keydown', e => { const t = e.target; if (t && /INPUT|
   h.addEventListener('pointerup', end); h.addEventListener('pointercancel', end);
   h.addEventListener('keydown', e => { if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return; e.preventDefault(); const w = setW(dr.getBoundingClientRect().width + (e.key === 'ArrowLeft' ? 24 : -24)); try { localStorage.setItem(KEY, w); } catch (er) {} }); }
 syncNav(); syncSaveState();
+/* ---------- missions only in the tutorial scene; everyone else gets a short "where things are" guide once ---------- */
+const isTutScene = () => !!(state && state.meta && state.meta.tut);
+// a lesson asked for from anywhere opens the tutorial scene first, then starts there
+{ const sl0 = startLesson; startLesson = function (id, at) { if (isTutScene()) return sl0.call(this, id, at);
+    const r = projects().find(p => p.title === TUT_SET.name);
+    (r ? openProject(r.id) : Promise.resolve(false)).then(ok => { if (!ok) { newFromPreset(TUT_SET, TUT_SET.name); state.meta.tut = true; save(); } setTimeout(() => sl0.call(this, id, at), 450); }); }; }
+// leaving the tutorial scene puts a running mission away (it picks up from the lesson list next time)
+{ const al0 = afterLoad; afterLoad = function () { if (lessonCur && !isTutScene()) tutStop(); if (guideOn) guideEnd(false); return al0.apply(this, arguments); }; }
+// the first-visit guide: five short stops, no tasks to complete
+let guideOn = false, guideI = 0;
+const GUIDE_KEY = 'previo.guide1';
+const guideSteps = () => { const ph = phone.matches || shortH.matches;
+  return [
+    { t: '3D 세트', p: '빈 곳을 끌면 시점이 돌고, 두 손가락으로 확대 · 이동해요. 카메라와 인물은 끌어서 옮겨요.', el: '#world' },
+    { t: '화면 바꾸기', p: '3D · 모니터(카메라에 찍히는 화면) · 탑(위에서 본 배치)을 오가요.', el: '#modeSeg' },
+    { t: '카메라', p: '렌즈 · 초점 · 노출 · 거리 · 센서는 카메라 패널에 있어요.', el: '#rail button[data-pane="cam"]' },
+    { t: '샷', p: '「＋ 샷」으로 컷을 더하고, 아래 줄에서 샷을 골라요. 화살표로 접을 수 있어요.', el: '#addBtn' },
+    ph ? { t: '더보기', p: '장비 · 조명 · 세트 · 샷 설정과 튜토리얼 · 촬영 계산기는 더보기에 있어요.', el: '#navMore' }
+       : { t: '도구', p: '장비 · 조명 · 세트 · 샷 패널은 왼쪽 레일에, 튜토리얼은 그 아래에 있어요.', el: '#rail' },
+    { t: '내보내기', p: '콘티 인쇄 · 링크 공유 · AI 프롬프트는 여기서 해요.', el: '#exportBtn' } ]; };
+function guideShow(i) { const L = guideSteps(); if (i >= L.length) return guideEnd(true);
+  guideOn = true; guideI = i; TOUR = L; tourI = i; const st = L[i];
+  $('#coachN').textContent = `${i + 1}/${L.length}`; $('#coachT').textContent = st.t; $('#coachP').textContent = st.p; $('#coachDo').hidden = true; $('#coach').hidden = false;
+  const a = $('#coachAct'); a.hidden = false; a.textContent = i === L.length - 1 ? '시작하기' : '다음'; a.onclick = () => guideShow(i + 1);
+  $('#coachSkip').hidden = i === L.length - 1;
+  if (!tourLoop) { tourLoop = true; requestAnimationFrame(tourPlace); } }
+function guideEnd(seen) { guideOn = false; $('#coach').hidden = true; $('#tourRing').hidden = true; $('#coachSkip').hidden = true; TOUR = []; tourI = -1;
+  if (seen) try { localStorage.setItem(GUIDE_KEY, '1'); } catch (e) {} }
+$('#coachSkip').onclick = () => guideEnd(true);
+maybeTour = function () { let seen = null; try { seen = localStorage.getItem(GUIDE_KEY); } catch (e) {}
+  if (seen || isTutScene() || sharedView) return; setTimeout(() => { if ($('#startScreen').hidden && !lessonCur) guideShow(0); }, 700); };
 </script>
 
 </body>
