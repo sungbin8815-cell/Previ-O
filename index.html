@@ -4989,7 +4989,7 @@ async function vrmImport(file, k) {
 // joint table the built-in figure uses (skeleton()), so every existing pose works and the eyes stay where the camera maths expects.
 const HUMAN_BASE = !/[?&]base=0\b/.test(location.search); // on by default since 2026-11-13; ?base=0 shows the older built-in figures
 // raise CHARS_V whenever the files in assets/chars are rebuilt: browsers keep the old ones under the same address otherwise
-const CHARS_V = '?v=4', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
+const CHARS_V = '?v=5', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
 // [bone, the bone its length runs to, joint table from, to]; the table's L side is −x, which is the model's right
 const HUMAN_AIM = [['spine_01', 'neck_01', 'pv', 'n0'], ['neck_01', 'head', 'n0', 'n1'],
   ...[['r', 'L'], ['l', 'R']].flatMap(([b, j]) => [['upperarm_' + b, 'lowerarm_' + b, 'sh' + j, 'el' + j], ['lowerarm_' + b, 'hand_' + b, 'el' + j, 'ha' + j],
@@ -5026,7 +5026,7 @@ async function humLoad(g) {
 // the body for one age and build: the base plus the file's shape keys, written into this copy's own vertices, with the joints moved to match
 const HUM_AGE = { child: 1, teen: 1, mid: 1, senior: 1 }, HUM_BUILD = { slim: 1, fit: 1, muscle: 1, big: 1 };
 // a life-sim game's idea of a good-looking face, under every character (the face choices in the look editor go on top): shape keys at part weight
-var CHAR_BEAUTY = { f: [['e_big', 1.8], ['n_small', 0.45], ['j_slim', 1], ['f_vline', 0.9], ['m_full', 0.25], ['c_point', 0.4]], m: [['e_big', 0.8], ['n_small', 0.3], ['j_wide', 0.3]] };
+var CHAR_BEAUTY = { f: [['e_big', 2], ['n_small', 0.6], ['j_slim', 1.2], ['f_vline', 1.1], ['m_full', 0.3], ['c_short', 0.4], ['k_high', 0.4]], m: [['e_big', 0.8], ['n_small', 0.3], ['j_wide', 0.3]] };
 const charBeauty = (who, age) => !CHAR_FX || (who !== 'f' && who !== 'm') ? [] : (CHAR_BEAUTY[who] || []).map(([n, w]) => n + '*' + (age === 'child' ? w * 0.5 : w));
 // one mesh's vertices for a set of variations: the file's shape plus its shape keys, with smooth normals summed per welded point
 function humBake(m, on) {
@@ -5110,7 +5110,7 @@ function charSurface(key, b) {
 	diffuseColor.a *= body * mix( 0.45, 1.0, ends ) * strokes;`); };
     m.customProgramCacheKey = () => 'char-brow'; return m; }
   const m = new THREE.MeshPhysicalMaterial({ vertexColors: b.vertexColors, side: b.side, metalness: 0 }); m.color.copy(b.color);
-  if (kind === 'skin') { Object.assign(m, { roughness: 0.5, specularIntensity: 0.45, sheen: 0.5, sheenRoughness: 0.7, normalMap: charPoreTex() }); m.sheenColor.setRGB(0.55, 0.38, 0.32); m.normalScale.set(0.18, 0.18);
+  if (kind === 'skin') { Object.assign(m, { roughness: 0.5, specularIntensity: 0.45, sheen: 0.5, sheenRoughness: 0.7, normalMap: charPoreTex() }); m.sheenColor.setRGB(0.5, 0.36, 0.33); m.normalScale.set(0.08, 0.08);
     m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <lights_physical_pars_fragment>', THREE.ShaderChunk.lights_physical_pars_fragment.replace('reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );', SKIN_WRAP)); };
     m.customProgramCacheKey = () => 'char-skin'; }
   if (kind === 'eye') { Object.assign(m, { roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.03, specularIntensity: 0.6 });
@@ -5168,7 +5168,7 @@ function humFigure(s, k) {
   const names = [lk.topT, !lk.dress && lk.botT, lk.shoeT].filter(Boolean), W = names.map(n => wearGet(g, n)); if (!it || W.includes(null)) return null;
   const sb = s[k], pose = sb.pose || 'stand', sk = skeleton(k, sb), { root, bones } = it;
   const age = c.age || 'adult', std = (p, v) => v !== 'std' && p + v;
-  humShape(it, [...charBeauty(c.who, age), HUM_AGE[age] && age, HUM_BUILD[lk.build] && lk.build, std('f_', lk.faceS), std('e_', lk.eyeS), std('n_', lk.noseS), std('m_', lk.mouthS), std('j_', lk.jawS), std('c_', lk.chinS), std('k_', lk.cheekS), std('a_', lk.earS), std('b_', lk.browS), std('g_', lk.eyeGap), lk.mood !== 'neutral' && 'x_' + lk.mood + (CHAR_FX && lk.mood === 'smile' ? '*0.6' : '')].filter(Boolean));
+  humShape(it, [...charBeauty(c.who, age), HUM_AGE[age] && age, HUM_BUILD[lk.build] && lk.build, std('f_', lk.faceS), std('e_', lk.eyeS), std('n_', lk.noseS), std('m_', lk.mouthS), std('j_', lk.jawS), std('c_', lk.chinS), std('k_', lk.cheekS), std('a_', lk.earS), std('b_', lk.browS), std('g_', lk.eyeGap), lk.mood !== 'neutral' && 'x_' + lk.mood + (CHAR_FX && lk.mood === 'smile' ? '*0.3' : '')].filter(Boolean));
   humPaint(it, lk); humHair(it, lk, g); humWear(it, lk, names, W);
   const low = () => { let v = Infinity; for (const n in it.floor) v = Math.min(v, bones[n].getWorldPosition(new THREE.Vector3()).y - it.floor[n]); return v - it.sole; };
   root.removeFromParent();
@@ -5209,14 +5209,17 @@ function hairMeasure(it) {
 function humPaint(it, lk) {
   const key = [it.shape, lk.skin, lk.lip || 'n', lk.hair, lk.eye, lk.hairS].join('|'); if (it.paint === key) return; it.paint = key;
   const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t], sk = lk.skin, hm = hairMeasure(it), line = hm && hairLine(it, lk.hairS);
-  const fem = it.g === 'f', lip = lk.lip || (CHAR_FX ? mix(sk, fem ? [0.72, 0.24, 0.28] : [0.6, 0.28, 0.26], fem ? 0.55 : 0.35) : mix(sk, [0.62, 0.2, 0.2], 0.42));
+  const fem = it.g === 'f', lip = lk.lip || (CHAR_FX ? mix(sk, fem ? [0.78, 0.36, 0.38] : [0.6, 0.28, 0.26], fem ? 0.5 : 0.35) : mix(sk, [0.62, 0.2, 0.2], 0.42));
   // eye centres (this shape) for the make-up: blush on the cheekbones, a soft shadow on the upper lids
   let EX = 0; { const em = it.meshes.find(q => q.userData.eye), A = em && em.geometry.attributes.position.array; if (A) { let sx = 0, k = 0; for (let j = 0; j < A.length; j += 3) if (A[j] > 0) { sx += A[j]; k++; } EX = k ? sx / k : 0; } }
-  const [EY, EZ] = it.eyeP || [0, 0], SC = EX / 0.031 || 1, BL = fem ? 0.3 : 0.1, LID = fem ? 0.32 : 0.12;
-  const blushC = mix(sk, [0.86, 0.3, 0.33], 0.75), lidC = mix(sk, fem ? [0.42, 0.26, 0.24] : [0.4, 0.3, 0.27], 0.8);
-  const face = (x, y, z, c) => { if (!CHAR_FX || !EX || z < EZ - 0.04 * SC) return c; const dx = (Math.abs(x) - EX) / SC, dy = (y - EY) / SC;
-    const b = Math.exp(-((dx - 0.006) ** 2 + (dy + 0.03) ** 2) / (2 * 0.015 * 0.015)); if (b > 0.01) c = mix(c, blushC, BL * b);
-    if (dy > 0) { const l = Math.exp(-(dx * dx) / (2 * 0.015 * 0.015) - ((dy - 0.007) ** 2) / (2 * 0.0055 * 0.0055)); if (l > 0.01) c = mix(c, lidC, LID * l); }
+  const [EY, EZ] = it.eyeP || [0, 0], SC = EX / 0.031 || 1, BL = fem ? 0.5 : 0.12, LID = fem ? 0.38 : 0.1, UND = fem ? 0.42 : 0.08, NOSE = fem ? 0.4 : 0.1;
+  const blushC = mix(sk, [0.9, 0.36, 0.36], 0.8), lidC = mix(sk, fem ? [0.85, 0.5, 0.42] : [0.42, 0.3, 0.27], 0.7), undC = mix(sk, [0.98, 0.62, 0.6], 0.7);
+  const G = (u, v, su, sv) => Math.exp(-(u * u) / (2 * su * su) - (v * v) / (2 * sv * sv));
+  const face = (x, y, z, c) => { if (!CHAR_FX || !EX || z < EZ - 0.04 * SC) return c; const ax = Math.abs(x) / SC, dx = ax - EX / SC, dy = (y - EY) / SC;
+    const b = G(dx + 0.002, dy + 0.024, 0.02, 0.014); if (b > 0.01) c = mix(c, blushC, BL * b);                       // cheeks, high and wide
+    const u = G(dx, dy + 0.011, 0.014, 0.0045); if (u > 0.01) c = mix(c, undC, UND * u);                                  // the flush under the eyes
+    const n = G(ax, dy + 0.043, 0.008, 0.007); if (n > 0.01 && z > EZ) c = mix(c, blushC, NOSE * n);                    // nose tip
+    if (dy > 0) { const l = G(dx + 0.002, dy - 0.007, 0.016, 0.006); if (l > 0.01) c = mix(c, lidC, LID * l); }            // warm lids
     return c; };
   const shade = lk.hairS === 'bald' ? 0 : lk.hairS === 'thin' ? 0.3 : 0.6, EYE = [[0.9, 0.89, 0.86], lk.eye, [0.02, 0.02, 0.02]];
   for (const m of it.meshes) { const sg = m.userData.srcGeo, ca = m.geometry.attributes.color, a = ca.array, n = a.length / 3;
@@ -5224,7 +5227,7 @@ function humPaint(it, lk) {
     const mk = sg.userData.mask, P = m.geometry.attributes.position.array;
     for (let i = 0; i < n; i++) { let c = sk; if (mk) { const s = mk[i * 4], l = mk[i * 4 + 1], e = mk[i * 4 + 3];
         c = face(P[i * 3], P[i * 3 + 1], P[i * 3 + 2], c);
-        if (s && shade) c = mix(c, lk.hair, shade * s * line(P[i * 3], P[i * 3 + 1], P[i * 3 + 2])); if (l) c = mix(c, lip, 0.9 * l); if (e) c = mix(c, [0.05, 0.035, 0.03], 0.85 * e); }
+        if (s && shade) c = mix(c, lk.hair, shade * s * line(P[i * 3], P[i * 3 + 1], P[i * 3 + 2])); if (l) { const g = CHAR_FX && fem && EX ? 1 - smooth01(0.006, 0.024, Math.abs(P[i * 3]) / SC) : 0; c = mix(c, g ? mix(lip, [0.66, 0.2, 0.24], 0.3 * g) : lip, (0.7 + 0.2 * g) * l); } if (e) c = mix(c, [0.05, 0.035, 0.03], 0.85 * e * (CHAR_FX && EX && P[i * 3 + 1] < EY ? 0.3 : 1)); }
       a[i * 3] = c[0]; a[i * 3 + 1] = c[1]; a[i * 3 + 2] = c[2]; }
     ca.needsUpdate = true; }
 }
