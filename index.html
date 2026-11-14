@@ -1610,6 +1610,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
         </div>
         <div class="ptab" data-tab="expo">
           <div class="lh"><span class="mini">조리개</span><input type="range" id="nRange" min="0" max="10" step="1" aria-label="조리개"><output id="nOut"></output></div>
+          <div class="lh stoprow"><span class="mini" id="nAlt"></span><div class="seg" id="stopSeg" role="group" aria-label="조리개 표기"><button data-stop="T" title="시네 렌즈: T값 (실제로 통과하는 빛)">T값</button><button data-stop="f" title="사진 렌즈: f값 (초점거리 ÷ 구경)">f값</button></div></div>
           <div class="lh"><span class="mini" id="shLab">셔터</span><div class="seg" id="shSeg"></div></div>
           <div class="lh"><span class="mini" id="isoLab">ISO</span><div class="seg" id="isoSeg"></div></div>
           <div class="lh"><span class="mini">ND</span><div class="seg" id="ndSeg"></div></div>
@@ -2047,7 +2048,16 @@ function lensSpec(k, f) { const d = LENS_DATA[k.id], cat = !!(d && d.mod[f]);
   return { f, mod: kitMOD(k, f) || 0.3, throw: d && d.throw || DEF_THROW, throwKnown: !!(d && d.throw), modKnown: cat || !!KIT_MODZ[k.id], breath: d && d.breath || 'unit', src: cat ? d.src : KIT_MODZ[k.id] ? '제조사 공칭 최소 초점거리' : '추정치 (같은 계열의 전형적인 최대 배율로 계산)' }; }
 const maxT = (k, f) => !k.T ? STOPS[0] : (k.T[f] ?? k.T.d);
 // how a stop is written: cine lenses in T-stops, photo lenses in f-numbers
-const stopTxt = (N, k = KIT()) => k.stop === 'f' ? `f/${N}` : `T${N}`;
+// T-stop vs f-number: a cine lens is marked in T (the light it really passes), a photo lens in f (focal length / entrance pupil).
+// The number on the ring is kept as marked (s.N); exposure always runs on T, depth of field / bokeh / diffraction on f.
+// T = f / √τ, τ = the light the glass passes (a typical modern prime ≈ 87%: f/1.4 ≈ T1.5). 자유 입력 lets you pick which one you type.
+const LENS_TAU = 0.87;
+const stopKind = (k = KIT()) => k.id === 'free' ? (state.freeStop === 'f' ? 'f' : 'T') : k.stop === 'f' ? 'f' : 'T';
+const fNum = (N, k = KIT()) => stopKind(k) === 'f' ? N : N * Math.sqrt(k.tau ?? LENS_TAU);   // geometric: depth of field, bokeh, diffraction
+const tNum = (N, k = KIT()) => stopKind(k) === 'T' ? N : N / Math.sqrt(k.tau ?? LENS_TAU);   // light: exposure
+const stopTxt = (N, k = KIT()) => stopKind(k) === 'f' ? `f/${N}` : `T${N}`;
+// the other number, for a hint: "≈ f/1.7" under a T-stop, "≈ T2.1" under an f-number
+const stopAlt = (N, k = KIT()) => { const v = stopKind(k) === 'f' ? tNum(N, k) : fNum(N, k), t = (Math.round(v * 10) / 10).toString(); return stopKind(k) === 'f' ? `T${t}` : `f/${t}`; };
 // snap a focal length to what the kit can actually do
 function kitF(f, k = KIT()) {
   if (k.type === 'prime') return k.f.reduce((b, x) => Math.abs(Math.log(x / f)) < Math.abs(Math.log(b / f)) ? x : b, k.f[0]);
@@ -2166,7 +2176,7 @@ function imageArea(sensor = SENSOR(), sq = state.squeeze || 1, asp = aspectV()) 
   return asp >= ew / eh ? { iw: ew, ih: ew / asp, w, h } : { iw: eh * asp, ih: eh, w, h };
 }
 function optics(s) {
-  const S = SENSOR(), area = imageArea(), f = s.f, N = s.N;
+  const S = SENSOR(), area = imageArea(), f = s.f, N = fNum(s.N);
   // the lens can't focus nearer than its minimum focus distance (measured from the sensor plane)
   const mod = kitMOD(KIT(), f), fdm = focusDist(s), smm = Math.max(fdm * 1000, mod * 1000, f * 1.05), tooClose = fdm < mod - 0.005;
   const v = state.breathing && (LENS_DATA[KIT().id] || {}).breath !== 'none' ? f * smm / (smm - f) : f; // thin lens: 1/f = 1/s + 1/v (Master Primes don't breathe)
@@ -3397,7 +3407,7 @@ function wbf(K, WB) { const a = kelvinRGB(K), b = kelvinRGB(WB), f = a.map((v, i
 const kelvinCss = K => { const c = kelvinRGB(K), m = Math.max(...c); return `rgb(${c.map(v => enc(v / m)).join(',')})`; };
 // exposure from the reflected-light meter equation N²/t = L·S/K (K = 12.5): luminance Lmg renders as 18% grey
 function expo(s) { const t = (s.shutter ?? 180) / 360 / fpsNow(), S = s.iso ?? 800, nd = Math.pow(2, -(s.nd ?? 0));
-  return { t, S, nd, Lmg: 12.5 * s.N * s.N / (t * S), Eneed: Math.PI * 12.5 / 0.18 * s.N * s.N / (t * S) / nd }; }
+  const T = tNum(s.N); return { t, S, nd, Lmg: 12.5 * T * T / (t * S), Eneed: Math.PI * 12.5 / 0.18 * T * T / (t * S) / nd }; }
 const tone = x => { x = Math.max(0, x); return x * (1 + x / 9) / (1 + x); }; // soft shoulder, clips about 5.5 stops over 18%
 const enc = v => { v = clamp(v, 0, 1); return Math.round(255 * (v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055)); };
 function falseColor(y) { // ARRI-style bands, approximate
@@ -6639,6 +6649,7 @@ $('#kitSel').addEventListener('change', e => { const prev = KIT(); state.kit = e
   state.shots.forEach(s => { s.f = roundF(kitF(s.f, k)); s.N = Math.max(s.N, maxT(k, s.f)); });
   buildTicks(); vsz = null; changed(true, true);
   toast(k.id === 'free' ? '키트 없이 초점거리를 자유롭게 고릅니다' : `${k.name} — 모든 샷을 가장 가까운 초점거리로 맞췄어요${k.sq ? ` · 아나모픽 ${k.sq}x 스퀴즈 적용` : ''}`); });
+$('#stopSeg').addEventListener('click', e => { const b = e.target.closest('[data-stop]'); if (!b) return; state.freeStop = b.dataset.stop; changed(true, true); });
 $('#nRange').addEventListener('input', e => { const s = cur(); s.N = stopsFor(s)[+e.target.value]; changed(false); });
 $('#nRange').addEventListener('change', () => changed(true));
 $('#focusSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; const s = cur();
@@ -6943,6 +6954,8 @@ function syncPanels() {
   document.querySelectorAll('#keepSeg button').forEach(b => b.setAttribute('aria-pressed', (b.dataset.keep === '1') === (state.keepSize === true)));
   const st = stopsFor(s); $('#nRange').max = st.length - 1;
   $('#nRange').value = st.reduce((bi, x, i) => Math.abs(x - s.N) < Math.abs(st[bi] - s.N) ? i : bi, 0); $('#nOut').textContent = stopTxt(s.N);
+  { const kf = KIT().id === 'free'; $('#stopSeg').hidden = !kf; document.querySelectorAll('#stopSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.stop === stopKind()));
+    $('#nAlt').textContent = stopKind() === 'f' ? `사진 렌즈 표기 · 노출은 ${stopAlt(s.N)} 상당` : `시네 렌즈 표기 · 심도는 ${stopAlt(s.N)} 상당`; }
   // only what needs saying: a lens kit that doesn't cover the sensor
   const kt = KIT(), recD = Math.hypot(o.iw / (state.squeeze || 1), o.ih), ls = $('#lensSum'), vig = kt.id !== 'free' && recD > kt.circle;
   if (act !== $('#kitSel')) $('#kitSel').value = kt.id;
@@ -8778,8 +8791,8 @@ function engLensOut() { const k = engKit(), S = engSensor(eng.camA), fs = k.type
   return db + cmp + prep; }
 /* ---- focus & depth ---- */
 function engCoc(S) { const dg = ENG.diagMm(S.w, S.h); return eng.coc === 'c' ? Math.max(0.001, +eng.cocUm / 1000) : dg / (eng.coc === 'd1730' ? 1730 : 1500); }
-function engFocusOut() { const S = engSensor(eng.camA), f = +eng.f, N = +eng.N, s = Math.max(+eng.fd, f / 1000 * 1.01), c = engCoc(S), D = FOPT.dofMm(f, N, c, s * 1000);
-  const near = D.near / 1000, far = D.far / 1000, H = D.H / 1000, r = SENSOR_RES[S.id], p = r ? ENG.pitchUm(S.w, r[0]) : NaN, airy = FOPT.airyMm(N, +eng.lam) * 1000, k = KIT();
+function engFocusOut() { const S = engSensor(eng.camA), f = +eng.f, N = +eng.N, Nf = fNum(N), s = Math.max(+eng.fd, f / 1000 * 1.01), c = engCoc(S), D = FOPT.dofMm(f, Nf, c, s * 1000);
+  const near = D.near / 1000, far = D.far / 1000, H = D.H / 1000, r = SENSOR_RES[S.id], p = r ? ENG.pitchUm(S.w, r[0]) : NaN, airy = FOPT.airyMm(Nf, +eng.lam) * 1000, k = KIT();
   // a log-distance bar, 0.3 m to 100 m
   const lx = m => 4 + 92 * clamp(Math.log(Math.max(0.3, Math.min(100, m)) / 0.3) / Math.log(100 / 0.3), 0, 1);
   const ticks = [0.5, 1, 2, 3, 5, 10, 20, 50].map(m => `<line class="tk" x1="${lx(m)}" x2="${lx(m)}" y1="13" y2="15"/><text class="lab" x="${lx(m)}" y="19">${m}</text>`).join('');
@@ -8789,7 +8802,7 @@ function engFocusOut() { const S = engSensor(eng.camA), f = +eng.f, N = +eng.N, 
     ${er('초점 앞 / 뒤', `${engNum((s - near) * 100, 1)} cm / ${isFinite(far) ? engNum((far - s) * 100, 1) + ' cm' : '∞'}`)}${er('과초점 거리', engM(H), `여기에 맞추면 ${engNum(H / 2)} m부터 ∞까지`)}
     ${er('착란원', `${engNum(c * 1000, 1)} µm`, eng.coc === 'c' ? '직접 입력' : `대각선 ${engNum(ENG.diagMm(S.w, S.h), 1)}mm ÷ ${eng.coc === 'd1730' ? 1730 : 1500}`)}
     ${er('배율', `1 : ${engNum(-1 / FOPT.magnification(f, s * 1000), 1)}`)}</div>
-    <div class="ebox"><h4>회절 참고</h4>${er(`에어리 디스크 (${eng.lam}nm, f/${N})`, `${engNum(airy, 2)} µm`, '')}${isFinite(p) ? er('픽셀 피치', `${engNum(p)} µm`, `에어리 디스크 = 픽셀 ${engNum(airy / p, 1)}개`) + er('회절이 보이기 시작 (경험칙: 픽셀 2개)', `f/${engNum(ENG.diffN(p, 2, +eng.lam), 1)} 부근`) : er('픽셀 피치', '—', '이 카메라는 해상도가 미입력이라 계산하지 않아요')}
+    <div class="ebox"><h4>회절 참고</h4>${er(`에어리 디스크 (${eng.lam}nm, f/${+Nf.toFixed(1)})`, `${engNum(airy, 2)} µm`, '')}${isFinite(p) ? er('픽셀 피치', `${engNum(p)} µm`, `에어리 디스크 = 픽셀 ${engNum(airy / p, 1)}개`) + er('회절이 보이기 시작 (경험칙: 픽셀 2개)', `f/${engNum(ENG.diffN(p, 2, +eng.lam), 1)} 부근`) : er('픽셀 피치', '—', '이 카메라는 해상도가 미입력이라 계산하지 않아요')}
     </div>
     
     <div class="eacts">${engAct('applyFocus', `이 샷에 적용 (${roundF(kitF(f))}mm · ${stopTxt(Math.max(N, maxT(k, kitF(f))), k)} · MF ${engNum(s)} m)`, true)}${engAct('fromShot', '현재 샷 값 다시 불러오기')}</div>`; }
@@ -8818,12 +8831,12 @@ function engLightOut() { const fx = FIXTURES.find(x => x.id === eng.fx), E1 = +e
     <div class="egrid">${er('조명 합 (E₁ + E₂ + …)', `${engNum(P.S.total, 0)} lux`, `${engNum(ENG.fcOfLux(P.S.total), 1)} fc`)}${er('해 · 하늘 · 반사광', `${engNum(P.rest, 0)} lux`)}${er('얼굴이 받는 전체', `${engNum(P.all, 0)} lux`)}</div>
     </div>`;
   // exposure
-  const tA = X.t, need = ENG.luxForF(cur().N, tA, X.S) * Math.pow(2, cur().nd ?? 0), B = { N: +eng.xN, t: ENG.shutterS(+eng.xSh, +eng.xFps), iso: +eng.xIso, nd: +eng.xNd };
+  const tA = X.t, need = ENG.luxForF(tNum(cur().N), tA, X.S) * Math.pow(2, cur().nd ?? 0), B = { N: +eng.xN, t: ENG.shutterS(+eng.xSh, +eng.xFps), iso: +eng.xIso, nd: +eng.xNd };
   const xs = `<div class="ebox"><h4>노출 스톱 계산</h4><div class="egrid">${er('이 샷 설정', `${stopTxt(cur().N)} · 1/${Math.round(1 / tA)}초 · ISO ${X.S}${cur().nd ? ` · ND ${(cur().nd * 0.3).toFixed(1)}` : ''}`)}
       ${er('18% 회색이 적정 노출이 되는 입사광', `${engNum(need, 0)} lux`, `${engNum(ENG.fcOfLux(need), 1)} fc`)}${P ? er('얼굴 (모델) 대비', `${engNum(ENG.stops(need, P.all), 2)} 스톱`) : ''}</div>
     <div class="eform">${ef('xN', '바꿀 조리개', '', { min: 0.7 })}${ef('xSh', '셔터 각도', '°', { min: 1, max: 360 })}${ef('xFps', '프레임레이트', 'fps', { min: 1 })}${ef('xIso', 'ISO', '', { min: 25 })}${ef('xNd', 'ND (스톱)', '', { min: 0 })}</div>
-    ${er('이 샷 → 바꾼 설정', `${engNum(ENG.expoStops({ N: cur().N, t: tA, iso: X.S, nd: cur().nd ?? 0 }, B), 2)} 스톱`, '')}
-    ${er('바꾼 설정의 적정 입사광', `${engNum(ENG.luxForF(B.N, B.t, B.iso) * Math.pow(2, B.nd), 0)} lux`)}</div>`;
+    ${er('이 샷 → 바꾼 설정', `${engNum(ENG.expoStops({ N: tNum(cur().N), t: tA, iso: X.S, nd: cur().nd ?? 0 }, { ...B, N: tNum(B.N) }), 2)} 스톱`, '')}
+    ${er('바꾼 설정의 적정 입사광', `${engNum(ENG.luxForF(tNum(B.N), B.t, B.iso) * Math.pow(2, B.nd), 0)} lux`)}</div>`;
   return inv + inc + multi + xs + ''; }
 /* ---- events ---- */
 $('#engModal').addEventListener('input', e => { const t = e.target, k = t.dataset && t.dataset.ek; if (!k || t.tagName === 'SELECT') return; const v = parseFloat(t.value); if (!isFinite(v)) return;
