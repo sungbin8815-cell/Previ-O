@@ -4989,7 +4989,7 @@ async function vrmImport(file, k) {
 // joint table the built-in figure uses (skeleton()), so every existing pose works and the eyes stay where the camera maths expects.
 const HUMAN_BASE = !/[?&]base=0\b/.test(location.search); // on by default since 2026-11-13; ?base=0 shows the older built-in figures
 // raise CHARS_V whenever the files in assets/chars are rebuilt: browsers keep the old ones under the same address otherwise
-const CHARS_V = '?v=5', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
+const CHARS_V = '?v=6', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
 // [bone, the bone its length runs to, joint table from, to]; the table's L side is −x, which is the model's right
 const HUMAN_AIM = [['spine_01', 'neck_01', 'pv', 'n0'], ['neck_01', 'head', 'n0', 'n1'],
   ...[['r', 'L'], ['l', 'R']].flatMap(([b, j]) => [['upperarm_' + b, 'lowerarm_' + b, 'sh' + j, 'el' + j], ['lowerarm_' + b, 'hand_' + b, 'el' + j, 'ha' + j],
@@ -5135,12 +5135,24 @@ function charSurface(key, b) {
 	vec3 white = vec3( 0.88, 0.86, 0.82 ) * mix( 1.0, 0.72, smoothstep( 0.62, 1.0, rr ) * front + ( 1.0 - front ) );
 	diffuseColor.rgb = mix( white, col, inIris );`); };
     m.customProgramCacheKey = () => 'char-eye'; }
-  if (kind === 'hair') { Object.assign(m, { roughness: 0.42, specularIntensity: 0.5, sheen: 0.45, sheenRoughness: 0.55 }); m.sheenColor.copy(b.color).lerp(new THREE.Color(1, 0.95, 0.85), 0.35).multiplyScalar(0.6);
-    m.onBeforeCompile = sh => { charPosVary(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+  if (kind === 'hair') { Object.assign(m, { roughness: 0.5, specularIntensity: 0.35 });
+    // game hair: two highlight bands along the fibres (Kajiya-Kay) instead of a plastic hot spot — a bright white one and a hair-coloured one
+    // below it, both jittered per strand. The fibres run down the surface from the crown: down, projected onto the surface.
+    m.onBeforeCompile = sh => { charPosVary(sh);
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vHairT;').replace('#include <normal_vertex>', `#include <normal_vertex>
+	{ vec3 hdn = normalize( ( viewMatrix * vec4( 0.0, -1.0, 0.0, 0.0 ) ).xyz ), hn = normalize( transformedNormal ); vHairT = normalize( hdn - hn * dot( hdn, hn ) + vec3( 1e-4 ) ); }`);
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vHairT;\nfloat hairShift = 0.0;')
+        .replace('#include <lights_physical_pars_fragment>', THREE.ShaderChunk.lights_physical_pars_fragment.replace('reflectedLight.directSpecular += irradiance * BRDF_GGX( directLight.direction, geometryViewDir, geometryNormal, material );', `{
+		vec3 hh = normalize( directLight.direction + geometryViewDir );
+		vec3 t1 = normalize( vHairT + geometryNormal * ( 0.14 + hairShift ) ), t2 = normalize( vHairT + geometryNormal * ( -0.1 + hairShift ) );
+		float a1 = dot( t1, hh ), a2 = dot( t2, hh );
+		float k1 = pow( sqrt( max( 0.0, 1.0 - a1 * a1 ) ), 360.0 ), k2 = pow( sqrt( max( 0.0, 1.0 - a2 * a2 ) ), 70.0 );
+		reflectedLight.directSpecular += irradiance * ( k1 * 0.07 + k2 * 0.05 * normalize( material.diffuseColor + 1e-4 ) ); }`))
+        .replace('#include <color_fragment>', `#include <color_fragment>
 	float sa = atan( vOP.x, vOP.z ) * 140.0, sv = vOP.y * 9.0;
 	float strand = 0.86 + 0.08 * sin( sa + 1.7 * sin( sv ) ) + 0.05 * sin( sa * 2.31 + 0.7 + sin( sv * 1.6 ) ) + 0.03 * sin( sa * 5.13 );
-	diffuseColor.rgb *= strand;`).replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n\troughnessFactor = clamp( roughnessFactor + ( 0.86 - strand ) * 1.5, 0.25, 0.8 );'); };
-    m.customProgramCacheKey = () => 'char-hair'; }
+	diffuseColor.rgb *= strand; hairShift = ( strand - 0.86 ) * 0.9;`); };
+    m.customProgramCacheKey = () => 'char-hair2'; }
   if (kind === 'cloth') { Object.assign(m, { roughness: 0.82, sheen: 0.8, sheenRoughness: 0.55 }); m.sheenColor.setRGB(0.22, 0.22, 0.22);
     m.onBeforeCompile = sh => { charPosVary(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
 	vec3 wq = vOP * 520.0; float weave = 0.98 + 0.02 * sin( wq.x + wq.y ) * sin( wq.z - wq.y );

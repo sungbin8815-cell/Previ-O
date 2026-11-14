@@ -3,7 +3,7 @@
 # Works in the file's own space (glTF: y up, z forward) using the head measure stored in the file (C, W, H, D).
 import bpy, bmesh, json, os, sys
 out = sys.argv[1]; os.makedirs(out, exist_ok=True)
-NO_FRINGE = {'part', 'pony', 'bun', 'buzz', 'thin', 'twin'}   # styles swept back or off the face: leave the front alone
+NO_FRINGE = {'part', 'pony', 'bun', 'buzz', 'thin', 'twin', 'wavy'}   # styles swept back or off the face: leave the front alone
 for f in sys.argv[2:]:
     style = os.path.basename(f)[:-4].split('_')[-1]
     bpy.ops.wm.read_factory_settings(use_empty=True); bpy.ops.import_scene.gltf(filepath=f)
@@ -20,10 +20,10 @@ for f in sys.argv[2:]:
         w = M @ v.co; x, y, z = w.x, w.z, -w.y             # back to glTF axes
         if style not in NO_FRINGE:
             sm = lambda a, b, t: (lambda u: u * u * (3 - 2 * u))(min(1, max(0, (t - a) / (b - a))))
-            wx = 1 - sm(0.5 * W, 0.78 * W, abs(x - C[0])); wz = sm(cz + 0.3 * D, cz + 0.6 * D, z); wy = 1 - sm(ey + 0.085, ey + 0.125, y)
+            wx = 1 - sm(0.42 * W, 0.56 * W, abs(x - C[0])); wz = sm(cz + 0.3 * D, cz + 0.6 * D, z); wy = 1 - sm(ey + 0.085, ey + 0.125, y)
             k = wx * wz * wy
             if k > 0:
-                y -= 0.075 * k; z += 0.024 * k                    # bring the fringe down, a little off the brow bone
+                y -= 0.075 * k; z += 0.024 * k + 0.012 * k * (1 - k)                    # bring the fringe down, a little off the brow bone
                 if y < fringe and wx > 0.5: y = fringe; nf += 1   # and cut it straight
                 elif y < fringe: y = fringe + (y - fringe) * 0.3
         if y < ends and not (z > cz + 0.3 * D and abs(x - C[0]) < 0.66 * W): y = ends; ne += 1
