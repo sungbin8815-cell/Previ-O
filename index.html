@@ -4989,7 +4989,7 @@ async function vrmImport(file, k) {
 // joint table the built-in figure uses (skeleton()), so every existing pose works and the eyes stay where the camera maths expects.
 const HUMAN_BASE = !/[?&]base=0\b/.test(location.search); // on by default since 2026-11-13; ?base=0 shows the older built-in figures
 // raise CHARS_V whenever the files in assets/chars are rebuilt: browsers keep the old ones under the same address otherwise
-const CHARS_V = '?v=3', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
+const CHARS_V = '?v=4', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
 // [bone, the bone its length runs to, joint table from, to]; the table's L side is −x, which is the model's right
 const HUMAN_AIM = [['spine_01', 'neck_01', 'pv', 'n0'], ['neck_01', 'head', 'n0', 'n1'],
   ...[['r', 'L'], ['l', 'R']].flatMap(([b, j]) => [['upperarm_' + b, 'lowerarm_' + b, 'sh' + j, 'el' + j], ['lowerarm_' + b, 'hand_' + b, 'el' + j, 'ha' + j],
@@ -5000,12 +5000,12 @@ const humLoadLib = () => humLib || (humLib = Promise.all([import('three/addons/l
 const humSrc = {}, humInst = {};
 // mark iris (1) and pupil (2) on the eyeballs by how far forward of each ball's centre a vertex sits
 function humEyes(geo) {
-  const p = geo.attributes.position, n = p.count, col = new Uint8Array(n), side = [[], []];
+  const p = geo.attributes.position, n = p.count, col = new Uint8Array(n), side = [[], []], ae = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) side[p.getX(i) < 0 ? 0 : 1].push(i);
   for (const ids of side) { if (!ids.length) continue; const c = [0, 0, 0]; for (const i of ids) { c[0] += p.getX(i); c[1] += p.getY(i); c[2] += p.getZ(i); }
     c.forEach((v, a) => c[a] = v / ids.length); let r = 0; for (const i of ids) r = Math.max(r, Math.hypot(p.getX(i) - c[0], p.getY(i) - c[1], p.getZ(i) - c[2]));
-    for (const i of ids) { const f = (p.getZ(i) - c[2]) / r; col[i] = f > 0.955 ? 2 : f > 0.80 ? 1 : 0; } }
-  geo.userData.eyeCls = col;
+    for (const i of ids) { const f = (p.getZ(i) - c[2]) / r; col[i] = f > 0.955 ? 2 : f > 0.80 ? 1 : 0; ae[i * 3] = (p.getX(i) - c[0]) / r; ae[i * 3 + 1] = (p.getY(i) - c[1]) / r; ae[i * 3 + 2] = f; } }
+  geo.userData.eyeCls = col; geo.setAttribute('aEye', new THREE.BufferAttribute(ae, 3));
 }
 function humWeld(geo) { const p = geo.attributes.position, seen = new Map(), weld = new Uint32Array(p.count);
   for (let i = 0; i < p.count; i++) { const key = p.getX(i) + ',' + p.getY(i) + ',' + p.getZ(i), j = seen.get(key); if (j == null) seen.set(key, i); weld[i] = j == null ? i : j; }
@@ -5100,8 +5100,22 @@ function charSurface(key, b) {
   if (kind === 'skin') { Object.assign(m, { roughness: 0.5, specularIntensity: 0.45, sheen: 0.5, sheenRoughness: 0.7, normalMap: charPoreTex() }); m.sheenColor.setRGB(0.55, 0.38, 0.32); m.normalScale.set(0.18, 0.18);
     m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <lights_physical_pars_fragment>', THREE.ShaderChunk.lights_physical_pars_fragment.replace('reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );', SKIN_WRAP)); };
     m.customProgramCacheKey = () => 'char-skin'; }
-  if (kind === 'eye') Object.assign(m, { roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.04, specularIntensity: 0.6 });
-  if (kind === 'hair') { Object.assign(m, { roughness: 0.42, specularIntensity: 0.55, sheen: 1, sheenRoughness: 0.35 }); m.sheenColor.copy(b.color).lerp(new THREE.Color(1, 0.95, 0.85), 0.35).multiplyScalar(0.6);
+  if (kind === 'eye') { Object.assign(m, { roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.03, specularIntensity: 0.6 });
+    // pupil, iris (radial fibres, a lighter ring round the pupil, a dark limbal ring) and the white, drawn per pixel from the ball coordinates
+    m.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute vec3 aEye;\nvarying vec3 vEye;').replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvEye = aEye;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vEye;').replace('#include <color_fragment>', `#include <color_fragment>
+	float rr = length( vEye.xy ), aa = max( fwidth( rr ) * 1.2, 0.012 ), front = step( 0.0, vEye.z );
+	const float IR = 0.60, PR = 0.25;
+	float ang = atan( vEye.y, vEye.x ), t = smoothstep( PR, IR, rr );
+	float fib = 0.82 + 0.18 * sin( ang * 46.0 + 2.0 * sin( ang * 7.0 ) ) * sin( ang * 17.0 + rr * 30.0 );
+	vec3 ic = diffuseColor.rgb, iris = ic * fib * mix( 1.45, 0.85, t );
+	iris = mix( iris, ic * 0.22, smoothstep( IR - 0.13, IR - 0.01, rr ) );
+	vec3 col = mix( vec3( 0.012 ), iris, smoothstep( PR - aa, PR + aa, rr ) );
+	float inIris = ( 1.0 - smoothstep( IR - aa, IR + aa, rr ) ) * front;
+	vec3 white = vec3( 0.88, 0.86, 0.82 ) * mix( 1.0, 0.72, smoothstep( 0.62, 1.0, rr ) * front + ( 1.0 - front ) );
+	diffuseColor.rgb = mix( white, col, inIris );`); };
+    m.customProgramCacheKey = () => 'char-eye'; }
+  if (kind === 'hair') { Object.assign(m, { roughness: 0.42, specularIntensity: 0.5, sheen: 0.45, sheenRoughness: 0.55 }); m.sheenColor.copy(b.color).lerp(new THREE.Color(1, 0.95, 0.85), 0.35).multiplyScalar(0.6);
     m.onBeforeCompile = sh => { charPosVary(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
 	float sa = atan( vOP.x, vOP.z ) * 140.0, sv = vOP.y * 9.0;
 	float strand = 0.86 + 0.08 * sin( sa + 1.7 * sin( sv ) ) + 0.05 * sin( sa * 2.31 + 0.7 + sin( sv * 1.6 ) ) + 0.03 * sin( sa * 5.13 );
@@ -5185,7 +5199,7 @@ function humPaint(it, lk) {
   const lip = lk.lip || mix(sk, [0.62, 0.2, 0.2], 0.42);
   const shade = lk.hairS === 'bald' ? 0 : lk.hairS === 'thin' ? 0.3 : 0.6, EYE = [[0.9, 0.89, 0.86], lk.eye, [0.02, 0.02, 0.02]];
   for (const m of it.meshes) { const sg = m.userData.srcGeo, ca = m.geometry.attributes.color, a = ca.array, n = a.length / 3;
-    if (m.userData.eye) { const cls = sg.userData.eyeCls; for (let i = 0; i < n; i++) a.set(EYE[cls[i]], i * 3); ca.needsUpdate = true; continue; }
+    if (m.userData.eye) { const cls = sg.userData.eyeCls, drawn = CHAR_FX && sg.attributes.aEye; for (let i = 0; i < n; i++) a.set(drawn ? lk.eye : EYE[cls[i]], i * 3); ca.needsUpdate = true; continue; }
     const mk = sg.userData.mask, P = m.geometry.attributes.position.array;
     for (let i = 0; i < n; i++) { let c = sk; if (mk) { const s = mk[i * 4], l = mk[i * 4 + 1], e = mk[i * 4 + 3];
         if (s && shade) c = mix(c, lk.hair, shade * s * line(P[i * 3], P[i * 3 + 1], P[i * 3 + 2])); if (l) c = mix(c, lip, 0.9 * l); if (e) c = mix(c, [0.05, 0.035, 0.03], 0.85 * e); }
