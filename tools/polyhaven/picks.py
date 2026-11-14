@@ -1,0 +1,20 @@
+# app type: (Poly Haven id, Korean name, catalogue group)  — existing types listed here get the scanned model in place of their box shape
+PICKS = {
+ 'barrel': ('Barrel_01', None, None), 'crate': ('old_military_crate', None, None), 'schoolchair': ('SchoolChair_01', None, None), 'schooldesk': ('SchoolDesk_01', None, None),
+ 'projscreen': ('projector_screen', None, None), 'ladder': ('ladder_sectioned_01', None, None), 'handtruck': ('hand_truck', None, None), 'acunit': ('exterior_aircon_unit', None, None),
+ 'campfire': ('stone_fire_pit', None, None), 'shelfrack': ('steel_frame_shelves_01', None, None), 'dining': ('dining_table', None, None),
+ 'ottoman': ('Ottoman_01', '오토만', '거실 · 침실'), 'rocking': ('Rockingchair_01', '흔들의자', '거실 · 침실'), 'lounge': ('mid_century_lounge_chair', '라운지 체어', '거실 · 침실'),
+ 'modernarm': ('modern_arm_chair_01', '모던 암체어', '거실 · 침실'), 'sofa2': ('sofa_02', '체스터필드 소파', '거실 · 침실'), 'sofa3': ('sofa_03', '빈티지 3인 소파', '거실 · 침실'),
+ 'sidetable': ('side_table_01', '사이드 테이블', '거실 · 침실'), 'coffeeround': ('coffee_table_round_01', '원형 커피 테이블', '거실 · 침실'), 'cabinet': ('modern_wooden_cabinet', '원목 수납장', '거실 · 침실'),
+ 'vcabinet': ('vintage_cabinet_01', '빈티지 장식장', '거실 · 침실'), 'woodshelves': ('painted_wooden_shelves', '나무 선반', '거실 · 침실'), 'grandclock': ('vintage_grandfather_clock_01', '괘종시계', '거실 · 침실'),
+ 'daybed': ('vintage_day_bed', '데이베드', '거실 · 침실'), 'ironbed': ('old_bed_frame', '철제 침대', '거실 · 침실'), 'screenpanel': ('chinese_screen_panels', '병풍 칸막이', '거실 · 침실'),
+ 'roundtable': ('round_wooden_table_01', '원목 원형 테이블', '카페 · 주방'), 'barchair': ('bar_chair_round_01', '원형 바 의자', '카페 · 주방'), 'diningchair': ('dining_chair_02', '식탁 의자', '카페 · 주방'),
+ 'metalstool': ('metal_stool_01', '철제 스툴', '카페 · 주방'), 'monobloc': ('plastic_monobloc_chair_01', '플라스틱 의자', '카페 · 주방'), 'coffeecart': ('CoffeeCart_01', '커피 카트', '카페 · 주방'),
+ 'chalkboard': ('standing_chalkboard_01', '칠판 입간판', '카페 · 주방'), 'metaldesk': ('metal_office_desk', '철제 사무 책상', '사무실 · 학교'), 'drawers': ('drawer_cabinet', '서랍 선반장', '사무실 · 학교'),
+ 'barber': ('BarberShopChair_01', '이발 의자', '가게'), 'trashcan': ('metal_trash_can', '철제 쓰레기통', '야외 · 거리'), 'wetfloor': ('WetFloorSign_01', '청소 중 표지판', '가게'),
+ 'paintedbench': ('painted_wooden_bench', '나무 벤치', '야외 · 거리'), 'outdoorset': ('outdoor_table_chair_set_01', '접이식 테이블 세트', '야외 · 자연'), 'concbarrier': ('concrete_road_barrier', '콘크리트 방호벽', '야외 · 거리'),
+ 'coveredcar': ('covered_car', '덮개 씌운 차', '야외 · 거리'), 'planter': ('planter_box_01', '화단 박스', '야외 · 거리'),
+ 'bigplant': ('potted_plant_02', '큰 화분', '거실 · 침실'), 'generator': ('portable_generator', '발전기', '창고 · 옥상'), 'floodlight': ('flood_lights', '투광등', '창고 · 옥상'),
+ 'tyre': ('old_tyre', '폐타이어', '창고 · 옥상'), 'toolchest': ('metal_tool_chest', '공구함', '창고 · 옥상'), 'storagecart': ('industrial_storage_cart', '산업용 카트', '창고 · 옥상'),
+ 'propane': ('propane_tank', '가스통', '창고 · 옥상'), 'cardboard': ('cardboard_box_01', '종이 상자', '창고 · 옥상'), 'plasticcrate': ('plastic_crate_01', '플라스틱 상자', '창고 · 옥상'),
+}

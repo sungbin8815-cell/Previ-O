@@ -2963,6 +2963,8 @@ const FINISH = {
   white: { name: '흰 벽', rho: 0.8, rgb: [0.82, 0.81, 0.78] }, beige: { name: '베이지', rho: 0.6, rgb: [0.66, 0.58, 0.47] },
   gray: { name: '회색', rho: 0.35, rgb: [0.35, 0.35, 0.36] }, dark: { name: '어두운 벽', rho: 0.08, rgb: [0.08, 0.08, 0.09] },
 };
+// pieces with a scanned model and a rendered catalogue picture (props/<type>.glb, props/thumbs/<type>.webp)
+const PH_PROPS = ['barrel',  'crate',  'schoolchair',  'schooldesk',  'projscreen',  'ladder',  'handtruck',  'acunit',  'campfire',  'shelfrack',  'dining',  'ottoman',  'rocking',  'lounge',  'modernarm',  'sofa2',  'sofa3',  'sidetable',  'coffeeround',  'cabinet',  'vcabinet',  'woodshelves',  'grandclock',  'daybed',  'ironbed',  'screenpanel',  'roundtable',  'barchair',  'diningchair',  'metalstool',  'monobloc',  'coffeecart',  'chalkboard',  'metaldesk',  'drawers',  'barber',  'trashcan',  'wetfloor',  'paintedbench',  'outdoorset',  'concbarrier',  'coveredcar',  'planter',  'bigplant',  'generator',  'floodlight',  'tyre',  'toolchest',  'storagecart',  'propane',  'cardboard',  'plasticcrate'];
 const PROPS = {
   sofa: { name: '소파', w: 2.0, d: 0.9, h: 0.85, rgb: [0.34, 0.29, 0.27] }, table: { name: '테이블', w: 1.2, d: 0.8, h: 0.75, rgb: [0.42, 0.3, 0.2] },
   cafe: { name: '카페 테이블', w: 0.7, d: 0.7, h: 0.74, rgb: [0.48, 0.36, 0.25] }, chair: { name: '의자', w: 0.45, d: 0.5, h: 0.9, rgb: [0.3, 0.24, 0.19] },
@@ -2986,7 +2988,7 @@ const PROPS = {
   floorlamp: { name: '플로어 스탠드', w: 0.4, d: 0.4, h: 1.65, rgb: [0.12, 0.12, 0.13] }, mirror: { name: '전신 거울', w: 0.55, d: 0.35, h: 1.7, rgb: [0.35, 0.26, 0.18] },
   piano: { name: '업라이트 피아노', w: 1.5, d: 0.6, h: 1.25, rgb: [0.03, 0.03, 0.035] }, curtain: { name: '커튼', w: 2.0, d: 0.15, h: 2.5, rgb: [0.62, 0.55, 0.45] },
   // office · school
-  officechair: { name: '사무 의자', w: 0.62, d: 0.62, h: 1.1, rgb: [0.1, 0.1, 0.11] }, schooldesk: { name: '학교 책상', w: 0.65, d: 0.5, h: 0.76, rgb: [0.68, 0.52, 0.34] },
+  officechair: { name: '사무 의자', w: 0.62, d: 0.62, h: 1.1, rgb: [0.1, 0.1, 0.11] }, schooldesk: { name: '학교 책상', w: 0.712, d: 0.546, h: 0.883, rgb: [0.68, 0.52, 0.34] },
   whiteboard: { name: '화이트보드', w: 1.8, d: 0.6, h: 1.9, rgb: [0.95, 0.95, 0.94] }, locker: { name: '사물함', w: 0.9, d: 0.5, h: 1.8, rgb: [0.42, 0.5, 0.58] },
   filing: { name: '서류함', w: 0.45, d: 0.6, h: 1.3, rgb: [0.55, 0.56, 0.57] }, podium: { name: '연단', w: 0.6, d: 0.5, h: 1.15, rgb: [0.4, 0.28, 0.18] },
   // shop · restaurant
@@ -3003,7 +3005,7 @@ const PROPS = {
   // outdoor · nature
   pine: { name: '소나무', w: 2.2, d: 2.2, h: 6.0, rgb: [0.1, 0.24, 0.12] }, hedge: { name: '산울타리', w: 2.4, d: 0.6, h: 1.2, rgb: [0.14, 0.3, 0.12] },
   flowerbed: { name: '화단', w: 1.6, d: 0.6, h: 0.45, rgb: [0.55, 0.3, 0.22] }, log: { name: '통나무', w: 2.0, d: 0.45, h: 0.45, rgb: [0.4, 0.28, 0.17] },
-  tent: { name: '캠핑 텐트', w: 2.1, d: 2.1, h: 1.3, rgb: [0.2, 0.42, 0.35] }, campfire: { name: '모닥불', w: 0.8, d: 0.8, h: 0.45, rgb: [0.4, 0.39, 0.37] },
+  tent: { name: '캠핑 텐트', w: 2.1, d: 2.1, h: 1.3, rgb: [0.2, 0.42, 0.35] }, campfire: { name: '모닥불', w: 1.448, d: 1.433, h: 0.388, rgb: [0.4, 0.39, 0.37] },
   // outdoor · street
   busstop: { name: '버스 정류장', w: 3.0, d: 1.3, h: 2.5, rgb: [0.2, 0.22, 0.25] }, trafficlight: { name: '신호등', w: 0.4, d: 0.5, h: 3.6, rgb: [0.15, 0.16, 0.17] },
   streetsign: { name: '표지판', w: 0.6, d: 0.1, h: 2.4, rgb: [0.1, 0.3, 0.62] }, bollard: { name: '볼라드', w: 0.22, d: 0.22, h: 0.9, rgb: [0.85, 0.7, 0.1] },
@@ -3011,28 +3013,28 @@ const PROPS = {
   motorbike: { name: '오토바이', w: 0.75, d: 2.0, h: 1.15, rgb: [0.08, 0.08, 0.09] }, van: { name: '승합차', w: 1.95, d: 5.1, h: 2.0, rgb: [0.85, 0.85, 0.84] },
   stall: { name: '포장마차', w: 2.4, d: 1.8, h: 2.3, rgb: [0.9, 0.4, 0.1] },
   // warehouse · construction
-  crate: { name: '나무 상자', w: 0.6, d: 0.4, h: 0.4, rgb: [0.62, 0.48, 0.3] }, barrel: { name: '드럼통', w: 0.58, d: 0.58, h: 0.88, rgb: [0.12, 0.25, 0.55] },
-  pallet: { name: '팔레트', w: 1.2, d: 1.0, h: 0.15, rgb: [0.62, 0.5, 0.32] }, ladder: { name: '사다리', w: 0.55, d: 0.8, h: 1.8, rgb: [0.7, 0.71, 0.72] },
+  crate: { name: '나무 상자', w: 0.815, d: 0.538, h: 0.301, rgb: [0.62, 0.48, 0.3] }, barrel: { name: '드럼통', w: 0.563, d: 0.563, h: 0.88, rgb: [0.12, 0.25, 0.55] },
+  pallet: { name: '팔레트', w: 1.2, d: 1.0, h: 0.15, rgb: [0.62, 0.5, 0.32] }, ladder: { name: '사다리', w: 0.662, d: 0.178, h: 2.135, rgb: [0.7, 0.71, 0.72] },
   // music · performance
   drums: { name: '드럼 세트', w: 1.6, d: 1.3, h: 1.2, rgb: [0.55, 0.08, 0.1] }, micstand: { name: '마이크 스탠드', w: 0.5, d: 0.5, h: 1.6, rgb: [0.06, 0.06, 0.07] },
   amp: { name: '기타 앰프', w: 0.6, d: 0.3, h: 0.55, rgb: [0.06, 0.06, 0.06] }, speaker: { name: 'PA 스피커', w: 0.5, d: 0.45, h: 1.0, rgb: [0.05, 0.05, 0.055] },
   synth: { name: '키보드 (신디)', w: 1.2, d: 0.45, h: 0.95, rgb: [0.08, 0.08, 0.09] },
   // for the set presets
-  cooler: { name: '음료 냉장고', w: 1.2, d: 0.7, h: 2.0, rgb: [0.85, 0.86, 0.87] }, schoolchair: { name: '학교 의자', w: 0.42, d: 0.45, h: 0.8, rgb: [0.68, 0.52, 0.34] },
+  cooler: { name: '음료 냉장고', w: 1.2, d: 0.7, h: 2.0, rgb: [0.85, 0.86, 0.87] }, schoolchair: { name: '학교 의자', w: 0.566, d: 0.675, h: 1.006, rgb: [0.68, 0.52, 0.34] },
   cubicle: { name: '사무실 파티션', w: 1.6, d: 0.06, h: 1.3, rgb: [0.45, 0.5, 0.56] }, watercooler: { name: '정수기', w: 0.35, d: 0.38, h: 1.25, rgb: [0.92, 0.92, 0.93] },
   printer: { name: '복합기', w: 0.6, d: 0.65, h: 1.15, rgb: [0.88, 0.88, 0.87] }, showerbooth: { name: '샤워 부스', w: 0.9, d: 0.9, h: 2.0, rgb: [0.8, 0.82, 0.84] },
   hospitalbed: { name: '병원 침대', w: 1.0, d: 2.15, h: 0.95, rgb: [0.9, 0.91, 0.92] }, ivstand: { name: '링거대', w: 0.5, d: 0.5, h: 1.9, rgb: [0.7, 0.71, 0.72] },
   fountain: { name: '분수대', w: 2.4, d: 2.4, h: 1.3, rgb: [0.72, 0.7, 0.66] }, campchair: { name: '캠핑 의자', w: 0.55, d: 0.55, h: 0.85, rgb: [0.18, 0.32, 0.28] },
-  watertank: { name: '옥상 물탱크', w: 1.4, d: 1.4, h: 1.9, rgb: [0.2, 0.42, 0.7] }, acunit: { name: '에어컨 실외기', w: 0.85, d: 0.32, h: 0.6, rgb: [0.88, 0.88, 0.86] },
+  watertank: { name: '옥상 물탱크', w: 1.4, d: 1.4, h: 1.9, rgb: [0.2, 0.42, 0.7] }, acunit: { name: '에어컨 실외기', w: 0.8, d: 0.374, h: 0.928, rgb: [0.88, 0.88, 0.86] },
   slide: { name: '미끄럼틀', w: 0.8, d: 3.0, h: 1.9, rgb: [0.92, 0.75, 0.15] }, swing: { name: '그네', w: 2.6, d: 1.6, h: 2.3, rgb: [0.85, 0.25, 0.2] },
-  dining: { name: '식탁 (6인)', w: 1.8, d: 0.9, h: 0.75, rgb: [0.5, 0.36, 0.22] }, meeting: { name: '회의 테이블', w: 2.4, d: 1.2, h: 0.75, rgb: [0.7, 0.66, 0.6] },
+  dining: { name: '식탁 (6인)', w: 2.256, d: 1.39, h: 0.877, rgb: [0.5, 0.36, 0.22] }, meeting: { name: '회의 테이블', w: 2.4, d: 1.2, h: 0.75, rgb: [0.7, 0.66, 0.6] },
   bunkbed: { name: '2층 침대', w: 1.0, d: 2.05, h: 1.7, rgb: [0.55, 0.4, 0.26] }, crib: { name: '아기 침대', w: 0.7, d: 1.3, h: 0.95, rgb: [0.9, 0.88, 0.84] },
   vanity: { name: '화장대', w: 1.0, d: 0.45, h: 1.4, rgb: [0.86, 0.84, 0.8] }, fireplace: { name: '벽난로', w: 1.4, d: 0.45, h: 2.2, rgb: [0.5, 0.24, 0.17] },
   beanbag: { name: '빈백', w: 0.9, d: 0.9, h: 0.7, rgb: [0.72, 0.45, 0.2] }, fan: { name: '선풍기', w: 0.42, d: 0.42, h: 1.2, rgb: [0.9, 0.9, 0.88] },
   aquarium: { name: '수조', w: 1.0, d: 0.4, h: 1.3, rgb: [0.25, 0.2, 0.16] }, easel: { name: '이젤', w: 0.62, d: 0.6, h: 1.7, rgb: [0.55, 0.42, 0.28] },
   coffeebar: { name: '커피 머신 카운터', w: 1.3, d: 0.6, h: 1.4, rgb: [0.42, 0.3, 0.2] }, showcase: { name: '케이크 쇼케이스', w: 1.2, d: 0.7, h: 1.3, rgb: [0.85, 0.84, 0.82] },
   stove: { name: '가스레인지 오븐', w: 0.6, d: 0.6, h: 1.0, rgb: [0.8, 0.8, 0.79] }, menuboard: { name: 'A형 입간판', w: 0.6, d: 0.5, h: 1.0, rgb: [0.5, 0.36, 0.22] },
-  projscreen: { name: '프로젝터 스크린', w: 2.0, d: 0.5, h: 2.2, rgb: [0.93, 0.93, 0.92] }, serverrack: { name: '서버 랙', w: 0.6, d: 1.0, h: 2.0, rgb: [0.1, 0.1, 0.11] },
+  projscreen: { name: '프로젝터 스크린', w: 1.094, d: 0.916, h: 1.799, rgb: [0.93, 0.93, 0.92] }, serverrack: { name: '서버 랙', w: 0.6, d: 1.0, h: 2.0, rgb: [0.1, 0.1, 0.11] },
   cart: { name: '쇼핑 카트', w: 0.6, d: 1.0, h: 1.02, rgb: [0.8, 0.15, 0.15] }, mannequin: { name: '마네킹', w: 0.5, d: 0.35, h: 1.77, rgb: [0.86, 0.85, 0.83] },
   hanger: { name: '옷 행거', w: 1.2, d: 0.45, h: 1.6, rgb: [0.5, 0.51, 0.53] }, atm: { name: 'ATM', w: 0.6, d: 0.6, h: 1.6, rgb: [0.82, 0.83, 0.84] },
   wheelchair: { name: '휠체어', w: 0.65, d: 1.0, h: 0.95, rgb: [0.08, 0.09, 0.12] }, examtable: { name: '진료 침대', w: 0.7, d: 1.9, h: 0.7, rgb: [0.2, 0.35, 0.36] },
@@ -3041,10 +3043,52 @@ const PROPS = {
   gazebo: { name: '정자', w: 3.0, d: 3.0, h: 3.3, rgb: [0.55, 0.42, 0.28] }, bus: { name: '버스', w: 2.5, d: 10.5, h: 3.1, rgb: [0.2, 0.5, 0.3] },
   truck: { name: '1톤 트럭', w: 1.75, d: 5.1, h: 2.0, rgb: [0.25, 0.4, 0.7] }, phonebooth: { name: '공중전화 부스', w: 0.9, d: 0.9, h: 2.3, rgb: [0.2, 0.4, 0.7] },
   mailbox: { name: '우체통', w: 0.45, d: 0.45, h: 1.31, rgb: [0.8, 0.12, 0.1] }, barricade: { name: '공사 바리케이드', w: 1.5, d: 0.5, h: 1.0, rgb: [0.95, 0.5, 0.1] },
-  billboard: { name: '광고판', w: 3.0, d: 0.4, h: 4.0, rgb: [0.85, 0.3, 0.25] }, shelfrack: { name: '창고 랙', w: 2.4, d: 0.9, h: 2.5, rgb: [0.15, 0.3, 0.6] },
-  handtruck: { name: '손수레', w: 0.5, d: 0.6, h: 1.2, rgb: [0.2, 0.4, 0.75] }, antenna: { name: '위성 안테나', w: 0.9, d: 0.9, h: 1.45, rgb: [0.75, 0.76, 0.78] },
+  billboard: { name: '광고판', w: 3.0, d: 0.4, h: 4.0, rgb: [0.85, 0.3, 0.25] }, shelfrack: { name: '창고 랙', w: 1.097, d: 0.502, h: 2.141, rgb: [0.15, 0.3, 0.6] },
+  handtruck: { name: '손수레', w: 0.593, d: 0.693, h: 1.403, rgb: [0.2, 0.4, 0.75] }, antenna: { name: '위성 안테나', w: 0.9, d: 0.9, h: 1.45, rgb: [0.75, 0.76, 0.78] },
   clothesline: { name: '빨랫줄', w: 3.0, d: 0.5, h: 1.8, rgb: [0.5, 0.51, 0.53] }, guitar: { name: '기타 스탠드', w: 0.4, d: 0.35, h: 1.08, rgb: [0.62, 0.38, 0.16] },
   djbooth: { name: 'DJ 부스', w: 1.6, d: 0.7, h: 1.03, rgb: [0.07, 0.07, 0.08] },
+  // scanned models (Poly Haven, CC0), converted for phones: the size is the model's own
+  ottoman: { name: '오토만', w: 0.885, d: 0.621, h: 0.624, rgb: [0.081, 0.075, 0.074] },
+  rocking: { name: '흔들의자', w: 0.708, d: 0.833, h: 0.995, rgb: [0.092, 0.056, 0.046] },
+  lounge: { name: '라운지 체어', w: 1.009, d: 1.19, h: 1.169, rgb: [0.173, 0.119, 0.095] },
+  modernarm: { name: '모던 암체어', w: 0.82, d: 0.987, h: 1.023, rgb: [0.101, 0.082, 0.067] },
+  sofa2: { name: '체스터필드 소파', w: 1.807, d: 0.818, h: 0.709, rgb: [0.041, 0.04, 0.038] },
+  sofa3: { name: '빈티지 3인 소파', w: 2.731, d: 0.925, h: 1.118, rgb: [0.149, 0.106, 0.077] },
+  sidetable: { name: '사이드 테이블', w: 0.55, d: 0.45, h: 0.551, rgb: [0.312, 0.156, 0.081] },
+  coffeeround: { name: '원형 커피 테이블', w: 1.301, d: 1.301, h: 0.491, rgb: [0.423, 0.457, 0.545] },
+  cabinet: { name: '원목 수납장', w: 2.44, d: 0.52, h: 0.68, rgb: [0.131, 0.089, 0.059] },
+  vcabinet: { name: '빈티지 장식장', w: 2.022, d: 0.67, h: 2.235, rgb: [0.06, 0.042, 0.039] },
+  woodshelves: { name: '나무 선반', w: 0.511, d: 0.367, h: 1.125, rgb: [0.07, 0.043, 0.038] },
+  grandclock: { name: '괘종시계', w: 0.626, d: 0.427, h: 2.191, rgb: [0.107, 0.064, 0.048] },
+  daybed: { name: '데이베드', w: 1.973, d: 0.855, h: 1.127, rgb: [0.506, 0.45, 0.383] },
+  ironbed: { name: '철제 침대', w: 0.905, d: 2.002, h: 1.202, rgb: [0.224, 0.188, 0.166] },
+  screenpanel: { name: '병풍 칸막이', w: 1.294, d: 0.377, h: 1.603, rgb: [0.129, 0.105, 0.082] },
+  roundtable: { name: '원목 원형 테이블', w: 1.399, d: 1.399, h: 1.005, rgb: [0.112, 0.074, 0.07] },
+  barchair: { name: '원형 바 의자', w: 0.483, d: 0.486, h: 0.751, rgb: [0.083, 0.055, 0.045] },
+  diningchair: { name: '식탁 의자', w: 0.434, d: 0.576, h: 0.973, rgb: [0.067, 0.055, 0.052] },
+  metalstool: { name: '철제 스툴', w: 0.352, d: 0.355, h: 0.883, rgb: [0.107, 0.065, 0.047] },
+  monobloc: { name: '플라스틱 의자', w: 0.642, d: 0.628, h: 0.88, rgb: [0.711, 0.72, 0.73] },
+  coffeecart: { name: '커피 카트', w: 2.168, d: 1.073, h: 1.718, rgb: [0.25, 0.255, 0.28] },
+  chalkboard: { name: '칠판 입간판', w: 0.92, d: 0.759, h: 1.509, rgb: [0.12, 0.079, 0.061] },
+  metaldesk: { name: '철제 사무 책상', w: 2.0, d: 0.947, h: 0.788, rgb: [0.26, 0.263, 0.282] },
+  drawers: { name: '서랍 선반장', w: 1.141, d: 0.488, h: 1.881, rgb: [0.326, 0.193, 0.11] },
+  barber: { name: '이발 의자', w: 0.757, d: 1.328, h: 1.489, rgb: [0.112, 0.082, 0.058] },
+  trashcan: { name: '철제 쓰레기통', w: 0.778, d: 0.556, h: 0.906, rgb: [0.12, 0.116, 0.111] },
+  wetfloor: { name: '청소 중 표지판', w: 0.3, d: 0.359, h: 0.63, rgb: [0.675, 0.576, 0.07] },
+  paintedbench: { name: '나무 벤치', w: 1.165, d: 0.497, h: 0.889, rgb: [0.096, 0.051, 0.045] },
+  outdoorset: { name: '접이식 테이블 세트', w: 0.742, d: 1.717, h: 0.859, rgb: [0.412, 0.209, 0.108] },
+  concbarrier: { name: '콘크리트 방호벽', w: 1.545, d: 0.639, h: 0.831, rgb: [0.325, 0.278, 0.22] },
+  coveredcar: { name: '덮개 씌운 차', w: 1.789, d: 4.38, h: 1.411, rgb: [0.058, 0.059, 0.057] },
+  planter: { name: '화단 박스', w: 0.913, d: 0.414, h: 0.425, rgb: [0.103, 0.079, 0.056] },
+  bigplant: { name: '큰 화분', w: 0.701, d: 0.656, h: 0.842, rgb: [0.252, 0.21, 0.109] },
+  generator: { name: '발전기', w: 0.818, d: 0.564, h: 0.577, rgb: [0.174, 0.133, 0.072] },
+  floodlight: { name: '투광등', w: 0.778, d: 1.282, h: 1.788, rgb: [0.178, 0.137, 0.073] },
+  tyre: { name: '폐타이어', w: 0.6, d: 0.165, h: 0.6, rgb: [0.039, 0.038, 0.038] },
+  toolchest: { name: '공구함', w: 0.685, d: 0.407, h: 0.652, rgb: [0.318, 0.086, 0.085] },
+  storagecart: { name: '산업용 카트', w: 1.603, d: 1.103, h: 1.377, rgb: [0.076, 0.081, 0.063] },
+  propane: { name: '가스통', w: 0.337, d: 0.337, h: 0.554, rgb: [0.275, 0.083, 0.086] },
+  cardboard: { name: '종이 상자', w: 0.387, d: 0.516, h: 0.342, rgb: [0.399, 0.313, 0.184] },
+  plasticcrate: { name: '플라스틱 상자', w: 0.298, d: 0.408, h: 0.264, rgb: [0.117, 0.042, 0.045] },
   // drawn with 짓기 (build mode), not from the catalogue: sx · sd · sh hold their size in metres
   wall: { name: '벽', w: 1, d: 0.12, h: 2.6, wall: true, free: true }, floor: { name: '바닥', w: 1, d: 1, h: 0.03, flat: true, free: true, rgb: [0.5, 0.36, 0.22] },
   block: { name: '블록', w: 1, d: 1, h: 0.4, free: true, rgb: [0.8, 0.79, 0.76] },
@@ -5021,7 +5065,44 @@ function humGet(k, g, ctx) {
       ng.setIndex(sg.index); ng.userData.shared = true; o.userData.srcGeo = sg; o.userData.morphs = { ...(o.morphTargetDictionary || {}) }; o.geometry = ng; delete o.morphTargetDictionary; delete o.morphTargetInfluences; } });
   return humInst[key] = { g, root, bones, rest, restW, meshes, src, floor: {}, eyeAt: null, fit: {}, shape: null, on: [], paint: null, hair: null, hairKey: null, wear: [], wearKey: null, sole: 0, minY: 0 };
 }
-const humMat = (key, make) => { let m = gl.charMats[key]; if (!m) { m = make(); m.userData.shared = true; gl.charMats[key] = m; } return m; };
+const humMat = (key, make) => { let m = gl.charMats[key]; if (!m) { m = make(); if (CHAR_FX) try { m = charSurface(key, m); } catch (e) { console.warn('character surface', e); } m.userData.shared = true; gl.charMats[key] = m; } return m; };
+/* ---------- character surfaces: the base materials above, made to read like a life-sim game's people rather than plastic ----------
+   skin: light wraps round the form and comes back warm through the shadow side (a cheap stand-in for light under the skin), a soft
+   velvet rim (peach fuzz) and a fine pore bump; eyes: a wet clear coat; hair: strand-by-strand shading and a sheen along the fibres;
+   clothes: a fabric sheen and a faint weave. ?charfx=0 shows the plain materials. */
+const CHAR_FX = !/[?&]charfx=0\b/.test(location.search);
+let charPore = null;
+function charPoreTex() { if (charPore) return charPore; const n = 256, c = document.createElement('canvas'); c.width = c.height = n; const x = c.getContext('2d'), img = x.createImageData(n, n), r = hashRnd('pores');
+  const h = new Float32Array(n * n); for (let i = 0; i < 1400; i++) { const px = r() * n, py = r() * n, rad = 0.8 + r() * 1.6, d = 0.5 + r() * 0.5;   // pores: small soft dips, wrapping at the edges
+    for (let dy = -3; dy <= 3; dy++) for (let dx = -3; dx <= 3; dx++) { const q = (dx * dx + dy * dy) / (rad * rad); if (q > 1) continue; const X = (Math.floor(px) + dx + n) % n, Y = (Math.floor(py) + dy + n) % n; h[Y * n + X] -= d * (1 - q) * (1 - q); } }
+  for (let i = 0; i < n * n; i++) h[i] += (r() - 0.5) * 0.12;
+  for (let y = 0; y < n; y++) for (let X = 0; X < n; X++) { const H = (a, b) => h[((b + n) % n) * n + (a + n) % n], dx = H(X + 1, y) - H(X - 1, y), dy = H(X, y + 1) - H(X, y - 1), k = 1 / Math.hypot(dx, dy, 1), o = (y * n + X) * 4;
+    img.data[o] = 128 - dx * k * 127; img.data[o + 1] = 128 - dy * k * 127; img.data[o + 2] = 128 + k * 127; img.data[o + 3] = 255; }
+  x.putImageData(img, 0, 0); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(36, 36); if ('colorSpace' in t) t.colorSpace = THREE.NoColorSpace; t._keep = true; return charPore = t; }
+// diffuse light only: wrap it past the terminator and tint what comes through red, as light scattered under the skin does
+const SKIN_WRAP = 'float wNL = saturate( ( dot( geometryNormal, directLight.direction ) + 0.5 ) / 1.5 );\n\treflectedLight.directDiffuse += ( irradiance + max( wNL - dotNL, 0.0 ) * vec3( 0.62, 0.24, 0.16 ) * directLight.color ) * BRDF_Lambert( material.diffuseColor );';
+// object-space position for the procedural strand / weave patterns (before skinning, so the pattern rides with the body)
+const charPosVary = sh => { sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vOP;').replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvOP = position;');
+  sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vOP;'); };
+function charSurface(key, b) {
+  const kind = key === 'hum/skin' ? 'skin' : key === 'hum/eye' ? 'eye' : key === 'hum/cloth' ? 'cloth' : key.startsWith('hum/hair') ? 'hair' : null; if (!kind) return b;
+  const m = new THREE.MeshPhysicalMaterial({ vertexColors: b.vertexColors, side: b.side, metalness: 0 }); m.color.copy(b.color);
+  if (kind === 'skin') { Object.assign(m, { roughness: 0.5, specularIntensity: 0.45, sheen: 0.5, sheenRoughness: 0.7, normalMap: charPoreTex() }); m.sheenColor.setRGB(0.55, 0.38, 0.32); m.normalScale.set(0.18, 0.18);
+    m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <lights_physical_pars_fragment>', THREE.ShaderChunk.lights_physical_pars_fragment.replace('reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );', SKIN_WRAP)); };
+    m.customProgramCacheKey = () => 'char-skin'; }
+  if (kind === 'eye') Object.assign(m, { roughness: 0.3, clearcoat: 1, clearcoatRoughness: 0.04, specularIntensity: 0.6 });
+  if (kind === 'hair') { Object.assign(m, { roughness: 0.42, specularIntensity: 0.55, sheen: 1, sheenRoughness: 0.35 }); m.sheenColor.copy(b.color).lerp(new THREE.Color(1, 0.95, 0.85), 0.35).multiplyScalar(0.6);
+    m.onBeforeCompile = sh => { charPosVary(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+	float sa = atan( vOP.x, vOP.z ) * 140.0, sv = vOP.y * 9.0;
+	float strand = 0.86 + 0.08 * sin( sa + 1.7 * sin( sv ) ) + 0.05 * sin( sa * 2.31 + 0.7 + sin( sv * 1.6 ) ) + 0.03 * sin( sa * 5.13 );
+	diffuseColor.rgb *= strand;`).replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\n\troughnessFactor = clamp( roughnessFactor + ( 0.86 - strand ) * 1.5, 0.25, 0.8 );'); };
+    m.customProgramCacheKey = () => 'char-hair'; }
+  if (kind === 'cloth') { Object.assign(m, { roughness: 0.82, sheen: 0.8, sheenRoughness: 0.55 }); m.sheenColor.setRGB(0.22, 0.22, 0.22);
+    m.onBeforeCompile = sh => { charPosVary(sh); sh.fragmentShader = sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+	vec3 wq = vOP * 520.0; float weave = 0.98 + 0.02 * sin( wq.x + wq.y ) * sin( wq.z - wq.y );
+	diffuseColor.rgb *= weave;`); };
+    m.customProgramCacheKey = () => 'char-cloth'; }
+  return m; }
 // rig (optional): the upper-body turn is put on the spine before the arms are aimed, the head turn and nod on neck and head at the end
 function humPose(it, sk, rig) {
   const { root, bones, rest } = it, A = new THREE.Vector3(), B = new THREE.Vector3(), q = new THREE.Quaternion(), wq = new THREE.Quaternion(), pq = new THREE.Quaternion(), hq0 = new THREE.Quaternion();
@@ -5360,9 +5441,10 @@ function envSkyHook() { const m = gl.sky.material, c = m.color; if (c._envHook) 
    with bevelled edges, stuffed cushions and contact shading baked into the vertex colours. Each piece's file is fetched the first time a
    scene uses it; until it arrives — or if it cannot load, or with ?props=0 — the piece is drawn from its face list exactly as before.
    The catalogue thumbnails, the 2-D views and the lighting maths keep using the face lists and bounding boxes. ---------- */
-const PROPS_ON = !/[?&]props=0\b/.test(location.search), PROP_V = '?v=2';
+const PROPS_ON = !/[?&]props=0\b/.test(location.search), PROP_V = '?v=3';
 const PROP_GLB = new Set(['sofa', 'armchair', 'coffee', 'table', 'chair', 'cafe', 'stool', 'counter', 'desk', 'officechair', 'bed', 'nightstand', 'wardrobe', 'dresser',
-  'shelf', 'tv', 'plant', 'rug', 'floorlamp', 'kitchen', 'fridge', 'bench', 'lamp', 'car', 'bin', 'cone', 'hydrant', 'bollard']);
+  'shelf', 'tv', 'plant', 'rug', 'floorlamp', 'kitchen', 'fridge', 'bench', 'lamp', 'car', 'bin', 'cone', 'hydrant', 'bollard',
+  ...PH_PROPS]);
 const propSrc = {}; let propTexP = null, propDirtyRaf = 0; const propMetal = new Set();
 // shared detail textures; the models' UVs are in metres, so each texture repeats once per its own tile size
 function propTexLoad() {
@@ -5374,7 +5456,7 @@ function propTexLoad() {
     .then(([w, wn, f, fn, bn]) => ({ w, wn, f, fn, bn })); }
 // materials by role (the Blender material name's prefix): wood and fabric get their grain / weave, metals a brushed finish and the sky's reflection
 function propMat(m, T) {
-  if (m.userData.prop) return m; m.userData.prop = m.userData.shared = true; const role = (m.name || '').split('_')[0];
+  if (m.userData.prop) return m; m.userData.prop = m.userData.shared = true; const role = m.map ? '' : (m.name || '').split('_')[0];
   if (role === 'wood') { m.map = T.w; m.normalMap = T.wn; m.normalScale = new THREE.Vector2(0.5, 0.5); m.color.multiplyScalar(1.22); }
   else if (role === 'fab') { m.map = T.f; m.normalMap = T.fn; m.normalScale = new THREE.Vector2(0.9, 0.9); m.color.multiplyScalar(1.12); }
   else if (role === 'metal') { m.normalMap = T.bn; m.normalScale = new THREE.Vector2(0.25, 0.25); }
@@ -6697,13 +6779,13 @@ $('#roomSeg').addEventListener('click', e => { const b = e.target.closest('butto
 $('#bgSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { state.set.bg = b.dataset.bg; changed(true, true); } });
 $('#ceilSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b && state.set.room) { state.set.room.h = +b.dataset.h; changed(true, true); } });
 $('#finSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b && state.set.room) { state.set.room.fin = b.dataset.fin; changed(true, true); } });
-const PROP_GROUPS = [['거실 · 침실', ['sofa', 'armchair', 'coffee', 'table', 'bed', 'nightstand', 'wardrobe', 'dresser', 'tv', 'shelf', 'piano', 'floorlamp', 'mirror', 'curtain', 'rug', 'plant', 'dining', 'bunkbed', 'crib', 'vanity', 'fireplace', 'beanbag', 'fan', 'aquarium', 'easel']],
-  ['카페 · 주방', ['cafe', 'chair', 'counter', 'stool', 'kitchen', 'fridge', 'booth', 'coffeebar', 'showcase', 'stove', 'menuboard']], ['사무실 · 학교', ['desk', 'officechair', 'cubicle', 'printer', 'watercooler', 'schooldesk', 'schoolchair', 'whiteboard', 'locker', 'filing', 'podium', 'meeting', 'projscreen', 'serverrack']],
-  ['가게', ['storeshelf', 'cooler', 'register', 'vending', 'cart', 'mannequin', 'hanger', 'atm']], ['욕실 · 병원', ['bathtub', 'showerbooth', 'toilet', 'sink', 'hospitalbed', 'ivstand', 'wheelchair', 'examtable']],
+const PROP_GROUPS = [['거실 · 침실', ['sofa', 'armchair', 'coffee', 'table', 'bed', 'nightstand', 'wardrobe', 'dresser', 'tv', 'shelf', 'piano', 'floorlamp', 'mirror', 'curtain', 'rug', 'plant', 'dining', 'bunkbed', 'crib', 'vanity', 'fireplace', 'beanbag', 'fan', 'aquarium', 'easel', 'ottoman', 'rocking', 'lounge', 'modernarm', 'sofa2', 'sofa3', 'sidetable', 'coffeeround', 'cabinet', 'vcabinet', 'woodshelves', 'grandclock', 'daybed', 'ironbed', 'screenpanel', 'bigplant']],
+  ['카페 · 주방', ['cafe', 'chair', 'counter', 'stool', 'kitchen', 'fridge', 'booth', 'coffeebar', 'showcase', 'stove', 'menuboard', 'roundtable', 'barchair', 'diningchair', 'metalstool', 'monobloc', 'coffeecart', 'chalkboard']], ['사무실 · 학교', ['desk', 'officechair', 'cubicle', 'printer', 'watercooler', 'schooldesk', 'schoolchair', 'whiteboard', 'locker', 'filing', 'podium', 'meeting', 'projscreen', 'serverrack', 'metaldesk', 'drawers']],
+  ['가게', ['storeshelf', 'cooler', 'register', 'vending', 'cart', 'mannequin', 'hanger', 'atm', 'barber', 'wetfloor']], ['욕실 · 병원', ['bathtub', 'showerbooth', 'toilet', 'sink', 'hospitalbed', 'ivstand', 'wheelchair', 'examtable']],
   ['세트 구조물', ['flat', 'flatdoor', 'flatwin', 'stairs', 'riser', 'pillar', 'backdrop', 'apple']], ['촬영 현장', ['director', 'monitorcart', 'cstand']],
-  ['야외 · 자연', ['tree', 'pine', 'bush', 'hedge', 'flowerbed', 'rock', 'log', 'fence', 'parasol', 'picnic', 'tent', 'campfire', 'campchair', 'fountain', 'slide', 'swing', 'seesaw', 'gazebo', 'palm', 'boat', 'snowman']],
-  ['야외 · 거리', ['bench', 'lamp', 'busstop', 'trafficlight', 'streetsign', 'bollard', 'guardrail', 'crosswalk', 'stall', 'bike', 'motorbike', 'car', 'van', 'cone', 'bin', 'hydrant', 'bus', 'truck', 'phonebooth', 'mailbox', 'barricade', 'billboard']],
-  ['창고 · 옥상', ['crate', 'barrel', 'pallet', 'ladder', 'watertank', 'acunit', 'shelfrack', 'handtruck', 'antenna', 'clothesline']], ['음악 · 공연', ['drums', 'micstand', 'amp', 'speaker', 'synth', 'guitar', 'djbooth']]];
+  ['야외 · 자연', ['tree', 'pine', 'bush', 'hedge', 'flowerbed', 'rock', 'log', 'fence', 'parasol', 'picnic', 'tent', 'campfire', 'campchair', 'fountain', 'slide', 'swing', 'seesaw', 'gazebo', 'palm', 'boat', 'snowman', 'outdoorset']],
+  ['야외 · 거리', ['bench', 'lamp', 'busstop', 'trafficlight', 'streetsign', 'bollard', 'guardrail', 'crosswalk', 'stall', 'bike', 'motorbike', 'car', 'van', 'cone', 'bin', 'hydrant', 'bus', 'truck', 'phonebooth', 'mailbox', 'barricade', 'billboard', 'trashcan', 'paintedbench', 'concbarrier', 'coveredcar', 'planter']],
+  ['창고 · 옥상', ['crate', 'barrel', 'pallet', 'ladder', 'watertank', 'acunit', 'shelfrack', 'handtruck', 'antenna', 'clothesline', 'generator', 'floodlight', 'tyre', 'toolchest', 'storagecart', 'propane', 'cardboard', 'plasticcrate']], ['음악 · 공연', ['drums', 'micstand', 'amp', 'speaker', 'synth', 'guitar', 'djbooth']]];
 // the catalogue shows each piece as a little 3D picture, like a building game's catalogue: drawn once, from its own model, when first seen
 function propThumb(type) { const cv = document.createElement('canvas'), W = 120, H = 84, dpr = Math.min(2, devicePixelRatio || 1); cv.width = W * dpr; cv.height = H * dpr;
   const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr); let faces = []; try { faces = propFaces({ id: 'thumb_' + type, type, x: 0, z: 0, yaw: 0, fin: 'white' }); } catch (e) { return ''; }
@@ -6717,12 +6799,13 @@ function propThumb(type) { const cv = document.createElement('canvas'), W = 120,
     ctx.beginPath(); f.p.forEach((p, i) => { const q = pr(p); i ? ctx.lineTo(ox + q.x * k, oy + q.y * k) : ctx.moveTo(ox + q.x * k, oy + q.y * k); }); ctx.closePath();
     ctx.globalAlpha = f.m.alpha ? Math.max(0.35, f.m.alpha) : 1; ctx.fillStyle = c; ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = c; ctx.lineWidth = 0.6; ctx.stroke(); });
   return cv.toDataURL('image/png'); }
+const thumbSrc = t => PROPS_ON && PH_PROPS.includes(t) ? 'props/thumbs/' + t + '.webp' + PROP_V : propThumb(t);
 $('#propAdd').innerHTML = PROP_GROUPS.map(([t, ids]) => `<div class="cat">${t}</div><div class="addgrid thumbs">${ids.map(k => { const v = PROPS[k];
-  return `<button data-prop="${k}"><i class="pthumb" data-thumb="${k}" aria-hidden="true"></i><span><b>${v.name}</b><small>${v.w}×${v.d}×${v.h}m</small></span></button>`; }).join('')}</div>`).join('');
+  return `<button data-prop="${k}"><i class="pthumb" data-thumb="${k}" aria-hidden="true"></i><span><b>${v.name}</b><small>${+v.w.toFixed(2)}×${+v.d.toFixed(2)}×${+v.h.toFixed(2)}m</small></span></button>`; }).join('')}</div>`).join('');
 // thumbnails are drawn as their buttons come into view (a few per frame), so opening the catalogue stays instant
 { const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; io.unobserve(e.target);
-    requestAnimationFrame(() => { const src = propThumb(e.target.dataset.thumb); if (src) e.target.style.backgroundImage = `url(${src})`; }); }), { rootMargin: '120px' }) : null;
-  document.querySelectorAll('#propAdd [data-thumb]').forEach(el => io ? io.observe(el) : (el.style.backgroundImage = `url(${propThumb(el.dataset.thumb)})`)); }
+    requestAnimationFrame(() => { const src = thumbSrc(e.target.dataset.thumb); if (src) e.target.style.backgroundImage = `url(${src})`; }); }), { rootMargin: '120px' }) : null;
+  document.querySelectorAll('#propAdd [data-thumb]').forEach(el => io ? io.observe(el) : (el.style.backgroundImage = `url(${thumbSrc(el.dataset.thumb)})`)); }
 groupTabs($('#propAdd'));
 $('#propAdd').addEventListener('click', e => { const b = e.target.closest('button[data-prop]'); if (b) startPlace(b.dataset.prop); });
 // building-game drag (mouse · pen): press a picture in the catalogue and drag it onto the 3D stage — the piece follows the pointer over the
@@ -7247,7 +7330,7 @@ const EN_MOVE = { arc: ['slow arc around the subject', 'Arc'], craned: ['crane /
 const EN_POSE = { stand: 'standing', sit: 'sitting', walk: 'walking', run: 'running', squat: 'crouching down', wave: 'raising one hand', point: 'pointing', lie: 'lying on their back' };
 const BG_KO = { street: '나무와 낮은 건물이 있는 조용한 거리', city: '고층 빌딩이 둘러싼 도심', forest: '침엽수와 활엽수가 섞인 숲속', mountain: '멀리 산맥이 보이는 산자락', sea: '수평선이 보이는 바닷가 모래사장', field: '낮은 언덕이 이어지는 넓은 들판' };
 const BG_EN = { street: 'a quiet city street with trees and low buildings in the background', city: 'a downtown street surrounded by high-rise buildings', forest: 'a clearing in a mixed forest of pines and broadleaf trees', mountain: 'a foothill meadow with a mountain range in the distance', sea: 'a sandy beach with the open sea and the horizon behind', field: 'a wide open grass field with low rolling hills in the distance' };
-const EN_PROP = { wall: 'a wall', floor: 'a floor area', block: 'a box-shaped platform', dining: 'a dining table', meeting: 'a conference table', bunkbed: 'a bunk bed', crib: 'a baby crib', vanity: 'a dressing table with a mirror', fireplace: 'a brick fireplace', beanbag: 'a bean bag chair', fan: 'a standing electric fan', aquarium: 'a fish tank on a stand', easel: 'a painting easel', coffeebar: 'a counter with an espresso machine', showcase: 'a glass cake display case', stove: 'a gas range with an oven', menuboard: 'an A-frame chalkboard sign', projscreen: 'a tripod projector screen', serverrack: 'a server rack', cart: 'a shopping cart', mannequin: 'a shop mannequin', hanger: 'a clothes rack', atm: 'an ATM', wheelchair: 'a wheelchair', examtable: 'a medical examination table', palm: 'a palm tree', snowman: 'a snowman', boat: 'a small wooden rowing boat', seesaw: 'a playground seesaw', gazebo: 'a wooden gazebo', bus: 'a city bus', truck: 'a small flatbed truck', phonebooth: 'a public phone booth', mailbox: 'a red post box', barricade: 'a striped construction barricade', billboard: 'a billboard', shelfrack: 'a warehouse pallet rack with boxes', handtruck: 'a hand truck', antenna: 'a satellite dish', clothesline: 'a clothesline with laundry', guitar: 'an acoustic guitar on a stand', djbooth: 'a DJ booth',
+const EN_PROP = { ottoman: 'a leather ottoman', rocking: 'a wooden rocking chair', lounge: 'a mid-century leather lounge chair', modernarm: 'a modern wooden armchair', sofa2: 'a black leather chesterfield sofa', sofa3: 'a vintage fabric three-seat sofa', sidetable: 'a small wooden side table', coffeeround: 'a round marble coffee table', cabinet: 'a long wooden sideboard', vcabinet: 'an antique dark wood display cabinet', woodshelves: 'a small painted wooden shelf', grandclock: 'a grandfather clock', daybed: 'a vintage daybed', ironbed: 'an old iron bed frame', screenpanel: 'a painted folding screen', roundtable: 'a round wooden pedestal table', barchair: 'a round wooden bar stool', diningchair: 'a leather dining chair', metalstool: 'a tall metal stool', monobloc: 'a white plastic chair', coffeecart: 'a coffee cart', chalkboard: 'an A-frame chalkboard sign', metaldesk: 'a steel office desk', drawers: 'a shelving unit with drawers', barber: 'a vintage barber chair', trashcan: 'a galvanised metal trash can', wetfloor: 'a yellow wet floor sign', paintedbench: 'a painted wooden bench', outdoorset: 'a folding bistro table and chairs', concbarrier: 'a concrete road barrier', coveredcar: 'a car under a cover', planter: 'a wooden planter box', bigplant: 'a potted plant', generator: 'a portable generator', floodlight: 'work floodlights on a stand', tyre: 'an old tyre', toolchest: 'a red metal tool chest', storagecart: 'an industrial storage cart', propane: 'a propane tank', cardboard: 'a cardboard box', plasticcrate: 'a plastic crate', wall: 'a wall', floor: 'a floor area', block: 'a box-shaped platform', dining: 'a dining table', meeting: 'a conference table', bunkbed: 'a bunk bed', crib: 'a baby crib', vanity: 'a dressing table with a mirror', fireplace: 'a brick fireplace', beanbag: 'a bean bag chair', fan: 'a standing electric fan', aquarium: 'a fish tank on a stand', easel: 'a painting easel', coffeebar: 'a counter with an espresso machine', showcase: 'a glass cake display case', stove: 'a gas range with an oven', menuboard: 'an A-frame chalkboard sign', projscreen: 'a tripod projector screen', serverrack: 'a server rack', cart: 'a shopping cart', mannequin: 'a shop mannequin', hanger: 'a clothes rack', atm: 'an ATM', wheelchair: 'a wheelchair', examtable: 'a medical examination table', palm: 'a palm tree', snowman: 'a snowman', boat: 'a small wooden rowing boat', seesaw: 'a playground seesaw', gazebo: 'a wooden gazebo', bus: 'a city bus', truck: 'a small flatbed truck', phonebooth: 'a public phone booth', mailbox: 'a red post box', barricade: 'a striped construction barricade', billboard: 'a billboard', shelfrack: 'a warehouse pallet rack with boxes', handtruck: 'a hand truck', antenna: 'a satellite dish', clothesline: 'a clothesline with laundry', guitar: 'an acoustic guitar on a stand', djbooth: 'a DJ booth',
   cooler: 'a glass-door drinks fridge', schoolchair: 'a school chair', cubicle: 'an office partition', watercooler: 'a water dispenser', printer: 'an office copier', showerbooth: 'a glass shower booth', hospitalbed: 'a hospital bed', ivstand: 'an IV drip stand', fountain: 'a stone fountain', campchair: 'a camping chair', watertank: 'a rooftop water tank', acunit: 'an air-conditioner outdoor unit', slide: 'a playground slide', swing: 'a playground swing set',
   coffee: 'a coffee table', nightstand: 'a nightstand', wardrobe: 'a wardrobe', dresser: 'a chest of drawers', floorlamp: 'a floor lamp', mirror: 'a full-length mirror',
   piano: 'an upright piano', curtain: 'curtains', officechair: 'an office chair', schooldesk: 'a school desk', whiteboard: 'a whiteboard', locker: 'lockers', filing: 'a filing cabinet', podium: 'a podium',
