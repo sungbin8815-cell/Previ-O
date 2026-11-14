@@ -5025,10 +5025,13 @@ async function humLoad(g) {
 }
 // the body for one age and build: the base plus the file's shape keys, written into this copy's own vertices, with the joints moved to match
 const HUM_AGE = { child: 1, teen: 1, mid: 1, senior: 1 }, HUM_BUILD = { slim: 1, fit: 1, muscle: 1, big: 1 };
+// a life-sim game's idea of a good-looking face, under every character (the face choices in the look editor go on top): shape keys at part weight
+var CHAR_BEAUTY = { f: [['e_big', 1.8], ['n_small', 0.45], ['j_slim', 1], ['f_vline', 0.9], ['m_full', 0.25], ['c_point', 0.4]], m: [['e_big', 0.8], ['n_small', 0.3], ['j_wide', 0.3]] };
+const charBeauty = (who, age) => !CHAR_FX || (who !== 'f' && who !== 'm') ? [] : (CHAR_BEAUTY[who] || []).map(([n, w]) => n + '*' + (age === 'child' ? w * 0.5 : w));
 // one mesh's vertices for a set of variations: the file's shape plus its shape keys, with smooth normals summed per welded point
 function humBake(m, on) {
   const sg = m.userData.srcGeo, pos = m.geometry.attributes.position, a = pos.array; a.set(sg.attributes.position.array);
-  for (const n of on) { const i = m.userData.morphs[n], d = i == null ? null : sg.morphAttributes.position[i].array; if (d) for (let j = 0; j < a.length; j++) a[j] += d[j]; }
+  for (const e of on) { const [n, ws] = String(e).split('*'), wt = ws ? +ws : 1, i = m.userData.morphs[n], d = i == null ? null : sg.morphAttributes.position[i].array; if (d && wt) for (let j = 0; j < a.length; j++) a[j] += d[j] * wt; }
   pos.needsUpdate = true; if (m.userData.eye) return a;
   const nr = m.geometry.attributes.normal, na = nr.array, w = sg.userData.weld, ix = sg.index.array, acc = new Float32Array(a.length);
   for (let f = 0; f < ix.length; f += 3) { const i0 = ix[f] * 3, i1 = ix[f + 1] * 3, i2 = ix[f + 2] * 3;
@@ -5095,7 +5098,17 @@ const SKIN_WRAP = 'float wNL = saturate( ( dot( geometryNormal, directLight.dire
 const charPosVary = sh => { sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vOP;').replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvOP = position;');
   sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vOP;'); };
 function charSurface(key, b) {
-  const kind = key === 'hum/skin' ? 'skin' : key === 'hum/eye' ? 'eye' : key === 'hum/cloth' ? 'cloth' : key.startsWith('hum/hair') ? 'hair' : null; if (!kind) return b;
+  const kind = key === 'hum/skin' ? 'skin' : key === 'hum/eye' ? 'eye' : key === 'hum/cloth' ? 'cloth' : key.startsWith('hum/hair') ? 'hair' : key.startsWith('hum/brow') ? 'brow' : null; if (!kind) return b;
+  if (kind === 'brow') { const m = new THREE.MeshStandardMaterial({ roughness: 0.85, metalness: 0, transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }); m.color.copy(b.color);
+    // u: inner end → tail, v: across. Soft edges, a feathered start, a tail that thins out, and fine slanted strokes
+    m.onBeforeCompile = sh => { sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nattribute vec2 aBrow;\nvarying vec2 vBrow;').replace('#include <begin_vertex>', '#include <begin_vertex>\n\tvBrow = aBrow;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec2 vBrow;').replace('#include <alphamap_fragment>', `#include <alphamap_fragment>
+	float bu = vBrow.x, bv = abs( vBrow.y - 0.5 ) * 2.0, bw = mix( 1.05, 0.6, smoothstep( 0.55, 1.0, bu ) );
+	float body = 1.0 - smoothstep( bw - 0.35, bw, bv );
+	float ends = smoothstep( 0.0, 0.22, bu ) * ( 1.0 - smoothstep( 0.86, 1.0, bu ) );
+	float strokes = 0.88 + 0.12 * sin( ( bu * 90.0 + vBrow.y * 6.0 ) ) * sin( bu * 37.0 + 1.3 );
+	diffuseColor.a *= body * mix( 0.45, 1.0, ends ) * strokes;`); };
+    m.customProgramCacheKey = () => 'char-brow'; return m; }
   const m = new THREE.MeshPhysicalMaterial({ vertexColors: b.vertexColors, side: b.side, metalness: 0 }); m.color.copy(b.color);
   if (kind === 'skin') { Object.assign(m, { roughness: 0.5, specularIntensity: 0.45, sheen: 0.5, sheenRoughness: 0.7, normalMap: charPoreTex() }); m.sheenColor.setRGB(0.55, 0.38, 0.32); m.normalScale.set(0.18, 0.18);
     m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('#include <lights_physical_pars_fragment>', THREE.ShaderChunk.lights_physical_pars_fragment.replace('reflectedLight.directDiffuse += irradiance * BRDF_Lambert( material.diffuseColor );', SKIN_WRAP)); };
@@ -5155,7 +5168,7 @@ function humFigure(s, k) {
   const names = [lk.topT, !lk.dress && lk.botT, lk.shoeT].filter(Boolean), W = names.map(n => wearGet(g, n)); if (!it || W.includes(null)) return null;
   const sb = s[k], pose = sb.pose || 'stand', sk = skeleton(k, sb), { root, bones } = it;
   const age = c.age || 'adult', std = (p, v) => v !== 'std' && p + v;
-  humShape(it, [HUM_AGE[age] && age, HUM_BUILD[lk.build] && lk.build, std('f_', lk.faceS), std('e_', lk.eyeS), std('n_', lk.noseS), std('m_', lk.mouthS), std('j_', lk.jawS), std('c_', lk.chinS), std('k_', lk.cheekS), std('a_', lk.earS), std('b_', lk.browS), std('g_', lk.eyeGap), lk.mood !== 'neutral' && 'x_' + lk.mood].filter(Boolean));
+  humShape(it, [...charBeauty(c.who, age), HUM_AGE[age] && age, HUM_BUILD[lk.build] && lk.build, std('f_', lk.faceS), std('e_', lk.eyeS), std('n_', lk.noseS), std('m_', lk.mouthS), std('j_', lk.jawS), std('c_', lk.chinS), std('k_', lk.cheekS), std('a_', lk.earS), std('b_', lk.browS), std('g_', lk.eyeGap), lk.mood !== 'neutral' && 'x_' + lk.mood + (CHAR_FX && lk.mood === 'smile' ? '*0.6' : '')].filter(Boolean));
   humPaint(it, lk); humHair(it, lk, g); humWear(it, lk, names, W);
   const low = () => { let v = Infinity; for (const n in it.floor) v = Math.min(v, bones[n].getWorldPosition(new THREE.Vector3()).y - it.floor[n]); return v - it.sole; };
   root.removeFromParent();
@@ -5196,12 +5209,21 @@ function hairMeasure(it) {
 function humPaint(it, lk) {
   const key = [it.shape, lk.skin, lk.lip || 'n', lk.hair, lk.eye, lk.hairS].join('|'); if (it.paint === key) return; it.paint = key;
   const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t], sk = lk.skin, hm = hairMeasure(it), line = hm && hairLine(it, lk.hairS);
-  const lip = lk.lip || mix(sk, [0.62, 0.2, 0.2], 0.42);
+  const fem = it.g === 'f', lip = lk.lip || (CHAR_FX ? mix(sk, fem ? [0.72, 0.24, 0.28] : [0.6, 0.28, 0.26], fem ? 0.55 : 0.35) : mix(sk, [0.62, 0.2, 0.2], 0.42));
+  // eye centres (this shape) for the make-up: blush on the cheekbones, a soft shadow on the upper lids
+  let EX = 0; { const em = it.meshes.find(q => q.userData.eye), A = em && em.geometry.attributes.position.array; if (A) { let sx = 0, k = 0; for (let j = 0; j < A.length; j += 3) if (A[j] > 0) { sx += A[j]; k++; } EX = k ? sx / k : 0; } }
+  const [EY, EZ] = it.eyeP || [0, 0], SC = EX / 0.031 || 1, BL = fem ? 0.3 : 0.1, LID = fem ? 0.32 : 0.12;
+  const blushC = mix(sk, [0.86, 0.3, 0.33], 0.75), lidC = mix(sk, fem ? [0.42, 0.26, 0.24] : [0.4, 0.3, 0.27], 0.8);
+  const face = (x, y, z, c) => { if (!CHAR_FX || !EX || z < EZ - 0.04 * SC) return c; const dx = (Math.abs(x) - EX) / SC, dy = (y - EY) / SC;
+    const b = Math.exp(-((dx - 0.006) ** 2 + (dy + 0.03) ** 2) / (2 * 0.015 * 0.015)); if (b > 0.01) c = mix(c, blushC, BL * b);
+    if (dy > 0) { const l = Math.exp(-(dx * dx) / (2 * 0.015 * 0.015) - ((dy - 0.007) ** 2) / (2 * 0.0055 * 0.0055)); if (l > 0.01) c = mix(c, lidC, LID * l); }
+    return c; };
   const shade = lk.hairS === 'bald' ? 0 : lk.hairS === 'thin' ? 0.3 : 0.6, EYE = [[0.9, 0.89, 0.86], lk.eye, [0.02, 0.02, 0.02]];
   for (const m of it.meshes) { const sg = m.userData.srcGeo, ca = m.geometry.attributes.color, a = ca.array, n = a.length / 3;
     if (m.userData.eye) { const cls = sg.userData.eyeCls, drawn = CHAR_FX && sg.attributes.aEye; for (let i = 0; i < n; i++) a.set(drawn ? lk.eye : EYE[cls[i]], i * 3); ca.needsUpdate = true; continue; }
     const mk = sg.userData.mask, P = m.geometry.attributes.position.array;
     for (let i = 0; i < n; i++) { let c = sk; if (mk) { const s = mk[i * 4], l = mk[i * 4 + 1], e = mk[i * 4 + 3];
+        c = face(P[i * 3], P[i * 3 + 1], P[i * 3 + 2], c);
         if (s && shade) c = mix(c, lk.hair, shade * s * line(P[i * 3], P[i * 3 + 1], P[i * 3 + 2])); if (l) c = mix(c, lip, 0.9 * l); if (e) c = mix(c, [0.05, 0.035, 0.03], 0.85 * e); }
       a[i * 3] = c[0]; a[i * 3 + 1] = c[1]; a[i * 3 + 2] = c[2]; }
     ca.needsUpdate = true; }
@@ -5247,7 +5269,9 @@ function hairBrows(it) {
   for (const tie of ties) { const q = [0, 0, 0], n = [0, 0, 0]; if (tie) for (let c = 0; c < 3; c++) for (let v = 0; v < 3; v++) { q[c] += tie[1][v] * P[tie[0][v] * 3 + c]; n[c] += tie[1][v] * N[tie[0][v] * 3 + c]; }
     const l = Math.hypot(...n) || 1; pos.push(q[0] + n[0] / l * 0.0006, q[1] + n[1] / l * 0.0006, q[2] + n[2] / l * 0.0006); nor.push(n[0] / l, n[1] / l, n[2] / l); }
   for (let s = 0; s < 2; s++) for (let i = 0; i < NU; i++) for (let j = 0; j < 2; j++) { const a = s * (NU + 1) * 3 + i * 3 + j, b = a + 3; if (!ties[a] || !ties[b] || !ties[a + 1] || !ties[b + 1]) continue; s ? idx.push(a, a + 1, b, b, a + 1, b + 1) : idx.push(a, b, a + 1, b, b + 1, a + 1); }
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g.setIndex(idx); g.userData.shared = true; return g;
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); g.setIndex(idx); g.userData.shared = true;
+  const br = new Float32Array(ties.length * 2); for (let k = 0; k < ties.length; k++) { br[k * 2] = Math.floor(k / 3) % (NU + 1) / NU; br[k * 2 + 1] = (k % 3) / 2; } g.setAttribute('aBrow', new THREE.BufferAttribute(br, 2));
+  return g;
 }
 // the hair and brows of one copy, carried by its head bone; rebuilt only when the body's shape or the style changes
 // hair that hangs below the neck is laid over the top being worn: those points move outward from the spine by the cloth's thickness
@@ -5270,7 +5294,7 @@ function humHair(it, lk, g) {
       const b = new THREE.Mesh(hairBrows(it)); b.userData.brow = true; b.receiveShadow = true; b.frustumCulled = false; grp.add(b);
       it.bones.head.add(grp); it.hair = grp; } }
   if (!it.hair) return;
-  const light = lk.hair[0] + lk.hair[1] + lk.hair[2] > 1.6, bc = lk.hairS === 'bald' || light ? lk.hair.map((v, i) => v + ([0.2, 0.14, 0.1][i] - v) * 0.6) : lk.hair.map(v => v * 0.8 + 0.02);
+  const light = lk.hair[0] + lk.hair[1] + lk.hair[2] > 1.6, bc = lk.hairS === 'bald' || light ? lk.hair.map((v, i) => v + ([0.2, 0.14, 0.1][i] - v) * 0.6) : lk.hair.map(v => CHAR_FX && it.g === 'f' ? v * 0.9 + 0.035 : v * 0.8 + 0.02);
   const brow = humMat('hum/brow/' + bc.join(), () => { const m = new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 }); m.color.setRGB(...bc); return m; });
   const mat = humMat('hum/hair2/' + lk.hair.join(), () => { const m = new THREE.MeshStandardMaterial({ roughness: 0.55, metalness: 0, vertexColors: true }); m.color.setRGB(...lk.hair.map(v => Math.min(1, v * 1.15 + 0.015))); return m; });
   for (const m of it.hair.children) m.material = m.userData.brow ? brow : mat;
