@@ -1,0 +1,17 @@
+{
+ "ground_asphalt": {
+  "metres": 4.0
+ },
+ "ground_paving": {
+  "metres": 2.0
+ },
+ "ground_grass": {
+  "metres": 3.0
+ },
+ "ground_sand": {
+  "metres": 4.0
+ },
+ "floor_oak": {
+  "metres": 1.2
+ }
+}

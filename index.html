@@ -1490,7 +1490,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
     <button id="copyBtn" role="menuitem">샷 리스트 복사</button><button id="csvBtn" role="menuitem">CSV 저장</button><button id="printBtn" role="menuitem">콘티 인쇄 · PDF</button><button id="techMenuBtn" role="menuitem" data-pro>테크비즈 시트 (현장용) · PDF</button>
     <hr><button id="shareLinkBtn" role="menuitem">링크로 공유</button><button id="expFileBtn" role="menuitem">프로젝트 파일 저장</button><button id="shareFileBtn" role="menuitem">파일 공유</button><button id="impFileBtn" role="menuitem">파일 가져오기</button>
     <hr><button id="uiModeBtn" role="menuitem"></button><button id="tourBtn" role="menuitem">튜토리얼</button><button id="fpMenuBtn" role="menuitem">포커스 연습 (팔로우 포커스)</button><button role="menuitem" data-engtab="cam">촬영 계산기 (센서 · 렌즈 · 심도 · 조명)</button><button id="keysBtn" role="menuitem">조작키 보기 (?)</button><button id="resetBtn" role="menuitem">처음부터 새로 시작</button>
-    <hr><button id="updBtn" role="menuitem">최신 버전 확인</button><p class="ver">버전 2026.11.13 22:02</p>
+    <hr><button id="updBtn" role="menuitem">최신 버전 확인</button><p class="ver">버전 2026.11.14 01:36</p>
     <div id="copyFallback" hidden></div>
   </div>
 
@@ -1746,7 +1746,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
       <div class="hm-pop" id="mcMenu" role="menu" hidden>
         <button class="hm-link" id="mcModeBtn" role="menuitem"></button>
         <button class="hm-link" id="mcAsk" role="menuitem">문의하기</button>
-        <p class="hm-ver">버전 2026.11.13 22:02</p>
+        <p class="hm-ver">버전 2026.11.14 01:36</p>
       </div>
     </header>
     <section class="hm-actions" aria-label="시작">
@@ -1801,7 +1801,7 @@ details.fold[open]{display:flex;flex-direction:column;gap:10px}
     <div class="mc-row"><button class="sbtn center" id="mcCopy"><b>주소 복사</b></button><a class="sbtn primary center" id="mcSend" target="_blank" rel="noopener"><b>메일 앱으로 보내기</b></a></div>
     <div class="mc-row"><button class="sbtn center" data-back><b>돌아가기</b></button></div>
   </div>
-  <div class="mc-foot"><span id="mcStat"></span><span class="ver">버전 2026.11.13 22:02</span></div>
+  <div class="mc-foot"><span id="mcStat"></span><span class="ver">버전 2026.11.14 01:36</span></div>
 </div>
 
 <div class="moresheet" id="moreSheet" hidden><div class="ms-back" data-msclose></div><div class="ms-box" role="dialog" aria-modal="true" aria-labelledby="msTitle">
@@ -4024,6 +4024,7 @@ function surfaceBelow(x, z, y) { let top = 0;
   return top; }
 function standFaces(out, x, z, top) {
   if (top < 0.25) return; const j = Math.min(0.5, top * 0.45), mid = Math.min(top, j + 0.95);
+  if (typeof gearSink === 'function' && gearSink('stand', null, { x, z, top, j, mid })) return; // the Blender-made stand (3-D view)
   for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2 + 0.4; mRod(out, { x, y: j, z }, { x: x + Math.sin(a) * 0.5, y: 0.01, z: z + Math.cos(a) * 0.5 }, 0.022, MAT.metal); }
   mRod(out, { x, y: j - 0.06, z }, { x, y: mid, z }, 0.034, MAT.metal); mRod(out, { x, y: mid, z }, { x, y: top, z }, 0.024, MAT.metal);
   mBox(out, yawFrame({ x, y: 0, z }, 0), -0.025, mid - 0.04, -0.025, 0.025, mid, 0.025, MAT.black);
@@ -4059,29 +4060,33 @@ function fixtureFaces(li) {
     mCyl(out, F0, 'y', [0, P.y - h - 0.03, 0], 0.024, 0.024, 0.03, 8, MAT.black); mCyl(out, F0, 'y', [0, P.y + h, 0], 0.024, 0.024, 0.03, 8, MAT.black);
     standFaces(out, P.x, P.z, P.y - h - 0.03); return out; }
   const F = dirFrame(P, li.D), yf = yawFrame(P, Math.atan2(li.D.x, li.D.z) / DEG);
-  const B = (x0, y0, z0, x1, y1, z1, m) => mBox(out, F, x0, y0, z0, x1, y1, z1, m);
+  const B = (x0, y0, z0, x1, y1, z1, m) => mBox(out, F, x0, y0, z0, x1, y1, z1, m), G = (k, F2, o) => typeof gearSink === 'function' && gearSink(k, F2, o);
   let R = 0.12, front = 0.12;
   if (kind === 'fresnel') { R = { tung100: 0.05, tung200: 0.06, tung300: 0.07, dedo100: 0.045, dedo: 0.05, tung650: 0.09, tung1k: 0.12, tung5k: 0.21, tung10k: 0.27, hmi200: 0.08, hmi575: 0.1, hmi800: 0.11, hmi12: 0.13, hmi25: 0.17, hmi4k: 0.2, hmi6k: 0.25, hmi12k: 0.3, hmi18k: 0.33, red800: 0.11, blonde2k: 0.15 }[fx.id] || 0.15; const body = { rgb: /^hmi/.test(fx.id) ? [0.3, 0.31, 0.32] : [0.08, 0.15, 0.3] };
-    mCyl(out, F, 'z', [0, 0, -0.17], R, R, 0.29, 18, { ...body, cap1: MAT.black });
+    const gm = G(/^hmi/.test(fx.id) ? 'f_frh' : 'f_frt', F, { s: [R / 0.15, R / 0.15, 1] });
+    if (!gm) mCyl(out, F, 'z', [0, 0, -0.17], R, R, 0.29, 18, { ...body, cap1: MAT.black });
     mCyl(out, F, 'z', [0, 0, 0.12], R * 0.82, R * 0.82, 0.006, 18, { ...MAT.black, cap1: em }, 2); // fresnel lens
-    B(-R * 0.55, R - 0.01, -0.15, R * 0.55, R + 0.05, 0.06, MAT.black); // vent hood
-    B(-R * 0.25, -R - 0.03, -0.1, R * 0.25, -R + 0.01, 0, MAT.black); // spot / flood knob
-    if (df === 'none') { // barn doors opened about 35°
+    if (!gm) { B(-R * 0.55, R - 0.01, -0.15, R * 0.55, R + 0.05, 0.06, MAT.black); B(-R * 0.25, -R - 0.03, -0.1, R * 0.25, -R + 0.01, 0, MAT.black); } // vent hood, spot / flood knob
+    const kb = R / 0.15; if (df === 'none' && !G('f_barn', F, { t: [0, 0, 0.13 * (1 - kb)], s: [kb, kb, kb] })) { // barn doors opened about 35°
       const z0 = front + 0.01, c = Math.cos(35 * DEG), sn = Math.sin(35 * DEG);
       for (const [sx, sy, Ll] of [[0, 1, R * 1.25], [0, -1, R * 1.25], [1, 0, R * 0.9], [-1, 0, R * 0.9]]) { const tx = -sy, ty = sx;
         const e1 = [sx * R + tx * R, sy * R + ty * R], e2 = [sx * R - tx * R, sy * R - ty * R], o = [sx * Ll * sn, sy * Ll * sn, Ll * c];
         mQuad(out, [fp3(F, e1[0], e1[1], z0), fp3(F, e2[0], e2[1], z0), fp3(F, e2[0] + o[0], e2[1] + o[1], z0 + o[2]), fp3(F, e1[0] + o[0], e1[1] + o[1], z0 + o[2])], MAT.black); } } }
+  else if (kind === 'leko' && G('f_leko', F)) { R = 0.1; front = 0.18; mCyl(out, F, 'z', [0, 0, 0.174], 0.07, 0.07, 0.004, 14, { ...MAT.black, cap1: em }, 2); }
   else if (kind === 'leko') { R = 0.1; // ellipsoidal: reflector housing, a gate with shutter handles, a long lens barrel
     mCyl(out, F, 'z', [0, 0, -0.26], 0.1, 0.12, 0.2, 16, { rgb: [0.07, 0.07, 0.08], cap1: MAT.black });
     for (const [sx, sy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) B(sx * 0.12 - 0.012, sy * 0.12 - 0.012, -0.08, sx * 0.12 + 0.012 + sx * 0.04, sy * 0.12 + 0.012 + sy * 0.04, -0.05, MAT.metal);
     mCyl(out, F, 'z', [0, 0, -0.06], 0.075, 0.075, 0.24, 14, { rgb: [0.07, 0.07, 0.08], cap1: em }, 2); front = 0.18; }
-  else if (kind === 'cob') { R = 0.12; const big = { cob1200: 1.4, cob120: 0.75, cob60: 0.6, cob200: 0.85, led30: 0.5, led5: 0.3, led10: 0.38 }[fx.id] || 1; B(-0.11 * big, -0.12 * big, -0.2, 0.11 * big, 0.12 * big, 0.03, MAT.grey); R *= big;
-    for (let i = 0; i < 4; i++) B(-0.1, -0.11 + i * 0.065, -0.24, 0.1, -0.09 + i * 0.065, -0.2, MAT.black); // cooling fins
+  else if (kind === 'cob') { R = 0.12; const big = { cob1200: 1.4, cob120: 0.75, cob60: 0.6, cob200: 0.85, led30: 0.5, led5: 0.3, led10: 0.38 }[fx.id] || 1; R *= big;
+    if (!G('f_cob', F, { s: [big, big, 1] })) { B(-0.11 * big, -0.12 * big, -0.2, 0.11 * big, 0.12 * big, 0.03, MAT.grey);
+      for (let i = 0; i < 4; i++) B(-0.1, -0.11 + i * 0.065, -0.24, 0.1, -0.09 + i * 0.065, -0.2, MAT.black); } // cooling fins
     mCyl(out, F, 'z', [0, 0, 0.03], 0.045, 0.045, 0.004, 14, { ...MAT.black, cap1: em }, 2); // COB chip
     front = 0.03;
-    if (df === 'none') { mCyl(out, F, 'z', [0, 0, 0.03], 0.06, 0.17, 0.15, 16, { rgb: [0.62, 0.63, 0.65], two: true }, 0); front = 0.18; } }
+    if (df === 'none') { if (!G('f_refl', F)) mCyl(out, F, 'z', [0, 0, 0.03], 0.06, 0.17, 0.15, 16, { rgb: [0.62, 0.63, 0.65], two: true }, 0); front = 0.18; } }
   else { const [pw, ph] = { skypanel: [0.36, 0.19], s30: [0.3, 0.16], s120: [0.62, 0.19], s360: [0.9, 0.4], kino: [0.63, 0.25], kino2: [0.32, 0.13], panel1x1: [0.16, 0.16], panel2x1: [0.32, 0.16], led5: [0.06, 0.04], led10: [0.08, 0.05], panel: [0.62, 0.16] }[fx.id] || [0.32, 0.32]; R = Math.max(pw, ph) + 0.01;
-    B(-pw, -ph, -0.05, pw, ph, 0, /^kino/.test(fx.id) ? MAT.black : { ...MAT.black, front: em }); B(-0.1, -0.1, -0.08, 0.1, 0.1, -0.05, MAT.grey); front = 0;
+    if (G('f_panel', F, { s: [pw, ph, 1] })) { if (!/^kino/.test(fx.id)) mQuad(out, [fp3(F, -pw + 0.012, -ph + 0.012, 0.001), fp3(F, pw - 0.012, -ph + 0.012, 0.001), fp3(F, pw - 0.012, ph - 0.012, 0.001), fp3(F, -pw + 0.012, ph - 0.012, 0.001)], em); }
+    else B(-pw, -ph, -0.05, pw, ph, 0, /^kino/.test(fx.id) ? MAT.black : { ...MAT.black, front: em });
+    if (!G('f_pback', F)) B(-0.1, -0.1, -0.08, 0.1, 0.1, -0.05, MAT.grey); front = 0;
     if (fx.id === 'kino' || fx.id === 'kino2') for (let i = 0, n = fx.id === 'kino' ? 4 : 2; i < n; i++) mCyl(out, F, 'x', [-pw + 0.04, -ph + (i + 0.5) * 2 * ph / n, 0.025], 0.016, 0.016, 2 * pw - 0.08, 8, em, 0);
     if (/^(skypanel|s30|s120|s360)$/.test(fx.id)) B(-pw, ph, -0.05, pw, ph + 0.03, -0.01, MAT.grey); }
   // light modifiers
@@ -4097,7 +4102,7 @@ function fixtureFaces(li) {
   const yy = P.y + sg * arm;
   if (hang) { mRod(out, { x: P.x, y: yy, z: P.z }, { x: P.x, y: rm.h, z: P.z }, 0.03, MAT.metal); mBox(out, yawFrame({ x: P.x, y: 0, z: P.z }, 0), -0.04, rm.h - 0.06, -0.04, 0.04, rm.h, 0.04, MAT.black); }
   else standFaces(out, P.x, P.z, yy);
-  if ((/^hmi/.test(fx.id) && fx.w >= 1200 || fx.id === 'cob1200') && !hang) mBox(out, yawFrame({ x: P.x + 0.55, y: 0, z: P.z + 0.2 }, 20), -0.17, 0, -0.12, 0.17, 0.22, 0.12, MAT.grey); // ballast
+  if ((/^hmi/.test(fx.id) && fx.w >= 1200 || fx.id === 'cob1200') && !hang && !G('f_ballast', yawFrame({ x: P.x + 0.55, y: 0, z: P.z + 0.2 }, 20))) mBox(out, yawFrame({ x: P.x + 0.55, y: 0, z: P.z + 0.2 }, 20), -0.17, 0, -0.12, 0.17, 0.22, 0.12, MAT.grey); // ballast
   return out;
 }
 
@@ -4107,6 +4112,7 @@ function camFaces(s) {
   const B = (x0, y0, z0, x1, y1, z1, m) => mBox(out, F, x0, y0, z0, x1, y1, z1, m);
   const zoom = kt.type === 'zoom', lr = zoom ? 0.06 : kt.sq ? 0.055 : 0.047;
   const ll = zoom ? 0.27 : clamp(0.085 + Math.log(Math.max(8, s.f) / 18) * 0.045, 0.08, 0.26) * (kt.sq ? 1.3 : 1), ring = { rgb: [0.2, 0.2, 0.21] };
+  if (typeof gearSink === 'function' && gearSink('cam', F, { lr, ll, mz: ll + 0.015 })) return out; // the Blender-made camera (3-D view)
   B(-0.07, -0.085, -0.25, 0.07, 0.075, -0.035, MAT.body);
   B(0.07, -0.05, -0.21, 0.077, 0.045, -0.08, { rgb: [0.06, 0.065, 0.07] }); // side control panel
   B(-0.062, -0.075, -0.32, 0.062, 0.065, -0.25, { rgb: [0.07, 0.07, 0.075] }); // battery
@@ -4135,18 +4141,20 @@ function camFaces(s) {
 function rigFaces(s) {
   const ev = shotRig(s), r = ev.r, c = s.cam, g = ev.geo, SB = shotBasis(s), out = [], bad = !ev.ok;
   const mt = bad ? { rgb: [0.62, 0.16, 0.1] } : MAT.metal, bk = bad ? { rgb: [0.4, 0.08, 0.05] } : MAT.black, chassis = { rgb: bad ? [0.4, 0.1, 0.06] : [0.17, 0.18, 0.19] };
-  const hf = yawFrame({ x: c.x, y: 0, z: c.z }, SB.yaw), top = c.y - 0.11;
-  const head = () => { mBox(out, hf, -0.065, top - 0.1, -0.09, 0.065, top, 0.07, bk); mCyl(out, hf, 'y', [0, top - 0.17, 0], 0.075, 0.07, 0.07, 14, bk);
+  const hf = yawFrame({ x: c.x, y: 0, z: c.z }, SB.yaw), top = c.y - 0.11, G = (k, F, o) => !bad && typeof gearSink === 'function' && gearSink(k, F, o);
+  const at = y => yawFrame({ x: c.x, y, z: c.z }, SB.yaw), rhead = () => G('rhead', at(c.y));
+  const head = () => { if (G('head', at(top))) return; mBox(out, hf, -0.065, top - 0.1, -0.09, 0.065, top, 0.07, bk); mCyl(out, hf, 'y', [0, top - 0.17, 0], 0.075, 0.07, 0.07, 14, bk);
     mRod(out, fp3(hf, 0.06, top - 0.05, -0.08), fp3(hf, 0.2, top - 0.22, -0.55), 0.022, bk); };
   const wheels = (F, hx, hz, rr, w) => { for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) mCyl(out, F, 'x', [sx > 0 ? hx : -hx - w, rr, sz * hz], rr, rr, w, 12, MAT.black); };
   if (r.kind === 'tripod') { head(); const y = Math.max(0.06, top - 0.17), rad = r.foot / 2;
-    mBox(out, hf, -0.07, y - 0.03, -0.07, 0.07, y, 0.07, bk);
+    if (!G('apex', at(y))) mBox(out, hf, -0.07, y - 0.03, -0.07, 0.07, y, 0.07, bk);
     for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2 + SB.yaw * DEG + Math.PI / 3, f = { x: c.x + Math.sin(a) * rad, y: 0.01, z: c.z + Math.cos(a) * rad };
-      mRod(out, { x: c.x + Math.sin(a) * 0.05, y: y - 0.03, z: c.z + Math.cos(a) * 0.05 }, f, 0.035, mt); mRod(out, f, { x: c.x, y: 0.02, z: c.z }, 0.015, bk); } }
+      const a0 = { x: c.x + Math.sin(a) * 0.05, y: y - 0.03, z: c.z + Math.cos(a) * 0.05 }, d = sub3(f, a0);
+      if (!G('leg', dirFrame(a0, d), { sz: Math.hypot(d.x, d.y, d.z) })) mRod(out, a0, f, 0.035, mt); mRod(out, f, { x: c.x, y: 0.02, z: c.z }, 0.015, bk); } }
   else if (r.kind === 'dolly') {
-    mBox(out, hf, -0.33, 0.1, -0.55, 0.33, 0.3, 0.55, chassis); wheels(hf, 0.33, 0.45, 0.08, 0.06);
-    mCyl(out, hf, 'y', [0, 0.3, 0], 0.085, 0.085, Math.max(0.05, top - 0.17 - 0.3), 14, mt, 2);
-    mRod(out, fp3(hf, 0, 0.3, -0.55), fp3(hf, 0, 1.0, -0.8), 0.03, mt); mRod(out, fp3(hf, -0.2, 1.0, -0.8), fp3(hf, 0.2, 1.0, -0.8), 0.03, mt); head();
+    if (!G('dolly', hf)) { mBox(out, hf, -0.33, 0.1, -0.55, 0.33, 0.3, 0.55, chassis); wheels(hf, 0.33, 0.45, 0.08, 0.06);
+      mRod(out, fp3(hf, 0, 0.3, -0.55), fp3(hf, 0, 1.0, -0.8), 0.03, mt); mRod(out, fp3(hf, -0.2, 1.0, -0.8), fp3(hf, 0.2, 1.0, -0.8), 0.03, mt); }
+    if (!G('col', at(0.3), { sy: Math.max(0.05, top - 0.17 - 0.3) })) mCyl(out, hf, 'y', [0, 0.3, 0], 0.085, 0.085, Math.max(0.05, top - 0.17 - 0.3), 14, mt, 2); head();
     const along = s.move === 'track' ? SB.rh : (s.move === 'dollyin' || s.move === 'dollyout') ? SB.fh : null;
     if (along) { const sd = { x: along.z, y: 0, z: -along.x }, at = (k, t, y) => ({ x: c.x + sd.x * k + along.x * t, y, z: c.z + sd.z * k + along.z * t });
       for (const k of [-0.31, 0.31]) mRod(out, at(k, -2.4, 0.03), at(k, 2.4, 0.03), 0.04, MAT.metal);
@@ -4156,7 +4164,7 @@ function rigFaces(s) {
     if (r.kind === 'jib') { const ty = Math.min(g.pivot.y - 0.25, 1.1);
       for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2 + 0.5; mRod(out, { x: g.base.x, y: ty, z: g.base.z }, { x: g.base.x + Math.sin(a) * r.foot / 2, y: 0.01, z: g.base.z + Math.cos(a) * r.foot / 2 }, 0.045, mt); }
       mRod(out, { x: g.base.x, y: Math.min(ty, 0.6), z: g.base.z }, { x: g.base.x, y: g.pivot.y - 0.08, z: g.base.z }, 0.07, mt); }
-    else { mBox(out, bf, -0.7, 0.12, -0.9, 0.7, 0.55, 0.9, chassis); wheels(bf, 0.7, 0.7, 0.14, 0.12);
+    else { if (!G('cbase', bf)) { mBox(out, bf, -0.7, 0.12, -0.9, 0.7, 0.55, 0.9, chassis); wheels(bf, 0.7, 0.7, 0.14, 0.12); }
       mRod(out, { x: g.base.x, y: 0.55, z: g.base.z }, { x: g.base.x, y: g.pivot.y - 0.1, z: g.base.z }, 0.2, mt); }
     mBox(out, bf, -0.12, g.pivot.y - 0.12, -0.12, 0.12, g.pivot.y + 0.08, 0.12, bk);
     mRod(out, g.pivot, g.tip, r.kind === 'tele' ? 0.13 : 0.07, mt);
@@ -4165,7 +4173,7 @@ function rigFaces(s) {
     mRod(out, g.pivot, g.tail, 0.08, mt);
     mBox(out, dirFrame(g.tail, sub3(g.tail, g.pivot)), -0.16, -0.16, -0.25, 0.16, 0.16, 0.05, bk); // counterweight
     mRod(out, g.tip, { x: c.x, y: c.y + 0.17, z: c.z }, 0.05, bk); // remote head drop
-    mBox(out, hf, -0.13, c.y + 0.13, -0.12, 0.13, c.y + 0.19, 0.08, bk); mBox(out, hf, 0.11, c.y - 0.1, -0.12, 0.13, c.y + 0.13, 0.08, bk); }
+    if (!rhead()) { mBox(out, hf, -0.13, c.y + 0.13, -0.12, 0.13, c.y + 0.19, 0.08, bk); mBox(out, hf, 0.11, c.y - 0.1, -0.12, 0.13, c.y + 0.13, 0.08, bk); } }
   else if (r.kind === 'slider') { const y = Math.max(0.2, top - 0.17), rh = SB.rh, end = k => ({ x: c.x + rh.x * k, y, z: c.z + rh.z * k });
     head(); mRod(out, end(-0.65), end(0.65), 0.06, mt); mBox(out, hf, -0.08, y + 0.03, -0.07, 0.08, top - 0.17, 0.07, bk);
     for (const k of [-0.62, 0.62]) { const e = end(k); for (let i = 0; i < 3; i++) { const a = i / 3 * Math.PI * 2 + 0.3; mRod(out, e, { x: e.x + Math.sin(a) * 0.45, y: 0.01, z: e.z + Math.cos(a) * 0.45 }, 0.025, mt); } } }
@@ -4176,16 +4184,17 @@ function rigFaces(s) {
     mRod(out, { x: c.x, y: gy, z: c.z }, elbow, 0.04, mt); mRod(out, elbow, { x: side.x, y: gy - 0.1, z: side.z }, 0.04, mt);
     mBox(out, yawFrame({ x: side.x, y: 0, z: side.z }, SB.yaw), -0.16, gy - 0.35, -0.1, 0.16, gy + 0.15, 0.1, bk); }
   else if (r.kind === 'arm') { const base = add({ x: c.x, y: 0, z: c.z }, SB.fh, -2.8);
-    propFaces({ id: 'rigcar', type: 'car', x: base.x, z: base.z, yaw: SB.yaw }).forEach(f => out.push(f));
+    if (!G('car', yawFrame({ x: base.x, y: 0, z: base.z }, SB.yaw))) propFaces({ id: 'rigcar', type: 'car', x: base.x, z: base.z, yaw: SB.yaw }).forEach(f => out.push(f));
     const col = { x: base.x, y: 1.95, z: base.z }; mRod(out, { x: base.x, y: 1.45, z: base.z }, col, 0.16, mt); mBox(out, hf, -0.15, 1.92, -0.15, 0.15, 2.05, 0.15, bk);
     const tip = { x: c.x, y: c.y + 0.2, z: c.z }; mRod(out, col, tip, 0.11, mt); mRod(out, tip, { x: c.x, y: c.y + 0.13, z: c.z }, 0.05, bk);
-    mBox(out, hf, -0.13, c.y + 0.13, -0.12, 0.13, c.y + 0.19, 0.08, bk); mBox(out, hf, 0.11, c.y - 0.1, -0.12, 0.13, c.y + 0.13, 0.08, bk); }
+    if (!rhead()) { mBox(out, hf, -0.13, c.y + 0.13, -0.12, 0.13, c.y + 0.19, 0.08, bk); mBox(out, hf, 0.11, c.y - 0.1, -0.12, 0.13, c.y + 0.13, 0.08, bk); } }
   else if (r.kind === 'cable') { const ty = c.y + 4, car = { x: c.x, y: c.y + 0.25, z: c.z };
     for (const k of [-15, 15]) { const tw = add({ x: c.x, y: 0, z: c.z }, SB.rh, k), tt = { x: tw.x, y: ty, z: tw.z };
       mRod(out, { x: tw.x, y: 0, z: tw.z }, tt, 0.3, mt); for (const k2 of [-1, 1]) mRod(out, tt, add({ x: tw.x, y: 0.01, z: tw.z }, SB.fh, k2 * 4), 0.02, MAT.black);
       mRod(out, tt, car, 0.015, MAT.black); }
     mBox(out, hf, -0.18, c.y + 0.15, -0.18, 0.18, c.y + 0.35, 0.18, bk); mRod(out, { x: c.x, y: c.y + 0.15, z: c.z }, { x: c.x, y: c.y + 0.08, z: c.z }, 0.04, bk); }
   else if (r.kind === 'drone') { const F = yawFrame({ x: c.x, y: c.y + 0.17, z: c.z }, SB.yaw);
+    if (G('drone', F)) { mRod(out, fp3(F, 0, -0.04, 0), { x: c.x, y: c.y + 0.08, z: c.z }, 0.03, MAT.black); return out; }
     mBox(out, F, -0.1, -0.04, -0.15, 0.1, 0.05, 0.15, MAT.grey);
     for (const [sx, sz] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const e = fp3(F, sx * 0.32, 0.02, sz * 0.32);
       mRod(out, fp3(F, sx * 0.06, 0.02, sz * 0.08), e, 0.03, MAT.black); mCyl(out, yawFrame(e, 0), 'y', [0, 0, 0], 0.03, 0.03, 0.04, 10, MAT.black);
@@ -4598,7 +4607,7 @@ function glBuildStatic() {
     if (b.kind === 'wall') { const mesh = box(b, b.rgb); gl.walls.push({ mesh, b }); (() => { // skirting board along the inside face
       if (b.cy - b.hy > 0.01) return; const i = b.wi, inward = [[0, -1], [0, 1], [-1, 0], [1, 0]][i], sk = { ...b, cy: 0.05, hy: 0.05, cx: b.cx + inward[0] * (b.hx + 0.008), cz: b.cz + inward[1] * (b.hz + 0.008), hx: inward[0] ? 0.008 : b.hx, hz: inward[1] ? 0.008 : b.hz };
       box(sk, [0.6, 0.58, 0.55]); })(); }
-    else if (!b.part) glMeshes(propFaces(b.obj), true).forEach(m => g.add(m));
+    else if (!b.part && !(typeof propGL === 'function' && propGL(b.obj, g))) glMeshes(propFaces(b.obj), true).forEach(m => g.add(m));
   });
 }
 // gobo slides drawn once each: white passes light, black blocks it; the round gate edge comes from the spot's cone
@@ -4649,7 +4658,7 @@ function glBuildFixtures(L) {
   const goboOn = li => FIX(li.l.fx).gobo && (li.l.gobo || 'win') !== 'none';
   const casters = new Set(L.lights.filter(li => !li.omni).sort((a, b) => goboOn(b) - goboOn(a) || b.I0 - a.I0).slice(0, small() ? 3 : 4).map(li => li.l.id));
   L.lights.forEach(li => {
-    glMeshes(fixtureFaces(li), false).forEach(m => g.add(m));
+    if (typeof gearWith === 'function') gearWith(() => fixtureFaces(li), g, false); else glMeshes(fixtureFaces(li), false).forEach(m => g.add(m));
     const P = li.P, size = li.size; let lt;
     if (li.omni) lt = new THREE.PointLight(0xffffff, li.I0, 0, 2);
     else { lt = new THREE.SpotLight(0xffffff, li.I0, 0, Math.min(li.fld, 1.55), clamp(1 - li.a / li.fld, 0, 1), 2); lt.target.position.set(P.x + li.D.x, P.y + li.D.y, P.z + li.D.z); g.add(lt.target);
@@ -4661,7 +4670,7 @@ function glBuildFixtures(L) {
     sp.userData.k = 0.25 + 0.75 * (li.l.dim ?? 1); g.add(sp); gl.glows.push(sp);
   });
   // grip frames: a flag is solid and casts a shadow; silks and nets are see-through cloth that act on the light instead
-  L.grips.forEach(gp => glMeshes(gripFaces(gp), GRIPS[gp.fx].kind === 'flag').forEach(m => g.add(m)));
+  L.grips.forEach(gp => typeof gearWith === 'function' ? gearWith(() => gripFaces(gp), g, GRIPS[gp.fx].kind === 'flag') : glMeshes(gripFaces(gp), GRIPS[gp.fx].kind === 'flag').forEach(m => g.add(m)));
 }
 // mannequins: capsule limbs, ellipsoid chest and pelvis, head with hair, nose and eyes so the facing reads at a glance
 function glMannequin(sb, shirt) {
@@ -4691,7 +4700,7 @@ function glSync(s, world) {
   if (gl.keys.figs !== k3) { gl.keys.figs = k3; clearGroup(gl.parts.figs); subjKeys(s).forEach(k => { const g = glCharacter(s, k); g.userData.k = k; gl.parts.figs.add(g); }); }
   gl.parts.figs.children.forEach(g => { const sb = s[g.userData.k]; if (sb) { g.position.set(sb.x, 0, sb.z); g.rotation.y = sb.face * DEG; } });
   if (world) { const ev = shotRig(s), k4 = JSON.stringify([s.cam, s.f, state.kit, s.rig, s.move, ev.r.id, ev.ok, ev.geo, C.accent]);
-    if (gl.keys.cam !== k4) { gl.keys.cam = k4; clearGroup(gl.parts.cam); glMeshes(rigFaces(s).concat(camFaces(s)), true).forEach(m => gl.parts.cam.add(m)); } }
+    if (gl.keys.cam !== k4) { gl.keys.cam = k4; clearGroup(gl.parts.cam); if (typeof gearBuild === 'function') gearBuild(s, gl.parts.cam); else glMeshes(rigFaces(s).concat(camFaces(s)), true).forEach(m => gl.parts.cam.add(m)); } }
   gl.parts.cam.visible = world;
   // white balance of this shot on every source
   L.lights.forEach((li, i) => { if (gl.lights[i]) gl.lights[i].color.setRGB(...li.col); if (gl.glows[i]) gl.glows[i].material.color.setRGB(...li.col.map(c => c * gl.glows[i].userData.k)); });
@@ -5228,6 +5237,178 @@ function humWear(it, lk, names, W) {
   for (const m of it.wear) { const pal = wearColours(m.userData.wear, lk), ck = pal.join('|'); m.material = mat; if (m.userData.ck === ck) continue; m.userData.ck = ck;
     const ca = m.geometry.attributes.color, a = ca.array, cls = m.userData.cls; for (let i = 0; i < cls.length; i++) a.set(pal[cls[i]] || pal[0], i * 3); ca.needsUpdate = true; }
 }
+/* ---------- scenery made in Blender (assets/blender/build_sky.py, build_ground.py, build_scenery.py, build_facade.py): sky domes,
+   ground and floor textures, trees / pines / peaks / hills, building facades. Loaded once, after the app is up; until they arrive —
+   or if they cannot load, or with ?env=0 — the original procedural set is drawn exactly as before. ---------- */
+const ENV_ON = !/[?&]env=0\b/.test(location.search), ENV_V = '?v=3';
+let envA = null; // { sky: {name: {tex, scale, sunU}}, ground: {name: {map, nrm, m}}, scen: {name: [{geo, mat}]}, facade: [{map, rm}] }
+const ENV_SKY = { 'e-4': -4, e2: 2, e8: 8, e18: 18, e35: 35, e60: 60 };
+const ENV_GROUND = { street: 'ground_paving', city: 'ground_asphalt', forest: 'ground_grass', mountain: 'ground_grass', field: 'ground_grass', sea: 'ground_sand', none: 'ground_paving' };
+function envLoad() {
+  if (!ENV_ON || envA || envLoad.busy || !gl) return; envLoad.busy = true;
+  const TL = new THREE.TextureLoader(), tex = (f, srgb, rep = true) => new Promise((res, rej) => TL.load('env/' + f + ENV_V, t => {
+    if (rep) t.wrapS = t.wrapT = THREE.RepeatWrapping; if ('colorSpace' in t) t.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; else t.encoding = srgb ? THREE.sRGBEncoding : THREE.LinearEncoding;
+    t.anisotropy = Math.min(8, gl.R.capabilities.getMaxAnisotropy()); t._keep = true; res(t); }, undefined, rej));
+  const J = f => fetch('env/' + f + ENV_V).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  Promise.all([J('sky.json'), J('ground.json'), humLoadLib()]).then(async ([skyM, gM, L]) => {
+    const sky = {}; await Promise.all(Object.entries(skyM).map(async ([k, v]) => { const t = await tex(`sky_${k}.jpg`, true); t.wrapT = THREE.ClampToEdgeWrapping; sky[k] = { tex: t, scale: v.scale, sunU: v.sunU }; }));
+    const ground = {}; await Promise.all(Object.entries(gM).map(async ([k, v]) => { ground[k] = { map: await tex(k + '.jpg', true), nrm: await tex(k + '_n.jpg', false), m: v.metres }; }));
+    const facade = await Promise.all(['brick', 'plaster', 'office', 'glass'].map(async k => ({ map: await tex(`facade_${k}.jpg`, true), rm: await tex(`facade_${k}_r.jpg`, false) })));
+    const glb = await new L.GLTFLoader().loadAsync('env/scenery.glb' + ENV_V), scen = {};
+    glb.scene.traverse(o => { if (!o.isMesh) return; let top = o; while (top.parent && top.parent !== glb.scene) top = top.parent;
+      const key = (top.name.match(/^(tree|pine|peak|hill)_\d/) || [])[0]; if (!key) return; o.updateWorldMatrix(true, false);
+      const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); g.userData.shared = true; const m = o.material; m.userData.shared = true;
+      if (m.map) { m.alphaTest = 0.28; m.transparent = false; m.side = THREE.DoubleSide; m.map._keep = true; } // low cut-off: far trees keep their leaves as the mipmaps thin the alpha
+      // scenery right in front of a viewpoint (the 3-D view orbiting through a tree line) is skipped instead of filling the screen
+      m.onBeforeCompile = sh => { sh.fragmentShader = sh.fragmentShader.replace('void main() {', 'void main() {\n  if (length(vViewPosition) < 2.5) discard;'); };
+      if (g.attributes.color) m.vertexColors = true; m.roughness = 0.9; m.metalness = 0;
+      (scen[key] = scen[key] || []).push({ geo: g, mat: m }); });
+    envA = { sky, ground, facade, scen }; gl.keys.stat = null; renderAll();
+  }).catch(e => { console.warn('scenery assets', e); envA = null; }).finally(() => { envLoad.busy = false; });
+}
+// sky: the picture for this sun height (or the overcast / twilight / night one), turned so its sun sits where the app's sun is
+function envSky(L) {
+  if (!envA || !gl.sky) return; let k;
+  if (L.sunDir && L.env.sun > 0) { const el = Math.asin(clamp(L.sunDir.y, -1, 1)) / DEG; k = Object.keys(ENV_SKY).reduce((a, b) => Math.abs(ENV_SKY[b] - el) < Math.abs(ENV_SKY[a] - el) ? b : a); }
+  else k = L.env.sky >= 1000 ? 'overcast' : L.env.sky > 20 ? 'e-4' : 'night';
+  const S = envA.sky[k]; if (!S) return; const m = gl.sky.material;
+  if (m.map !== S.tex) { m.map = S.tex; m.vertexColors = false; m.needsUpdate = true; }
+  const d = L.sunDir || { x: 0, z: 1 }, phi = Math.atan2(d.z, -d.x); S.tex.offset.x = S.sunU - phi / (2 * Math.PI);
+  m.userData.k = S.scale; }
+// the dome's colour is set by the renderer each frame from the sky luminance; the picture's own scale rides along
+function envSkyHook() { const m = gl.sky.material, c = m.color; if (c._envHook) return; c._envHook = true;
+  c.setRGB = function (r, g, b) { const k = (envA && m.map && m.userData.k) || 1; return THREE.Color.prototype.setRGB.call(this, r * k, g * k, b * k); }; }
+{ const sd0 = sunDisc; sunDisc = function (L, P, ex) { if (gl && envA) { envSkyHook(); envSky(L); } return sd0.apply(this, arguments); }; }
+// ground and floor: Blender-baked textures; the ground picks its surface from the backdrop
+{ const bs0 = glBuildStatic; glBuildStatic = function () { const r = bs0.apply(this, arguments); if (!envA) { envLoad(); return r; }
+    const G = envA.ground[ENV_GROUND[bgOf()] || 'ground_paving'];
+    if (gl.gp && G) { const m = gl.gp.material; m.map = G.map; m.normalMap = G.nrm; m.normalScale = new THREE.Vector2(0.6, 0.6); const n = 160 / G.m; G.map.repeat.set(n, n); G.nrm.repeat.set(n, n); m.roughness = bgOf() === 'city' ? 0.85 : 0.95; m.needsUpdate = true; }
+    const F = envA.ground.floor_oak, rm = roomInfo();
+    if (F && rm) gl.parts.stat.children.forEach(o => { if (o.material && o.material.map === gl.wood) { o.material.map = F.map; o.material.normalMap = F.nrm; o.material.normalScale = new THREE.Vector2(0.35, 0.35); const n = rm.side / F.m; F.map.repeat.set(n, n); F.nrm.repeat.set(n, n); o.material.needsUpdate = true; } });
+    return r; }; }
+// the backdrop itself: Blender trees, pines, peaks and hills (instanced, one draw per piece of each kind) and facade-textured buildings
+{ const bd0 = glBackdrop; glBackdrop = function (g) { if (!envA) return bd0.apply(this, arguments);
+    const items = backdropItems(bgOf()), byKind = {}, rnd = hashRnd('env-' + bgOf());
+    const roofM = new THREE.MeshStandardMaterial({ roughness: 0.9 }); roofM.color.setRGB(0.18, 0.18, 0.19);
+    const facM = envA.facade.map(F => new THREE.MeshStandardMaterial({ map: F.map, roughnessMap: F.rm, metalnessMap: F.rm, roughness: 1, metalness: 1 }));
+    const tintK = [[1, 1, 1], [1, 0.96, 0.9], [1, 1, 1], [0.95, 0.98, 1]];
+    for (const it of items) {
+      if (it.k === 'bldg') { const geo = new THREE.BoxGeometry(it.w, it.h, it.d), uv = geo.attributes.uv;
+        for (let f = 0; f < 6; f++) { const wide = f < 2 ? it.d : it.w; for (let v = 0; v < 4; v++) { const i = f * 4 + v;
+          if (f === 2 || f === 3) uv.setXY(i, 0.5, 0.5); else uv.setXY(i, uv.getX(i) * Math.max(1, Math.round(wide / 3)), uv.getY(i) * Math.max(1, Math.round(it.h / 3))); } }
+        geo.clearGroups(); [0, 1, 2, 3, 4, 5].forEach(f => geo.addGroup(f * 6, 6, f === 2 || f === 3 ? 1 : 0));
+        const fm = facM[it.tint % facM.length]; const m = new THREE.Mesh(geo, [fm, roofM]); m.position.set(it.x, it.h / 2, it.z); m.rotation.y = it.yaw; m.receiveShadow = true; g.add(m); continue; }
+      if (it.k === 'land') { const G = envA.ground[bgOf() === 'sea' ? 'ground_sand' : 'ground_grass'], mat = new THREE.MeshStandardMaterial({ map: G.map, normalMap: G.nrm, roughness: 0.95 });
+        const d = new THREE.Mesh(new THREE.CircleGeometry(it.rad || 290, 64), mat); d.rotation.x = -Math.PI / 2; d.position.y = -0.002; d.receiveShadow = true; g.add(d); if (gl.gp) gl.gp.visible = false;
+        // the disc's UVs span 0..1 over its whole width: repeat so one tile covers its own metres
+        const n = 2 * (it.rad || 290) / G.m; G.map.repeat.set(n, n); G.nrm.repeat.set(n, n); continue; }
+      if (it.k === 'sea') { const d = new THREE.Mesh(new THREE.RingGeometry(it.r0, 290, 96), new THREE.MeshStandardMaterial({ roughness: 0.12, metalness: 0.0, color: new THREE.Color(0.04, 0.16, 0.24) })); d.rotation.x = -Math.PI / 2; d.position.y = 0.02; g.add(d); continue; }
+      const kind = it.k === 'tree' ? 'tree' : it.k === 'pine' ? 'pine' : it.k === 'peak' ? 'peak' : it.k === 'hill' ? 'hill' : null; if (!kind) continue;
+      const key = `${kind}_${(it.tint ?? 0) % 3}`; if (!envA.scen[key]) continue;
+      let sx, sy, y = 0;
+      if (kind === 'tree') { sy = it.h * 0.5 + it.cr * 2.1; sx = Math.max(sy * 0.75, it.cr * 2.3); }
+      else if (kind === 'pine') { sy = it.h * 1.05; sx = sy * 0.95; }
+      else if (kind === 'peak') { sy = it.h; sx = it.rad; y = -0.5; }
+      else { sy = it.h; sx = it.rad; y = -0.3; }
+      const M = new THREE.Matrix4().compose(new THREE.Vector3(it.x, y, it.z), new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), rnd() * Math.PI * 2), new THREE.Vector3(sx, sy, sx));
+      (byKind[key] = byKind[key] || []).push(M); }
+    for (const [key, Ms] of Object.entries(byKind)) for (const part of envA.scen[key]) {
+      const im = new THREE.InstancedMesh(part.geo, part.mat, Ms.length); Ms.forEach((M, i) => im.setMatrixAt(i, M)); im.instanceMatrix.needsUpdate = true;
+      const near = key.startsWith('tree') && Ms.length <= 24; im.castShadow = near; /* street trees throw shadows; whole forests would double the work, so they don't */ im.receiveShadow = true; im.frustumCulled = false; g.add(im); }
+  }; }
+/* ---------- set pieces modelled in Blender (assets/blender/build_props.py): the everyday furniture, street furniture and the car,
+   with bevelled edges, stuffed cushions and contact shading baked into the vertex colours. Each piece's file is fetched the first time a
+   scene uses it; until it arrives — or if it cannot load, or with ?props=0 — the piece is drawn from its face list exactly as before.
+   The catalogue thumbnails, the 2-D views and the lighting maths keep using the face lists and bounding boxes. ---------- */
+const PROPS_ON = !/[?&]props=0\b/.test(location.search), PROP_V = '?v=2';
+const PROP_GLB = new Set(['sofa', 'armchair', 'coffee', 'table', 'chair', 'cafe', 'stool', 'counter', 'desk', 'officechair', 'bed', 'nightstand', 'wardrobe', 'dresser',
+  'shelf', 'tv', 'plant', 'rug', 'floorlamp', 'kitchen', 'fridge', 'bench', 'lamp', 'car', 'bin', 'cone', 'hydrant', 'bollard']);
+const propSrc = {}; let propTexP = null, propDirtyRaf = 0; const propMetal = new Set();
+// shared detail textures; the models' UVs are in metres, so each texture repeats once per its own tile size
+function propTexLoad() {
+  if (propTexP) return propTexP; const TL = new THREE.TextureLoader();
+  const t = (f, srgb, tile) => new Promise((res, rej) => TL.load('props/' + f + '.jpg' + PROP_V, x => { x.wrapS = x.wrapT = THREE.RepeatWrapping; x.repeat.set(1 / tile, 1 / tile);
+    if ('colorSpace' in x) x.colorSpace = srgb ? THREE.SRGBColorSpace : THREE.NoColorSpace; else x.encoding = srgb ? THREE.sRGBEncoding : THREE.LinearEncoding;
+    x.anisotropy = Math.min(8, gl.R.capabilities.getMaxAnisotropy()); x._keep = true; res(x); }, undefined, rej));
+  return propTexP = Promise.all([t('tex_wood', true, 0.5), t('tex_wood_n', false, 0.5), t('tex_fabric', true, 0.1), t('tex_fabric_n', false, 0.1), t('tex_brush_n', false, 0.5)])
+    .then(([w, wn, f, fn, bn]) => ({ w, wn, f, fn, bn })); }
+// materials by role (the Blender material name's prefix): wood and fabric get their grain / weave, metals a brushed finish and the sky's reflection
+function propMat(m, T) {
+  if (m.userData.prop) return m; m.userData.prop = m.userData.shared = true; const role = (m.name || '').split('_')[0];
+  if (role === 'wood') { m.map = T.w; m.normalMap = T.wn; m.normalScale = new THREE.Vector2(0.5, 0.5); m.color.multiplyScalar(1.22); }
+  else if (role === 'fab') { m.map = T.f; m.normalMap = T.fn; m.normalScale = new THREE.Vector2(0.9, 0.9); m.color.multiplyScalar(1.12); }
+  else if (role === 'metal') { m.normalMap = T.bn; m.normalScale = new THREE.Vector2(0.25, 0.25); }
+  if (m.metalness >= 0.6) propMetal.add(m);
+  if (m.emissive && (m.emissive.r + m.emissive.g + m.emissive.b) > 0) m.toneMapped = true;
+  m.needsUpdate = true; return m; }
+function propDirty() { if (propDirtyRaf) return; propDirtyRaf = requestAnimationFrame(() => { propDirtyRaf = 0; if (gl) gl.keys.stat = null; renderAll(); }); }
+function propLoad(type) {
+  const S0 = propSrc[type]; if (S0 && !(S0.state === 'error' && S0.n < 3 && Date.now() - S0.t > 8000)) return; propSrc[type] = { state: 'loading', n: S0 ? S0.n : 0 };
+  Promise.all([humLoadLib(), propTexLoad()]).then(async ([L, T]) => {
+    const glb = await new L.GLTFLoader().loadAsync('props/' + type + '.glb' + PROP_V), parts = [];
+    glb.scene.updateMatrixWorld(true);
+    glb.scene.traverse(o => { if (!o.isMesh) return; const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); g.userData.shared = true;
+      [].concat(o.material).forEach(m => propMat(m, T)); parts.push({ geo: g, mat: o.material, emit: /^emit|^glass_(head|lamp)/.test(o.material.name || '') }); });
+    if (!parts.length) throw new Error('empty'); propSrc[type] = { state: 'ready', parts }; propDirty();
+  }).catch(e => { console.warn('set piece', type, e); const n = (propSrc[type].n || 0) + 1; propSrc[type] = { state: 'error', n, t: Date.now() }; });
+}
+// a placed piece → the model at its spot, turn and size; false = not available (yet), draw the face list instead
+function propGL(o, g) {
+  if (!PROPS_ON || !gl || !PROP_GLB.has(o.type)) return false; const S = propSrc[o.type];
+  if (!S || S.state === 'error') { propLoad(o.type); return false; } if (S.state !== 'ready') return false;
+  const F = yawFrame({ x: o.x, y: 0, z: o.z }, o.yaw || 0), sx = o.sx ?? 1, sd = o.sd ?? 1, sh = o.sh ?? 1, M = new THREE.Matrix4();
+  M.set(F.r.x * sx, F.u.x * sh, F.f.x * sd, F.P.x, F.r.y * sx, F.u.y * sh, F.f.y * sd, F.P.y, F.r.z * sx, F.u.z * sh, F.f.z * sd, F.P.z, 0, 0, 0, 1);
+  S.parts.forEach(p => { const mesh = new THREE.Mesh(p.geo, p.mat); mesh.matrixAutoUpdate = false; mesh.matrix.copy(M); mesh.castShadow = !p.emit; mesh.receiveShadow = true; g.add(mesh); });
+  return true; }
+// metals reflect the current sky (pre-filtered once per sky picture); its brightness follows the sky — or the room's bounce light indoors
+const propEnv = {};
+function propEnvSet(L) {
+  if (!propMetal.size) return; const sk = envA && gl.sky && gl.sky.material.map;
+  let pm = null; if (sk) { pm = propEnv[sk.uuid]; if (!pm) { try { const G = new THREE.PMREMGenerator(gl.R); pm = propEnv[sk.uuid] = G.fromEquirectangular(sk).texture; G.dispose(); } catch (e) { pm = null; } } }
+  const avg = c => (c[0] + c[1] + c[2]) / 3, I = L.rm ? avg(L.indCol) * L.Eind / Math.PI : avg(L.envCol) * L.env.sky / Math.PI * ((gl.sky.material.userData.k) || 1);
+  propMetal.forEach(m => { if (m.envMap !== pm) { m.envMap = pm; m.needsUpdate = true; } m.envMapIntensity = pm ? I : 0;
+    if (m.userData.met0 === undefined) m.userData.met0 = m.metalness; m.metalness = pm ? m.userData.met0 : Math.min(0.5, m.userData.met0); }); }
+{ const sd0 = sunDisc; sunDisc = function (L) { const r = sd0.apply(this, arguments); if (gl && PROPS_ON) try { propEnvSet(L); } catch (e) { } return r; }; }
+/* ---------- camera gear and light housings / stands modelled in Blender (assets/blender/build_gear.py, build_fixtures.py): camera body, lens, matte box, rods, follow focus, fluid
+   head, tripod spider and legs, dolly and its column, remote head, telescopic crane base, drone. The rigs change shape with every shot,
+   so rigFaces / camFaces stay the authority on where each part goes: while the 3-D view builds the rig, they hand each part's frame to
+   gearSink instead of drawing it, and the parts are placed (and stretched: legs, column, rods, lens) here. Until the file arrives, when a
+   rig is flagged red as out of range, or with ?props=0, the face-list rig is drawn as before. ---------- */
+var gearSink = null; // set only while the 3-D view builds the rig (see gearBuild); the 2-D views never see it
+let gearA = null, gearBusy = false;
+function gearLoad() {
+  if (gearA || gearBusy || !gl || !PROPS_ON) return; gearBusy = true;
+  Promise.all([humLoadLib(), propTexLoad()]).then(async ([L, T]) => {
+    const parts = {};
+    for (const f of ['gear', 'fixtures']) { const glb = await new L.GLTFLoader().loadAsync('props/' + f + '.glb' + PROP_V); glb.scene.updateMatrixWorld(true);
+      glb.scene.traverse(o => { if (!o.isMesh) return; let top = o; while (top.parent && top.parent !== glb.scene) top = top.parent;
+        const m = top.name.match(/^([gf])_(\w+)/); if (!m) return; const k = m[1] === 'g' ? m[2] : 'f_' + m[2]; const g = o.geometry.clone(); g.applyMatrix4(o.matrixWorld); g.userData.shared = true;
+        propMat(o.material, T); (parts[k] = parts[k] || []).push({ geo: g, mat: o.material, emit: /^emit|^glass_lens/.test(o.material.name || '') }); }); }
+    gearA = parts; if (gl) { gl.keys.cam = null; gl.keys.fix = null; } renderAll();
+  }).catch(e => console.warn('camera gear', e)).finally(() => { gearBusy = false; });
+}
+// a frame (P, r, u, f) with an offset in its own axes and a per-axis stretch → matrix
+function gearM(F, t = [0, 0, 0], k = [1, 1, 1]) { const P = fp3(F, t[0], t[1], t[2]), M = new THREE.Matrix4();
+  M.set(F.r.x * k[0], F.u.x * k[1], F.f.x * k[2], P.x, F.r.y * k[0], F.u.y * k[1], F.f.y * k[2], P.y, F.r.z * k[0], F.u.z * k[1], F.f.z * k[2], P.z, 0, 0, 0, 1); return M; }
+// run a face builder with the sink open: parts it hands over are placed as models, the rest of its faces are drawn as before
+function gearWith(fn, g, cast) {
+  const put = []; gearLoad();
+  const add = (k, M) => { if (!gearA || !gearA[k]) return false; put.push([gearA[k], M]); return true; };
+  const prev = gearSink; gearSink = (k, F, o = {}) => {
+    if (!gearA) return false;
+    if (k === 'cam') return add('cam', gearM(F)) && add('lens', gearM(F, [0, 0, 0], [o.lr, o.lr, o.ll])) && add('matte', gearM(F, [0, 0, o.mz]))
+      && add('rods', gearM(F, [0, 0, -0.22], [1, 1, 0.22 + o.mz])) && add('ff', gearM(F, [0, 0, o.ll * 0.32]));
+    if (k === 'stand') { if (!gearA.f_sbase) return false; const at = y => yawFrame({ x: o.x, y, z: o.z }, 0);
+      add('f_sbase', gearM(at(0), [0, 0, 0], [1, o.j / 0.5, 1])); add('f_slow', gearM(at(o.j - 0.06), [0, 0, 0], [1, Math.max(0.01, o.mid - o.j + 0.06), 1]));
+      if (o.top - o.mid > 0.005) add('f_sup', gearM(at(o.mid), [0, 0, 0], [1, o.top - o.mid, 1])); return true; }
+    if (k === 'car') { const S = propSrc.car; if (!S || S.state !== 'ready') { propLoad('car'); return false; } put.push([S.parts, gearM(F)]); return true; }
+    return add(k, gearM(F, o.t || [0, 0, 0], o.s || [o.sx ?? 1, o.sy ?? 1, o.sz ?? 1]));
+  };
+  let faces; try { faces = fn(); } finally { gearSink = prev; }
+  glMeshes(faces, cast).forEach(m => g.add(m));
+  put.forEach(([parts, M]) => parts.forEach(p => { const m = new THREE.Mesh(p.geo, p.mat); m.matrixAutoUpdate = false; m.matrix.copy(M); m.castShadow = cast && !p.emit; m.receiveShadow = true; g.add(m); }));
+}
+function gearBuild(s, g) { gearWith(() => rigFaces(s).concat(camFaces(s)), g, true); }
 /* ---------- 3D set view ---------- */
 const viewer = { tx: 0, ty: 1, tz: -1.5, az: 235, el: 28, dist: 9, fov: 30 };
 let wsz = null, worldHandles = [], wDrag = null, worldV = null, view3d = null;
@@ -7938,7 +8119,7 @@ if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]
 }
 $('#updBtn').onclick = () => { xMenu(false);
   if (!swReg) { location.reload(); return; }
-  toast('최신 버전을 확인하는 중…'); swReg.update().then(() => { if (!swReg.installing && !swReg.waiting) toast('지금이 최신 버전이에요 · 2026.11.13 22:02'); }).catch(() => toast('인터넷 연결을 확인해 주세요')); };
+  toast('최신 버전을 확인하는 중…'); swReg.update().then(() => { if (!swReg.installing && !swReg.waiting) toast('지금이 최신 버전이에요 · 2026.11.14 01:36'); }).catch(() => toast('인터넷 연결을 확인해 주세요')); };
 readColors();
 // three.js is an ES module, so it lands after this script has run: start on the canvas renderer and switch when it arrives
 gl = initGL();
