@@ -4990,13 +4990,30 @@ async function vrmParse(buf) {
   const toon = new Map(), conv = m => { if (!m) return m; if (toon.has(m)) return toon.get(m);
     const n = m.isMToonMaterial === undefined && !m.uniforms ? m : new THREE.MeshToonMaterial({ map: m.map || null, gradientMap: toonGrad(), transparent: !!m.transparent, alphaTest: m.alphaTest || 0, side: m.side, depthWrite: m.depthWrite });
     if (n !== m) { if (m.color) n.color.copy(m.color); if (m.isOutline || (m.userData && m.userData.vrmOutline) || m.name && /outline/i.test(m.name)) n.visible = false; }
-    n.userData.shared = true; toon.set(m, n); return n; };
+    n.userData.shared = true; n.userData.part = vrmPart(m.name || ''); if (n !== m) vrmTintable(n); toon.set(m, n); return n; };
   vrm.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; o.frustumCulled = false; o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material); }
     if (o.geometry) o.geometry.userData.shared = true; });
   // rest measurements in the model's own units: eye height and ankle height when standing
   vrmPose(vrm, 'stand'); vrm.scene.updateMatrixWorld(true); const w = vrmBoneY(vrm);
   return { vrm, eye: w.eye, foot: w.foot, name: (vrm.meta && (vrm.meta.name || vrm.meta.title)) || '' };
 }
+// VRoid names every material by part: Hair…_HAIR, Body_…_SKIN / Face_…_SKIN, Tops_…, Bottoms_…, Shoes_…, EyeIris_…
+const vrmPart = n => /hair/i.test(n) ? 'hair' : /eyeiris|iris/i.test(n) ? 'eye' : /tops|onepiece|jacket|shirt|coat/i.test(n) ? 'top' : /bottoms|skirt|pants/i.test(n) ? 'bottom' : /shoes|boots/i.test(n) ? 'shoes' : /(body|face)_\d+_skin|_skin$/i.test(n) && !/mouth|brow|eyeline|eyelash/i.test(n) ? 'skin' : '';
+// recolouring keeps the texture's shading: its brightness × the new colour (×2 so mid-grey keeps the colour as chosen); uMix 0 = original
+// the texture's own average brightness (opaque texels), so the chosen colour lands on its mid-tone: a white shirt dyed red is red, not pink
+function texLum(t) { try { const im = t && t.image; if (!im || !im.width) return 0.5; const c = document.createElement('canvas'); c.width = c.height = 32; const x = c.getContext('2d'); x.drawImage(im, 0, 0, 32, 32);
+  const d = x.getImageData(0, 0, 32, 32).data; let s = 0, n = 0; for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 128) { const l = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255; s += Math.pow(l, 2.2); n++; } return n ? Math.max(0.03, s / n) : 0.5; } catch (e) { return 0.5; } }
+function vrmTintable(m) { m.userData.tint = { uTint: { value: new THREE.Color(1, 1, 1) }, uMix: { value: 0 }, uRef: { value: m.map ? texLum(m.map) : 0.5 } };
+  m.onBeforeCompile = sh => { Object.assign(sh.uniforms, m.userData.tint);
+    sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uTint; uniform float uMix, uRef;').replace('#include <map_fragment>', `#include <map_fragment>
+	if ( uMix > 0.0 ) { float lum = dot( diffuseColor.rgb, vec3( 0.299, 0.587, 0.114 ) ); diffuseColor.rgb = mix( diffuseColor.rgb, clamp( lum / uRef * uTint, 0.0, 1.0 ), uMix ); }`); };
+  m.customProgramCacheKey = () => 'vrm-tint'; }
+// a cast member's colours and face on its model: c.vlook = { hair, eye, top, bottom, shoes, skin: [r,g,b] (linear) }, mood from the look
+const VRM_MOOD = { smile: 'happy', angry: 'angry', sad: 'sad', surprise: 'surprised' };
+function vrmLook(vrm, c) { const L = c.vlook || {};
+  vrm.scene.traverse(o => { if (!o.isMesh) return; for (const m of [].concat(o.material)) { const t = m && m.userData.tint, p = m && m.userData.part; if (!t) continue;
+    const col = p && L[p]; t.uMix.value = col ? 1 : 0; if (col) t.uTint.value.setRGB(...col); } });
+  const em = vrm.expressionManager; if (em) { for (const v of Object.values(VRM_MOOD)) em.setValue(v, 0); const mood = VRM_MOOD[c.mood]; if (mood) em.setValue(mood, mood === 'happy' ? 0.7 : 0.85); } }
 function vrmBoneY(vrm) {
   const h = vrm.humanoid, y = n => { const b = h.getRawBoneNode(n); return b ? b.getWorldPosition(new THREE.Vector3()).y : null; };
   const foot = Math.min(y('leftFoot') ?? 0, y('rightFoot') ?? 0), head = y('head') ?? 1.4, eyeB = y('leftEye');
@@ -5004,10 +5021,17 @@ function vrmBoneY(vrm) {
 }
 // one parsed copy per cast slot (two slots may wear the same file); returns it once ready, otherwise starts loading and returns null
 const vrmCache = {};
+// built-in characters, shipped with the app (chars/vrm/): VRoid-made models whose licences allow use, change and redistribution.
+// A cast slot wears one as c.vrm = 'lib:<id>', which, unlike an imported file, works on every device and in shared projects.
+const VRM_LIB = [
+  { id: 'vroid_f1', name: '하루 (긴 머리)', who: 'f', file: 'chars/vrm/vroid_f1.vrm', credit: '© pixiv Inc. · VRM1 Constraint Twist Sample (수정·재배포 허용)' },
+];
+const vrmLibOf = id => VRM_LIB.find(v => 'lib:' + v.id === id);
 function vrmGet(id, k) {
   const key = id + '|' + k, c = vrmCache[key]; if (c) return c.state === 'ready' ? c : null;
   vrmCache[key] = { state: 'loading' };
-  vrmDb.get(id).then(rec => { if (!rec) { vrmCache[key] = { state: 'missing' }; return; }
+  const lib = vrmLibOf(id);
+  (lib ? fetch(lib.file + CHARS_V).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.arrayBuffer(); }).then(buf => ({ buf })) : vrmDb.get(id)).then(rec => { if (!rec) { vrmCache[key] = { state: 'missing' }; return; }
     return vrmParse(rec.buf).then(r => { vrmCache[key] = { state: 'ready', ...r }; if (gl) gl.keys.figs = null; renderAll(); }); })
     .catch(e => { console.warn('VRM', e); vrmCache[key] = { state: 'error' }; });
   return null;
@@ -5033,7 +5057,7 @@ function vrmPose(vrm, pose) {
 function vrmFigure(vc, s, k) {
   const sb = s[k], vrm = vc.vrm, lie = sb.pose === 'lie', sc = skeleton(k, { pose: 'stand' }).eye / Math.max(0.2, vc.eye);
   vrm.scene.removeFromParent(); vrm.scene.position.set(0, 0, 0); vrm.scene.scale.setScalar(sc);
-  vrmPose(vrm, lie ? 'stand' : sb.pose || 'stand'); vrm.scene.updateMatrixWorld(true);
+  vrmLook(vrm, castOf(k)); vrmPose(vrm, lie ? 'stand' : sb.pose || 'stand'); vrm.scene.updateMatrixWorld(true);
   vrm.scene.position.y = vc.foot * sc - vrmBoneY(vrm).foot;
   const o = new THREE.Group(), inner = new THREE.Group(); inner.add(vrm.scene); o.add(inner);
   if (lie) { inner.rotation.x = -Math.PI / 2; inner.position.set(0, 0.12, LIE_Z); }
@@ -7240,10 +7264,27 @@ function syncCast() { const s = cur(); const ae = document.activeElement; if (ae
       <div class="seg kr">${Object.entries(WHO).map(([w, n]) => `<button data-who="${w}" aria-pressed="${c.who === w}">${n}</button>`).join('')}</div>
       ${dog ? `<div class="seg kr">${Object.entries(DOG_SIZES).map(([z, n]) => `<button data-dsize="${z}" aria-pressed="${(c.size || 'm') === z}">${n}</button>`).join('')}</div>`
         : `<div class="seg kr">${Object.entries(baseOnly(AGES)).map(([a, n]) => `<button data-age="${a}" aria-pressed="${(c.age || 'adult') === a}">${n}</button>`).join('')}</div>${c.vrm ? `<div class="lh"><span class="mini">키</span>${heightCtl(k)}</div>` : ''}`}
-      ${!dog && c.vrm ? `<div class="lh vrmrow"><span class="mini">3D 모델</span><span class="vrmname">${esc(c.vrmName || 'VRM')}${{ loading: ' · 불러오는 중', missing: ' · 이 기기에 없음', error: ' · 읽기 실패' }[vrmState(c.vrm, k)] || ''}</span><button class="btn sm" data-vrmpick="1">바꾸기</button><button class="btn sm ghost" data-vrmoff="1">기본</button></div>` : ''}
+      ${!dog ? vrmPanel(k, c) : ''}
+      ${!dog && c.vrm && !vrmLibOf(c.vrm) ? `<div class="lh vrmrow"><span class="mini">3D 모델</span><span class="vrmname">${esc(c.vrmName || 'VRM')}${{ loading: ' · 불러오는 중', missing: ' · 이 기기에 없음', error: ' · 읽기 실패' }[vrmState(c.vrm, k)] || ''}</span><button class="btn sm" data-vrmpick="1">바꾸기</button><button class="btn sm ghost" data-vrmoff="1">기본</button></div>` : ''}
       ${c.vrm && !dog ? '' : `<div class="lh"><span class="mini">${dog ? '털색' : '옷'}</span><div class="sw">${(dog ? pal : pal.slice(0, 7)).map((rgb, i) => `<button data-outfit="${i}" aria-pressed="${c.outfit % pal.length === i}" style="background:${linCss(rgb)}" aria-label="${dog ? FUR_NAMES[i] : '옷 색 ' + (i + 1)}"></button>`).join('')}</div></div>
       ${dog ? '' : `<div class="lh hrow"><span class="mini">피부</span><div class="sw">${SKINS.slice(0, 4).map((rgb, i) => `<button data-skin="${i}" aria-pressed="${(c.skin || 0) === i}" style="background:${linCss(rgb)}" aria-label="피부 톤 ${i + 1}"></button>`).join('')}</div><span class="hgrp"><span class="mini hlab">키</span>${heightCtl(k)}</span></div>`}`}` : ''}
     </div>`; }).join(''); }
+// the gallery of built-in characters and, on a model, its colours and expression
+const VRM_COLS = { hair: [[0.01, 0.008, 0.008], [0.09, 0.04, 0.02], [0.35, 0.16, 0.06], [0.75, 0.55, 0.3], [0.6, 0.2, 0.32], [0.18, 0.26, 0.6], [0.85, 0.85, 0.88]],
+  eye: [[0.05, 0.03, 0.02], [0.25, 0.12, 0.05], [0.1, 0.25, 0.55], [0.12, 0.4, 0.2], [0.5, 0.12, 0.3], [0.6, 0.6, 0.65]],
+  top: [[0.85, 0.85, 0.84], [0.03, 0.03, 0.035], [0.55, 0.08, 0.1], [0.1, 0.2, 0.5], [0.85, 0.45, 0.55], [0.7, 0.62, 0.42], [0.2, 0.4, 0.25]],
+  bottom: [[0.03, 0.03, 0.035], [0.12, 0.2, 0.42], [0.6, 0.55, 0.45], [0.85, 0.85, 0.84], [0.45, 0.08, 0.12], [0.3, 0.3, 0.32]],
+  shoes: [[0.03, 0.03, 0.035], [0.85, 0.85, 0.84], [0.35, 0.2, 0.1], [0.6, 0.1, 0.12]],
+  skin: [[0.95, 0.82, 0.76], [0.85, 0.66, 0.55], [0.66, 0.46, 0.34], [0.4, 0.25, 0.17]] };
+const VRM_PART_NAME = { hair: '머리', eye: '눈', top: '상의', bottom: '하의', shoes: '신발', skin: '피부' };
+function vrmPanel(k, c) {
+  const lib = vrmLibOf(c.vrm), gal = VRM_LIB.map(v => `<button data-vlib="${v.id}" aria-pressed="${c.vrm === 'lib:' + v.id}">${esc(v.name)}</button>`).join('');
+  let h = `<div class="lh vrmgal"><span class="mini">캐릭터</span><div class="seg kr wrap"><button data-vlib="" aria-pressed="${!c.vrm}">기본 인형</button>${gal}<button data-vrmpick="1">파일…</button></div></div>`;
+  if (c.vrm) { const L = c.vlook || {};
+    for (const p of Object.keys(VRM_COLS)) h += `<div class="lh"><span class="mini">${VRM_PART_NAME[p]}</span><div class="sw"><button data-vcol="${p}" data-vi="-1" aria-pressed="${!L[p]}" title="원래 색" aria-label="${VRM_PART_NAME[p]} 원래 색" style="background:linear-gradient(135deg,var(--soft) 45%,var(--line) 45% 55%,var(--soft) 55%)"></button>${VRM_COLS[p].map((rgb, i) => `<button data-vcol="${p}" data-vi="${i}" aria-pressed="${!!L[p] && L[p].join() === rgb.join()}" style="background:${linCss(rgb)}" aria-label="${VRM_PART_NAME[p]} 색 ${i + 1}"></button>`).join('')}</div></div>`;
+    h += `<div class="lh"><span class="mini">표정</span><div class="seg kr">${[['neutral', '기본'], ['smile', '미소'], ['sad', '슬픔'], ['angry', '화남'], ['surprise', '놀람']].map(([m, n]) => `<button data-vmood="${m}" aria-pressed="${(c.mood || 'neutral') === m}">${n}</button>`).join('')}</div></div>`;
+    if (lib) h += `<p class="sum">${esc(lib.credit)}</p>`; }
+  return h; }
 $('#castList').addEventListener('input', e => { const t = e.target; if (!t.classList.contains('cname')) return; const k = t.closest('.castcard').dataset.k;
   (state.cast[k] = state.cast[k] || { ...CAST0[k] }).name = t.value; save(); syncHud(); syncBars(); renderWorld(); updateSum(); });
 $('#castList').addEventListener('change', e => { if (e.target.classList.contains('cname')) { e.target.blur(); changed(true, true); } });
@@ -7253,6 +7294,9 @@ $('#castList').addEventListener('click', e => { const b = e.target.closest('butt
   if (d.look) return openLook(k);
   if (d.vrmpick) { vrmFor = k; $('#vrmFile').value = ''; $('#vrmFile').click(); return; }
   if (d.vrmoff) { delete c.vrm; delete c.vrmName; if (gl) gl.keys.figs = null; changed(true, true); return; }
+  if (d.vlib !== undefined) { if (d.vlib) { const v = VRM_LIB.find(x => x.id === d.vlib); c.vrm = 'lib:' + v.id; c.vrmName = v.name; if (c.who === 'dog') c.who = v.who; } else { delete c.vrm; delete c.vrmName; } if (gl) gl.keys.figs = null; changed(true, true); return; }
+  if (d.vcol) { const L = c.vlook = c.vlook || {}; if (+d.vi < 0) delete L[d.vcol]; else L[d.vcol] = VRM_COLS[d.vcol][+d.vi]; if (gl) gl.keys.figs = null; changed(true, true); return; }
+  if (d.vmood) { c.mood = d.vmood; if (gl) gl.keys.figs = null; changed(true, true); return; }
   if (d.who) { if (c.who !== d.who) { c.outfit = 0; delete c.height; } c.who = d.who; } if (d.age) { c.age = d.age; delete c.height; } if (d.dsize) c.size = d.dsize;
   if (d.hd) c.height = clamp(castHeight(k) + +d.hd, 90, 220);
   if (d.outfit) c.outfit = +d.outfit; if (d.skin) c.skin = +d.skin; if (d.pose) setPose(s[k], d.pose);
