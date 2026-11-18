@@ -15,15 +15,16 @@ def img(path, size=1024):
 import math
 from mathutils import Matrix, Vector
 arm = [o for o in bpy.context.scene.objects if o.type == 'ARMATURE'][0]; M = arm.matrix_world
+BIP = next(b.name.split(' ')[0] for b in arm.data.bones if b.name.endswith(' Pelvis'))
 bpy.context.view_layer.objects.active = arm; bpy.ops.object.mode_set(mode='POSE')
 for S, sx in (('L', 1), ('R', -1)):
-    pb = arm.pose.bones['Bip01 %s UpperArm' % S]; h = M @ arm.data.bones['Bip01 %s UpperArm' % S].head_local; e = M @ arm.data.bones['Bip01 %s Forearm' % S].head_local
+    pb = arm.pose.bones[BIP + ' %s UpperArm' % S]; h = M @ arm.data.bones[BIP + ' %s UpperArm' % S].head_local; e = M @ arm.data.bones[BIP + ' %s Forearm' % S].head_local
     for _ in range(3):
-        h = M @ pb.head; e = M @ arm.pose.bones['Bip01 %s Forearm' % S].head; d = (e - h).normalized(); ang = math.atan2(-d.z, abs(d.x))
+        h = M @ pb.head; e = M @ arm.pose.bones[BIP + ' %s Forearm' % S].head; d = (e - h).normalized(); ang = math.atan2(-d.z, abs(d.x))
         t = Vector((1 if d.x > 0 else -1, d.y, 0)).normalized(); q = d.rotation_difference(t).to_matrix().to_4x4()
         pb.matrix = (M.inverted() @ Matrix.Translation(h) @ q @ Matrix.Translation(-h) @ M) @ pb.matrix; bpy.context.view_layer.update()
     bpy.context.view_layer.update()
-    e2 = M @ pb.tail; print('arm', S, 'now dz', round(((M @ arm.pose.bones['Bip01 %s Forearm' % S].head) - h).z, 3))
+    e2 = M @ pb.tail; print('arm', S, 'now dz', round(((M @ arm.pose.bones[BIP + ' %s Forearm' % S].head) - h).z, 3))
 bpy.ops.object.mode_set(mode='OBJECT')
 for ob in [o for o in bpy.context.scene.objects if o.type == 'MESH']:
     mod = next(m for m in ob.modifiers if m.type == 'ARMATURE'); bpy.context.view_layer.objects.active = ob
@@ -58,7 +59,7 @@ for s, S in (('left', 'L'), ('right', 'R')):
             B[s + f + part] = f'{S} Finger{fi}' + ('' if k == 0 else str(k))
 hb = {}
 for vb, bip in B.items():
-    n = 'Bip01 ' + bip
+    n = BIP + ' ' + bip
     if n in idx: hb[vb] = { 'node': idx[n] }
 missing = [k for k in ['hips', 'spine', 'head', 'leftUpperArm', 'leftLowerArm', 'leftHand', 'rightUpperArm', 'rightLowerArm', 'rightHand', 'leftUpperLeg', 'leftLowerLeg', 'leftFoot', 'rightUpperLeg', 'rightLowerLeg', 'rightFoot'] if k not in hb]
 if missing: sys.exit('missing bones: ' + ', '.join(missing))
