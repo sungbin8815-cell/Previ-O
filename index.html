@@ -1541,6 +1541,13 @@ input[type=range]::-moz-range-thumb{background:var(--ink);border:0;box-shadow:0 
 .stage{container-type:inline-size;container-name:stage}
 #camBar .toolbar{flex-wrap:nowrap}
 @container stage (max-width:1000px){ #camBar .lab{display:none} #camBar .fab{padding:8px;min-width:var(--hit);justify-content:center} }
+
+/* character gallery (Rocketbox people) */
+.rbgal{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.rbgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:4px;max-height:280px;overflow-y:auto}
+.rbgrid button{padding:0;border:1px solid var(--line);border-radius:var(--r-2);background:var(--soft);aspect-ratio:1;overflow:hidden;min-height:var(--hit)}
+.rbgrid button img{width:100%;height:100%;object-fit:cover;display:block}
+.rbgrid button[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 </style>
 </head>
 <body>
@@ -5026,6 +5033,12 @@ const vrmCache = {};
 const VRM_LIB = [
   { id: 'vroid_f1', name: '하루 (긴 머리)', who: 'f', file: 'chars/vrm/vroid_f1.vrm', credit: '© pixiv Inc. · VRM1 Constraint Twist Sample (수정·재배포 허용)' },
 ];
+// the Microsoft Rocketbox library (MIT licence): 115 semi-realistic people, converted by tools/rb_convert.py; listed in chars/vrm/rb/index.json
+const RB_GROUPS = { f: '여성', m: '남성', c: '아이', p: '직업' };
+let rbList = null;
+setTimeout(() => fetch('chars/vrm/rb/index.json' + CHARS_V).then(r => r.ok ? r.json() : []).then(list => { rbList = list;
+  for (const v of list) VRM_LIB.push({ id: 'rb_' + v.id, name: v.name, who: v.who, grp: v.grp, file: 'chars/vrm/rb/' + v.id + '.vrm', thumb: 'chars/vrm/rb/thumbs/' + v.id + '.webp', credit: 'Microsoft Rocketbox Avatar Library (MIT 라이선스)' });
+  try { syncCast(); } catch (e) {} }).catch(() => { rbList = []; }), 0);
 const vrmLibOf = id => VRM_LIB.find(v => 'lib:' + v.id === id);
 function vrmGet(id, k) {
   const key = id + '|' + k, c = vrmCache[key]; if (c) return c.state === 'ready' ? c : null;
@@ -7276,11 +7289,16 @@ const VRM_COLS = { hair: [[0.01, 0.008, 0.008], [0.09, 0.04, 0.02], [0.35, 0.16,
   bottom: [[0.03, 0.03, 0.035], [0.12, 0.2, 0.42], [0.6, 0.55, 0.45], [0.85, 0.85, 0.84], [0.45, 0.08, 0.12], [0.3, 0.3, 0.32]],
   shoes: [[0.03, 0.03, 0.035], [0.85, 0.85, 0.84], [0.35, 0.2, 0.1], [0.6, 0.1, 0.12]],
   skin: [[0.95, 0.82, 0.76], [0.85, 0.66, 0.55], [0.66, 0.46, 0.34], [0.4, 0.25, 0.17]] };
+let vrmGrp = null;
 const VRM_PART_NAME = { hair: '머리', eye: '눈', top: '상의', bottom: '하의', shoes: '신발', skin: '피부' };
 function vrmPanel(k, c) {
-  const lib = vrmLibOf(c.vrm), gal = VRM_LIB.map(v => `<button data-vlib="${v.id}" aria-pressed="${c.vrm === 'lib:' + v.id}">${esc(v.name)}</button>`).join('');
-  let h = `<div class="lh vrmgal"><span class="mini">캐릭터</span><div class="seg kr wrap"><button data-vlib="" aria-pressed="${!c.vrm}">기본 인형</button>${gal}<button data-vrmpick="1">파일…</button></div></div>`;
-  if (c.vrm) { const L = c.vlook || {};
+  const lib = vrmLibOf(c.vrm), plain = VRM_LIB.filter(v => !v.grp).map(v => `<button data-vlib="${v.id}" aria-pressed="${c.vrm === 'lib:' + v.id}">${esc(v.name)}</button>`).join('');
+  let h = `<div class="lh vrmgal"><span class="mini">캐릭터</span><div class="seg kr wrap"><button data-vlib="" aria-pressed="${!c.vrm}">기본 인형</button>${plain}<button data-vrmpick="1">파일…</button></div></div>`;
+  const rb = VRM_LIB.filter(v => v.grp); if (rb.length) { const g = vrmGrp in RB_GROUPS ? vrmGrp : (lib && lib.grp) || 'f';
+    h += `<div class="rbgal"><div class="seg kr">${Object.entries(RB_GROUPS).map(([k2, n]) => `<button data-vgrp="${k2}" aria-pressed="${g === k2}">${n} ${rb.filter(v => v.grp === k2).length}</button>`).join('')}</div>
+      <div class="rbgrid">${rb.filter(v => v.grp === g).map(v => `<button data-vlib="${v.id}" aria-pressed="${c.vrm === 'lib:' + v.id}" title="${esc(v.name)}"><img src="${v.thumb}" alt="${esc(v.name)}" loading="lazy"></button>`).join('')}</div></div>`; }
+  if (c.vrm) { const L = c.vlook || {}, vc = vrmCache[c.vrm + '|' + k], tint = !vc || !vc.vrm || (() => { let t = false; vc.vrm.scene.traverse(o => { if (o.isMesh) for (const m of [].concat(o.material)) if (m && m.userData.part) t = true; }); return t; })();
+    if (!tint) { if (lib) h += `<p class="sum">${esc(lib.credit)}</p>`; return h; }
     for (const p of Object.keys(VRM_COLS)) h += `<div class="lh"><span class="mini">${VRM_PART_NAME[p]}</span><div class="sw"><button data-vcol="${p}" data-vi="-1" aria-pressed="${!L[p]}" title="원래 색" aria-label="${VRM_PART_NAME[p]} 원래 색" style="background:linear-gradient(135deg,var(--soft) 45%,var(--line) 45% 55%,var(--soft) 55%)"></button>${VRM_COLS[p].map((rgb, i) => `<button data-vcol="${p}" data-vi="${i}" aria-pressed="${!!L[p] && L[p].join() === rgb.join()}" style="background:${linCss(rgb)}" aria-label="${VRM_PART_NAME[p]} 색 ${i + 1}"></button>`).join('')}</div></div>`;
     h += `<div class="lh"><span class="mini">표정</span><div class="seg kr">${[['neutral', '기본'], ['smile', '미소'], ['sad', '슬픔'], ['angry', '화남'], ['surprise', '놀람']].map(([m, n]) => `<button data-vmood="${m}" aria-pressed="${(c.mood || 'neutral') === m}">${n}</button>`).join('')}</div></div>`;
     if (lib) h += `<p class="sum">${esc(lib.credit)}</p>`; }
@@ -7296,6 +7314,7 @@ $('#castList').addEventListener('click', e => { const b = e.target.closest('butt
   if (d.vrmoff) { delete c.vrm; delete c.vrmName; if (gl) gl.keys.figs = null; changed(true, true); return; }
   if (d.vlib !== undefined) { if (d.vlib) { const v = VRM_LIB.find(x => x.id === d.vlib); c.vrm = 'lib:' + v.id; c.vrmName = v.name; if (c.who === 'dog') c.who = v.who; } else { delete c.vrm; delete c.vrmName; } if (gl) gl.keys.figs = null; changed(true, true); return; }
   if (d.vcol) { const L = c.vlook = c.vlook || {}; if (+d.vi < 0) delete L[d.vcol]; else L[d.vcol] = VRM_COLS[d.vcol][+d.vi]; if (gl) gl.keys.figs = null; changed(true, true); return; }
+  if (d.vgrp) { vrmGrp = d.vgrp; syncCast(); return; }
   if (d.vmood) { c.mood = d.vmood; if (gl) gl.keys.figs = null; changed(true, true); return; }
   if (d.who) { if (c.who !== d.who) { c.outfit = 0; delete c.height; } c.who = d.who; } if (d.age) { c.age = d.age; delete c.height; } if (d.dsize) c.size = d.dsize;
   if (d.hd) c.height = clamp(castHeight(k) + +d.hd, 90, 220);
