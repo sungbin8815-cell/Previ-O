@@ -36,9 +36,9 @@
   --r-1:2px; --r-2:4px; --r-3:8px; --r-s:4px; --r-m:8px; --r-l:8px;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
   --hit:44px;
-  --f-num:"Barlow Condensed","Pretendard",sans-serif;
-  --f-display:"Pretendard","Inter","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; --f-logo:"Inter","Pretendard",sans-serif;
-  --f-body:"Pretendard","Inter","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"Barlow Condensed","IBM Plex Sans KR",sans-serif;
+  --f-display:"IBM Plex Sans KR","Inter","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; --f-logo:"Inter","IBM Plex Sans KR",sans-serif;
+  --f-body:"IBM Plex Sans KR","Inter","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 *{box-sizing:border-box}
@@ -1598,6 +1598,43 @@ input[type=range]::-moz-range-thumb{width:3px;height:18px;border-radius:0;backgr
 input[type=range]::-moz-range-progress{background:transparent}
 /* brand: silver mount ring around a graphite badge */
 .logo{background:var(--raise);box-shadow:inset 0 0 0 1px var(--silver);border-radius:50%} .logo svg{stroke:var(--accent)}
+
+/* ---------- mechanical controls (2026-11-19) ---------- */
+/* rulers: fixed values (focal lengths, stops) sit on a scale like the engraving on a lens barrel; the set one gets the lime index */
+.fpresets,.ruler,.ticks{display:flex;gap:0;margin-top:8px;position:relative;padding-top:12px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.fpresets::before,.ruler::before,.ticks::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;pointer-events:none;
+  background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 6px) top/100% 4px no-repeat,linear-gradient(var(--muted),var(--muted)) top/100% 1px no-repeat}
+.fpresets button,.ruler button,.ticks button{flex:1 0 auto;min-width:40px;min-height:var(--hit);background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;padding:4px 4px 0;position:relative;color:var(--ink2);cursor:pointer}
+.fpresets button::before,.ruler button::before,.ticks button::before{content:"";position:absolute;top:-12px;left:50%;width:1px;height:8px;background:var(--muted)}
+.fpresets button b,.ruler button b,.ticks button{font:600 17px/1 var(--f-num);letter-spacing:.02em}
+.fpresets button small{font:500 var(--fs-1) var(--f-body);color:var(--muted)}
+.fpresets button[aria-pressed="true"],.ruler button[aria-pressed="true"],.ticks button[aria-pressed="true"]{color:var(--accent)!important;background:transparent!important}
+.fpresets button[aria-pressed="true"]::before,.ruler button[aria-pressed="true"]::before,.ticks button[aria-pressed="true"]::before{background:var(--accent);height:14px;top:-14px;width:2px;margin-left:-1px}
+.fpresets button:hover,.ruler button:hover,.ticks button:hover{color:var(--ink)}
+.ruler{margin-top:4px}
+/* dials: a knurled ring with a lime index line, turned by dragging */
+.dialin{position:absolute!important;opacity:0;width:1px!important;height:1px!important;pointer-events:none}
+.dialin:focus-visible + output{outline:1.5px solid var(--accent);outline-offset:2px}
+.dial{position:relative;width:44px;height:44px;flex:none;justify-self:start;cursor:ns-resize;touch-action:none;border-radius:50%;
+  background:conic-gradient(from -135deg,var(--accent) calc(var(--p,0) * 270deg),var(--line) 0 270deg,transparent 0);padding:3px}
+.dial .dk{display:block;width:100%;height:100%;border-radius:50%;position:relative;
+  background:radial-gradient(circle at 50% 40%,#34373C 0 30%,#212327 54%,transparent 55%),repeating-conic-gradient(#4A4E55 0 4deg,#141518 4deg 8deg);box-shadow:inset 0 0 0 1px #000}
+.dial .dx{position:absolute;left:50%;top:3px;width:2px;height:11px;margin-left:-1px;background:var(--accent)}
+.dial.on .dk{filter:brightness(1.2)}
+.xrow .dial{align-self:center}
+/* setting lists: rows like a camera menu — name left, value right, hairlines, the chosen row marked on its left edge */
+.objlist button,.riglist button{background:transparent!important;border:0!important;border-bottom:1px solid var(--line2)!important;border-radius:0!important;box-shadow:none!important;text-align:left}
+.objlist button[aria-pressed="true"],.riglist button[aria-pressed="true"]{box-shadow:inset 2px 0 0 var(--accent)!important;color:var(--accent)}
+/* viewfinder brackets instead of boxes: the current shot and chosen catalogue pieces get four corner marks */
+.card,.addgrid button,.sm-grid button{border-color:transparent!important;--bk:var(--line)}
+.card[aria-current="true"],.addgrid button[aria-pressed="true"],.sm-grid button[aria-pressed="true"]{--bk:var(--accent)}
+.card,.addgrid button,.sm-grid button{background-image:
+  linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),
+  linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk))!important;
+  background-repeat:no-repeat!important;background-size:10px 1px,1px 10px,10px 1px,1px 10px,10px 1px,1px 10px,10px 1px,1px 10px!important;
+  background-position:0 0,0 0,100% 0,100% 0,0 100%,0 100%,100% 100%,100% 100%!important;background-color:var(--soft)!important;box-shadow:none!important}
+.card[aria-current="true"]{background-size:12px 2px,2px 12px,12px 2px,2px 12px,12px 2px,2px 12px,12px 2px,2px 12px!important}
 </style>
 </head>
 <body>
@@ -1735,6 +1772,7 @@ input[type=range]::-moz-range-progress{background:transparent}
         </div>
         <div class="ptab" data-tab="expo">
           <div class="lh"><span class="mini">조리개</span><input type="range" id="nRange" min="0" max="10" step="1" aria-label="조리개"><output id="nOut"></output></div>
+          <div class="ruler" id="nRuler" role="group" aria-label="조리개 눈금"></div>
           <div class="lh stoprow"><span class="mini" id="nAlt"></span><div class="seg" id="stopSeg" role="group" aria-label="조리개 표기"><button data-stop="T" title="시네 렌즈: T값 (실제로 통과하는 빛)">T값</button><button data-stop="f" title="사진 렌즈: f값 (초점거리 ÷ 구경)">f값</button></div></div>
           <div class="lh"><span class="mini" id="shLab">셔터</span><div class="seg" id="shSeg"></div></div>
           <div class="lh"><span class="mini" id="isoLab">ISO</span><div class="seg" id="isoSeg"></div></div>
@@ -6908,7 +6946,7 @@ $('#fRange').addEventListener('input', e => { lensView(); setF(roundF(r2f(+e.tar
 $('#fRange').addEventListener('change', () => { keepDone(); changed(true); });
 $('#ticks').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { lensView(); setF(+b.dataset.f); keepDone(); changed(true); } });
 // 간편 모드: no lens kits, just a handful of views by name (full-frame focal lengths)
-$('#fPresets').innerHTML = F_PRESETS.map(([f, n]) => `<button data-f="${f}"><b>${n}</b><small>${f}mm</small></button>`).join('');
+$('#fPresets').innerHTML = F_PRESETS.map(([f, n]) => `<button data-f="${f}" aria-label="${n} ${f}mm"><b>${f}</b><small>${n}</small></button>`).join('');
 $('#fPresets').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { lensView(); setF(roundF(kitF(+b.dataset.f * imageArea().iw / imageArea({ w: 36, h: 24 }).iw))); keepDone(); changed(true); } });
 $('#keepSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.keepSize = b.dataset.keep === '1'; keepMsg = null; changed(true); });
 // distance from the subject to the wall behind it along the camera's heading (the background it is shot against); outdoors it is far away
@@ -6931,6 +6969,23 @@ $('#kitSel').addEventListener('change', e => { const prev = KIT(); state.kit = e
   state.shots.forEach(s => { s.f = roundF(kitF(s.f, k)); s.N = Math.max(s.N, maxT(k, s.f)); });
   buildTicks(); vsz = null; changed(true, true);
   toast(k.id === 'free' ? '키트 없이 초점거리를 자유롭게 고릅니다' : `${k.name} — 모든 샷을 가장 가까운 초점거리로 맞췄어요${k.sq ? ` · 아나모픽 ${k.sq}x 스퀴즈 적용` : ''}`); });
+// ---------- dials: every 0–100 % setting (a slider whose reading ends in %) is turned like a lens ring / a knob on a light ----------
+// The range input stays (keyboard, screen readers, the existing handlers); a knob is drawn over it. Drag up or right to turn it up,
+// down or left to turn it down; the wheel turns it in steps. Turning fires the input's own input / change events.
+function dialize(root) { root.querySelectorAll('input[type=range]').forEach(r => { if (r.dataset.dial) return; const o = r.nextElementSibling;
+    if (!(o && o.tagName === 'OUTPUT' && /%$/.test(o.textContent.trim()))) return; r.dataset.dial = 1;
+    const k = document.createElement('span'); k.className = 'dial'; k.setAttribute('aria-hidden', 'true'); k.innerHTML = '<i class="dk"><i class="dx"></i></i>'; r.before(k); r.classList.add('dialin');
+    const span = () => { const a = +r.min, b = +r.max; return (+r.value - a) / ((b - a) || 1); };
+    const draw = () => { k.firstChild.style.transform = `rotate(${-135 + 270 * span()}deg)`; k.style.setProperty('--p', span()); }; draw(); r.addEventListener('input', draw);
+    const set = v => { const a = +r.min, b = +r.max, st = +r.step || 1; v = Math.min(b, Math.max(a, Math.round((v - a) / st) * st + a)); if (+r.value === v) return; r.value = v; r.dispatchEvent(new Event('input', { bubbles: true })); };
+    let d = null; k.addEventListener('pointerdown', e => { e.preventDefault(); k.setPointerCapture(e.pointerId); d = { x: e.clientX, y: e.clientY, v: +r.value }; k.classList.add('on'); });
+    k.addEventListener('pointermove', e => { if (!d) return; const range = +r.max - +r.min; set(d.v + ((e.clientX - d.x) - (e.clientY - d.y)) / 160 * range); });
+    const end = () => { if (!d) return; d = null; k.classList.remove('on'); r.dispatchEvent(new Event('change', { bubbles: true })); };
+    k.addEventListener('pointerup', end); k.addEventListener('pointercancel', end);
+    k.addEventListener('wheel', e => { e.preventDefault(); set(+r.value + (e.deltaY < 0 ? 1 : -1) * Math.max(+r.step || 1, (+r.max - +r.min) / 40)); clearTimeout(k._t); k._t = setTimeout(() => r.dispatchEvent(new Event('change', { bubbles: true })), 300); }, { passive: false });
+  }); }
+new MutationObserver(() => dialize(document.body)).observe(document.body, { childList: true, subtree: true }); dialize(document.body);
+$('#nRuler').addEventListener('click', e => { const b = e.target.closest('[data-ni]'); if (!b) return; const s = cur(); s.N = stopsFor(s)[+b.dataset.ni]; changed(true); });
 $('#stopSeg').addEventListener('click', e => { const b = e.target.closest('[data-stop]'); if (!b) return; state.freeStop = b.dataset.stop; changed(true, true); });
 $('#nRange').addEventListener('input', e => { const s = cur(); s.N = stopsFor(s)[+e.target.value]; changed(false); });
 $('#nRange').addEventListener('change', () => changed(true));
@@ -7236,6 +7291,7 @@ function syncPanels() {
   document.querySelectorAll('#keepSeg button').forEach(b => b.setAttribute('aria-pressed', (b.dataset.keep === '1') === (state.keepSize === true)));
   const st = stopsFor(s); $('#nRange').max = st.length - 1;
   $('#nRange').value = st.reduce((bi, x, i) => Math.abs(x - s.N) < Math.abs(st[bi] - s.N) ? i : bi, 0); $('#nOut').textContent = stopTxt(s.N);
+  $('#nRuler').innerHTML = st.map((x, i) => `<button data-ni="${i}" aria-pressed="${+$('#nRange').value === i}" aria-label="${stopTxt(x)}"><b>${x}</b></button>`).join('');
   { const kf = KIT().id === 'free'; $('#stopSeg').hidden = !kf; document.querySelectorAll('#stopSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.stop === stopKind()));
     $('#nAlt').textContent = stopKind() === 'f' ? `사진 렌즈 표기 · 노출은 ${stopAlt(s.N)} 상당` : `시네 렌즈 표기 · 심도는 ${stopAlt(s.N)} 상당`; }
   // only what needs saying: a lens kit that doesn't cover the sensor
