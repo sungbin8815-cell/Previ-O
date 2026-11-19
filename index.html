@@ -16,26 +16,27 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
 /* PREVIO design system. One full-height workspace: header, tool rail, stage (3D / monitor / top), a drawer that opens beside the stage
    (a bottom sheet on phones) and the shot strip. Surfaces: paper (app) < sheet (chrome) < raise (cards inside panels). */
 :root{
-  /* design tokens (2026-11-19, ARRI-style pass): camera-menu black, neutral greys told apart by lightness, white type,
-     ONE fluorescent green for what is active, selected or the main action. Recording red and caution amber keep their meaning. */
-  --paper:#000000; --sheet:#0A0A0A; --raise:#161616; --soft:#101010; --line:#262626; --line2:#1A1A1A;
-  --ink:#F2F2F2; --ink2:#BDBDBD; --muted:#808080;
-  --accent:#39FF14; --accent-ink:#000000; --accent-soft:rgba(57,255,20,.10); --accent2:#39FF14; --pencil:#CFCFCF; --tally:#39FF14;
-  --ok:#39FF14; --caution:#FFC400; --rec:#FF2A1F; --warn:#FF5A3C;
-  --figA:#2F3A40; --figB:#40382E; --col:#2A2D30; --cam:#A5A5A5; --wall:#2B2B2B; --prop:#555046;
-  --sky:#0C0C0C; --ground:#080808; --grid:rgba(57,255,20,.10); --shadow:rgba(0,0,0,.6);
-  --vf:#000000; --vf-ink:#F2F2F2; --vf-dim:#8A8A8A;
+  /* design tokens (2026-11-19, lens pass): taken from a cine prime — matte graphite barrel, lime engraving for what is set or active,
+     mount silver for the finest rules. Surfaces differ by lightness only. Recording red and caution amber keep their meaning. */
+  --paper:#0D0E0F; --sheet:#151618; --raise:#1C1D20; --soft:#18191B; --line:#2A2C30; --line2:#212225;
+  --ink:#ECEDEE; --ink2:#B6B8BC; --muted:#7E8187; --silver:#AEB3BA;
+  --accent:#C9DD4F; --accent-ink:#121309; --accent-soft:rgba(201,221,79,.09); --accent2:#C9DD4F; --pencil:#CFD1D4; --tally:#C9DD4F;
+  --ok:#9CCB5A; --caution:#E3B341; --rec:#E5483A; --warn:#E0745E;
+  --figA:#2F3A40; --figB:#40382E; --col:#2A2D30; --cam:#A9ACB1; --wall:#2B2C2E; --prop:#555046;
+  --sky:#101113; --ground:#0B0C0D; --grid:rgba(201,221,79,.09); --shadow:rgba(0,0,0,.55);
+  --vf:#050505; --vf-ink:#ECEDEE; --vf-dim:#8A8D92;
   --sh-1:none; --sh-2:0 0 0 1px var(--line);
   color-scheme:dark;
   --fs-1:11px; --fs-2:13px; --fs-3:15px; --fs-4:22px;
-  --r-1:0px; --r-2:2px; --r-3:2px; --r-s:2px; --r-m:2px; --r-l:2px;
+  --r-1:2px; --r-2:4px; --r-3:8px; --r-s:4px; --r-m:8px; --r-l:8px;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
   --hit:44px;
+  --f-num:"Barlow Condensed","Pretendard",sans-serif;
   --f-display:"Pretendard","Inter","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; --f-logo:"Inter","Pretendard",sans-serif;
   --f-body:"Pretendard","Inter","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -1540,20 +1541,63 @@ input[type=range]::-moz-range-thumb{background:var(--ink);border:0;box-shadow:0 
 @container stage (max-width:1000px){ #camBar .lab{display:none} #camBar .fab{padding:8px;min-width:var(--hit);justify-content:center} }
 
 
-/* ---------- ARRI-style pass (2026-11-19): black camera-menu look, fluorescent green for active / selected / main action ---------- */
-.btn.primary,.sbtn.primary,.hm-big.primary,.hm-act.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.btn.primary:hover,.sbtn.primary:hover,.hm-big.primary:hover,.hm-act.primary:hover{background:#6BFF4F;border-color:#6BFF4F}
-:is(.btn,.fab,.chip,.seg button,.modeseg button,.vtoggle button,.sw button,.ticks button,.fpresets button,.riglist button,.objlist button,.sm-grid button,.mc-item,.chips button,.seqb,.vf-tools button,.posebar button,.rigbar .rt button,.fsbtn,.movepad button)[aria-pressed="true"]{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
-.seg button[aria-pressed="true"],.vtoggle button[aria-pressed="true"],.modeseg button[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 -2px 0 var(--accent)}
-.rail button[aria-pressed="true"],.rail button[aria-pressed="true"] svg{color:var(--accent);stroke:var(--accent)}
-.ptabs button[aria-pressed="true"],.dtabs button[aria-pressed="true"],.looktabs button[aria-selected="true"]{color:var(--accent)}
-.card[aria-current="true"] .no{background:var(--accent);color:var(--accent-ink)}
-.logo{background:var(--accent)} .logo svg{stroke:#000}
-/* labels like a camera menu: small, spaced capitals for the Latin parts, quiet grey */
-.mini,.rail .rg,.meta,.cat,.hud .mf i{letter-spacing:.08em;text-transform:uppercase}
-.bar,.rail,.drawer,.shots{border-color:var(--line)}
-input[type=range]::-webkit-slider-thumb{background:var(--accent)} input[type=range]::-moz-range-thumb{background:var(--accent)}
-input[type=range]::-moz-range-progress{background:var(--accent)}
+/* ---------- lens pass (2026-11-19): a cine prime as the design brief ----------
+   barrel  : matte graphite surfaces with a faint anodised grain; no boxes inside boxes — sections are separated by hairlines
+   knurling: the fine ribbed band of a focus gear, only along the top edge of the drawer and the shot strip
+   engraving: lime marks the value that is set (pressed option, current shot, slider index, main action); condensed numerals for readouts
+   scales  : segmented choices read like a lens scale — plain labels, the set one lime with a short index tick under it */
+.bar,.rail,.drawer,.shots{background:var(--sheet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+.db{background:transparent}
+.drawer,.shots{position:relative}
+.drawer::before,.shots::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;pointer-events:none;
+  background:repeating-linear-gradient(90deg,#2E3034 0 1px,#16171A 1px 3px);border-bottom:1px solid var(--line)}
+/* panels: flat, one level deep */
+.ptab,.castcard,.edit{background:transparent;border:0;box-shadow:none;padding:12px 4px;border-radius:0}
+.ptab + .ptab,.castcard + .castcard{border-top:1px solid var(--line2)}
+.edit{border-left:2px solid var(--accent);padding-left:12px}
+.mini,.rail .rg,.cat{font-size:var(--fs-1);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+/* tabs: engraved labels, a short lime index under the open one */
+.ptabs,.dtabs{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0}
+.ptabs button,.dtabs button{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--muted);position:relative;border-radius:0}
+.ptabs button[aria-pressed="true"],.dtabs button[aria-pressed="true"]{color:var(--accent)!important}
+.ptabs button[aria-pressed="true"]::after,.dtabs button[aria-pressed="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;width:18px;height:2px;margin-left:-9px;background:var(--accent);border-radius:0}
+/* segmented choices: a lens scale, not a pill box */
+.seg{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0}
+.seg button{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--ink2);border-radius:0;position:relative;font-weight:500}
+.seg button[aria-pressed="true"]{color:var(--accent)!important;font-weight:600}
+.seg button[aria-pressed="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;width:2px;height:6px;margin-left:-1px;background:var(--accent)}
+.vtoggle,.modeseg{background:color-mix(in srgb,var(--sheet) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-3);padding:2px;gap:0}
+.vtoggle button,.modeseg button{border-radius:6px;color:var(--muted)}
+.vtoggle button[aria-pressed="true"],.modeseg button[aria-pressed="true"]{background:var(--raise)!important;color:var(--accent)!important;box-shadow:none!important}
+/* buttons: graphite with a hairline; the main action is lime engraving on graphite, not a filled slab */
+.btn{background:var(--raise);border:1px solid var(--line);border-radius:var(--r-2);color:var(--ink)}
+.btn:hover{border-color:var(--silver)}
+.btn.primary,.sbtn.primary,.hm-big.primary,.hm-act.primary{background:var(--raise);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 55%,var(--line))}
+.btn.primary:hover,.sbtn.primary:hover,.hm-big.primary:hover,.hm-act.primary:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+:is(.btn,.fab,.chip,.sw button,.ticks button,.fpresets button,.riglist button,.objlist button,.sm-grid button,.mc-item,.chips button,.seqb,.vf-tools button,.posebar button,.rigbar .rt button,.fsbtn,.movepad button)[aria-pressed="true"]{
+  color:var(--accent);border-color:color-mix(in srgb,var(--accent) 60%,var(--line));background:var(--accent-soft);box-shadow:none}
+.fpresets button,.ticks button,.riglist button,.addgrid button{border-radius:var(--r-2)}
+.toolbar.glass,.glass,.chipi{background:color-mix(in srgb,var(--sheet) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-3)}
+/* rail: the active tool gets the index mark, not a filled tile */
+.rail button[aria-pressed="true"]{background:transparent;color:var(--accent)}
+.rail button[aria-pressed="true"] svg{stroke:var(--accent)}
+.rail button[aria-pressed="true"]::before{width:2px;background:var(--accent)}
+/* shot cards */
+.card{border-radius:var(--r-2);border-color:var(--line)}
+.card[aria-current="true"]{border-color:var(--accent);box-shadow:none}
+.card[aria-current="true"] .no{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+/* readouts: condensed numerals like the focal length on the barrel */
+#fOut,#nOut,.hud .mf b,.chipi b,.card .no,.dur output,.ticks button,.fpresets button b{font-family:var(--f-num);font-weight:600;letter-spacing:.02em}
+#fOut,#nOut{font-size:26px;color:var(--accent);line-height:1}
+/* sliders: a scale with ticks and a thin index line */
+input[type=range]{background:transparent}
+input[type=range]::-webkit-slider-runnable-track{height:10px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 8px) bottom/100% 6px no-repeat,linear-gradient(var(--line),var(--line)) bottom/100% 1px no-repeat}
+input[type=range]::-moz-range-track{height:10px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 8px) bottom/100% 6px no-repeat,linear-gradient(var(--line),var(--line)) bottom/100% 1px no-repeat}
+input[type=range]::-webkit-slider-thumb{width:3px;height:18px;border-radius:0;background:var(--accent);border:0;box-shadow:none;margin-top:-6px}
+input[type=range]::-moz-range-thumb{width:3px;height:18px;border-radius:0;background:var(--accent);border:0;box-shadow:none}
+input[type=range]::-moz-range-progress{background:transparent}
+/* brand: silver mount ring around a graphite badge */
+.logo{background:var(--raise);box-shadow:inset 0 0 0 1px var(--silver);border-radius:50%} .logo svg{stroke:var(--accent)}
 </style>
 </head>
 <body>
