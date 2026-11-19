@@ -4991,6 +4991,7 @@ async function vrmParse(buf) {
   const gltf = await loader.parseAsync(buf, ''), vrm = gltf.userData.vrm; if (!vrm) throw new Error('VRM 파일이 아니에요');
   L.VRMUtils.removeUnnecessaryVertices(gltf.scene); L.VRMUtils.removeUnnecessaryJoints(gltf.scene);
   if (vrm.meta && vrm.meta.metaVersion === '0') L.VRMUtils.rotateVRM0(vrm); // VRM 0.x faces −Z; turn it to face +Z like the cast
+  vrm.userData = vrm.userData || {}; vrm.userData.restArm = +(((gltf.parser.json || {}).extras || {}).previoRestArm) || 0; // models rigged with their arms down: how far below horizontal
   // MToon's own shader doesn't compile with spot-light shadows on three r160, so each surface becomes the app's toon material
   // (same texture, colour and transparency); MToon's outline pass is dropped. The model is reused from shot to shot, so the
   // scene clean-up must never dispose it.
@@ -5032,6 +5033,7 @@ const vrmCache = {};
 // A cast slot wears one as c.vrm = 'lib:<id>', which, unlike an imported file, works on every device and in shared projects.
 const VRM_LIB = [
   { id: 'f_young', name: '여성 청년', who: 'f', file: 'chars/vrm/f_young.vrm', credit: 'PREVIO 자체 제작 (그림 → 3D 변환)' },
+  { id: 'm_young', name: '남성 청년', who: 'm', file: 'chars/vrm/m_young.vrm', credit: 'PREVIO 자체 제작 (그림 → 3D 변환)' },
   { id: 'vroid_f1', name: '하루 (긴 머리)', who: 'f', file: 'chars/vrm/vroid_f1.vrm', credit: '© pixiv Inc. · VRM1 Constraint Twist Sample (수정·재배포 허용)' },
 ];
 // the Microsoft Rocketbox library (MIT licence): 115 semi-realistic people, converted by tools/rb_convert.py; listed in chars/vrm/rb/index.json
@@ -5062,7 +5064,7 @@ function vrmPose(vrm, pose) {
     for (const [ax, deg] of rots) q.premultiply(new THREE.Quaternion().setFromAxisAngle(ax, deg * DEG)); b.quaternion.copy(q); };
   for (const sd of ['L', 'R']) { const side = sd === 'L' ? 'left' : 'right', sx = sd === 'L' ? -1 : 1, [a, b] = P.legs[sd], [ua, eb, out] = P.arms[sd];
     set(side + 'UpperLeg', [X, -a]); set(side + 'LowerLeg', [X, b]); set(side + 'Foot', [X, clamp(a - b, -45, 45)]);
-    set(side + 'UpperArm', [Z, sx * (90 - out)], [X, -ua]); set(side + 'LowerArm', [Y, sx * eb]); }
+    set(side + 'UpperArm', [Z, sx * (90 - out - ((vrm.userData && vrm.userData.restArm) || 0))], [X, -ua]); set(side + 'LowerArm', [Y, sx * eb]); }
   const lean = P.lean || 0; set('spine', [X, lean * 0.5]); set('chest', [X, lean * 0.5]);
   // vrm.update carries the pose to the raw bones and runs the model's constraints (twist bones in sleeves); hair springs settle at rest
   vrm.update(0); vrm.scene.updateMatrixWorld(true); if (vrm.nodeConstraintManager) vrm.nodeConstraintManager.update(); if (vrm.springBoneManager) vrm.springBoneManager.reset();

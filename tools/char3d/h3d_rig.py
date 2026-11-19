@@ -14,20 +14,27 @@ zmin = min(v.z for v in V); zmax = max(v.z for v in V); Hh = zmax - zmin; cx = (
 Z = lambda f: zmin + Hh * f
 def band(f, w=0.01): return [v for v in V if abs(v.z - Z(f)) < Hh * w]
 def mid(vs): return sum(vs, Vector()) / len(vs) if vs else Vector()
-# torso half-width at chest height: the gap between body and arms at z = 0.70
-row = sorted(v.x for v in band(0.70)); gaps = [(row[i + 1] - row[i], row[i]) for i in range(len(row) - 1)]
-L = [x for x in row if x < cx]; R = [x for x in row if x > cx]
-def inner_gap(xs, side):   # the widest jump between consecutive points on one side: between the torso and the arm
-    xs = sorted(xs, key=lambda x: abs(x - cx)); best = (0, None)
-    for a, b in zip(xs, xs[1:]):
-        if abs(b - a) > best[0]: best = (abs(b - a), (a + b) / 2)
-    return best[1]
-tL, tR = inner_gap(L, -1), inner_gap(R, 1); half = (abs(tL - cx) + abs(tR - cx)) / 2; print('torso half', round(half, 3))
+# the torso at each height: split that height's points into clusters at gaps wider than 1.2 cm; the cluster around the centre line
+# is the body, the ones beside it are the arms. Works whether the arms are lifted (A-pose) or hang close to the sides.
+def clusters(f, w=0.01):
+    xs = sorted(v.x for v in band(f, w)); out = []
+    for x in xs:
+        if out and x - out[-1][1] < Hh * 0.006: out[-1][1] = x
+        else: out.append([x, x])
+    return out
+def body_at(f):   # every cluster that reaches into the torso core (8.5% of the height either side of the centre line)
+    core = Hh * 0.085; cs = [c for c in clusters(f) if c[1] > cx - core and c[0] < cx + core]
+    return [min(c[0] for c in cs), max(c[1] for c in cs)] if cs else [cx - core, cx + core]
+TB = {k: body_at(k / 100) for k in range(30, 84)}
+def in_body(v):
+    k = min(83, max(30, round((v.z - zmin) / Hh * 100))); c = TB[k]; return c[0] - Hh * 0.004 <= v.x <= c[1] + Hh * 0.004
+half = Hh * 0.10 / 0.92   # shoulder joints at 10% of the height either side of the centre (human proportion; measuring fails when arms touch the body)
+print('torso half', round(half, 3))
 def legs(f):
     vs = [v for v in band(f, 0.012) if abs(v.x - cx) < half * 1.05]; l = [v for v in vs if v.x < cx]; r = [v for v in vs if v.x > cx]; return mid(l), mid(r)
 hipL, hipR = legs(0.47); kneeL, kneeR = legs(0.27); ankL, ankR = legs(0.055)
 def depth(f): vs = band(f, 0.015); vs = [v for v in vs if abs(v.x - cx) < half]; return mid(vs).y if vs else 0
-J = {}
+J = {}; ARM = {}
 J['hips'] = Vector((cx, depth(0.52), Z(0.52))); J['spine'] = Vector((cx, depth(0.58), Z(0.58))); J['chest'] = Vector((cx, depth(0.66), Z(0.66)))
 J['upperChest'] = Vector((cx, depth(0.73), Z(0.73))); J['neck'] = Vector((cx, depth(0.82), Z(0.82))); J['head'] = Vector((cx, depth(0.855), Z(0.855))); J['headTop'] = Vector((cx, depth(0.9), zmax))
 for s, hip, knee, ank in (('left', hipL if True else 0, kneeL, ankL), ('right', hipR, kneeR, ankR)): pass
@@ -38,14 +45,15 @@ for s, sx in (('left', 1), ('right', -1)):
     J[s + 'UpperLeg'] = Vector((hip.x, hip.y, Z(0.49))); J[s + 'LowerLeg'] = knee; J[s + 'Foot'] = Vector((ank.x, ank.y, Z(0.045)))
     toe = [v for v in V if v.z < Z(0.03) and (v.x - cx) * sx > 0]; tip = min(toe, key=lambda v: v.y) if toe else ank
     J[s + 'Toes'] = Vector((ank.x, (ank.y + tip.y) / 2, Z(0.015))); J[s + 'ToesEnd'] = Vector((ank.x, tip.y, Z(0.01)))
-    # the arm: points beyond the torso, above the hips; walk outwards along x and take each slice's centre
-    arm = [v for v in V if (v.x - cx) * sx > half * 1.05 and v.z > Z(0.45)]
-    ext = max(abs(v.x - cx) for v in arm)
-    def at(t):   # centre of the arm at a fraction t of the way from the shoulder (x = half) to the fingertips
-        x = cx + sx * (half + (ext - half) * t); sl = [v for v in arm if abs(v.x - x) < (ext - half) * 0.04]; return mid(sl)
+    # the arm: points beside the body cluster, above the hips, on this side; joints along the line shoulder -> fingertip
     sh = Vector((cx + sx * half * 0.92, J['upperChest'].y, Z(0.80)))
+    arm = [v for v in V if (v.x - cx) * sx > 0 and Z(0.40) < v.z < Z(0.80) and not in_body(v)]
+    tipv = max(arm, key=lambda v: (v - sh).length); ax = (tipv - sh); Lr = ax.length; ax.normalize()
+    def at(t):
+        sl = [v for v in arm if abs((v - sh).dot(ax) - Lr * t) < Lr * 0.03]; return mid(sl) if sl else sh + ax * (Lr * t)
     J[s + 'Shoulder'] = Vector((cx + sx * half * 0.25, J['upperChest'].y, Z(0.79))); J[s + 'UpperArm'] = sh
-    J[s + 'LowerArm'] = at(0.42); J[s + 'Hand'] = at(0.78); J[s + 'HandEnd'] = at(0.97)
+    J[s + 'LowerArm'] = at(0.42); J[s + 'Hand'] = at(0.80); J[s + 'HandEnd'] = at(0.97)
+    ARM[sx] = (sh, ax, Lr)
 for k in sorted(J): print(k, tuple(round(c, 3) for c in J[k]))
 # parts for recolouring: each face goes to top / bottom / shoes, or stays as is (skin, hair, face); judged by height and by its colour
 # in the texture against references sampled at the chest, the thighs and the cheek. Each part is its own material, named the way
@@ -71,25 +79,27 @@ for k in range(75, 30, -1):
     if fs and np.abs(np.median([colour(f) for f in fs], 0) - rBot).sum() < np.abs(np.median([colour(f) for f in fs], 0) - rTop).sum(): wz = Z(k / 100 + 0.005); break
 print('waist at', round((wz - zmin) / Hh, 3))
 # the sleeve end on each arm: walking out from the shoulder, where the colour turns from the top's to the skin's
-ext = {sx: max(abs(v.x - cx) for v in V if (v.x - cx) * sx > half and v.z > Z(0.45)) for sx in (1, -1)}
+def arm_t(p, sx): sh, ax, Lr = ARM[sx]; return (p - sh).dot(ax) / Lr   # 0 at the shoulder, 1 at the fingertips
+def is_arm(f):
+    m = f.calc_center_median(); return Z(0.40) < m.z < Z(0.83) and not in_body(m) and abs(m.x - cx) > Hh * 0.01
 sleeve = {}
 for sx in (1, -1):
-    sleeve[sx] = half
+    sleeve[sx] = 0.0
     for k in range(2, 40):
-        x0 = half + (ext[sx] - half) * k / 40; fs = [f for f in bm.faces if abs(abs(f.calc_center_median().x - cx) - x0) < (ext[sx] - half) / 60 and (f.calc_center_median().x - cx) * sx > 0 and f.calc_center_median().z > Z(0.45)]
+        t0 = k / 40; fs = [f for f in bm.faces if (f.calc_center_median().x - cx) * sx > 0 and is_arm(f) and abs(arm_t(f.calc_center_median(), sx) - t0) < 1 / 60]
         if not fs: continue
         fs = [f for f in fs if f.normal.y < -0.3] or fs; mc = np.median([colour(f) for f in fs], 0); warm = lambda c: (c[0] - c[2]) / max(0.05, c.max())
         if abs(warm(mc) - warm(rSkin)) < abs(warm(mc) - warm(rTop)): break
-        sleeve[sx] = x0
-fr = max((sleeve[k] - half) / (ext[k] - half) for k in sleeve); sleeve = {k: half + (ext[k] - half) * fr for k in sleeve}   # clothes are symmetric: the longer reading wins
-print('sleeve ends at', {k: round((v - half) / (ext[k] - half), 2) for k, v in sleeve.items()})
+        sleeve[sx] = t0
+fr = max(sleeve.values()); sleeve = {k: fr for k in sleeve}   # clothes are symmetric: the longer reading wins
+print('sleeve ends at', sleeve)
 lab = {}
 for f in bm.faces:
     m = f.calc_center_median(); z = m.z; c = colour(f); d = lambda r: float(np.abs(c - r).sum())
-    arm = abs(m.x - cx) > half * (1.02 if z > Z(0.66) else 1.45) and z > Z(0.42)
+    arm = is_arm(f)
     if z > Z(0.83): p = 'body'
     elif z < Z(0.055): p = 'shoes'
-    elif arm: sx = 1 if m.x > cx else -1; p = 'top' if abs(m.x - cx) < sleeve[sx] else 'body'
+    elif arm: sx = 1 if m.x > cx else -1; p = 'top' if arm_t(m, sx) < sleeve[sx] else 'body'
     else: p = 'top' if z > wz else 'bottom'
     if not arm and z > Z(0.74) and d(rSkin) < d(rTop) * 0.7: p = 'body'        # the neckline: skin above the collar
     lab[f.index] = p
@@ -136,27 +146,34 @@ if empty > len(ob.data.vertices) * 0.02:
     mods = [m for m in ob.modifiers if m.type == 'ARMATURE']; ob.parent = None
     for m in mods: ob.modifiers.remove(m)
     bpy.ops.object.parent_set(type='ARMATURE_ENVELOPE'); print('fell back to envelope weights')
-# T-pose: arms to horizontal, baked into the mesh and the rest pose
-bpy.context.view_layer.objects.active = rig; bpy.ops.object.mode_set(mode='POSE'); M = rig.matrix_world
-for s in ('left', 'right'):
-    pb = rig.pose.bones[s + 'UpperArm']
-    for _ in range(3):
-        h = M @ pb.head; e = M @ rig.pose.bones[s + 'LowerArm'].head; d = (e - h).normalized(); t = Vector((1 if d.x > 0 else -1, 0, 0))
-        pb.matrix = (M.inverted() @ Matrix.Translation(h) @ d.rotation_difference(t).to_matrix().to_4x4() @ Matrix.Translation(-h) @ M) @ pb.matrix; bpy.context.view_layer.update()
-    for nb in ('LowerArm', 'Hand'):   # straighten the forearm and hand along the arm too
-        pb = rig.pose.bones[s + nb]; h = M @ pb.head; e = M @ pb.tail; d = (e - h).normalized(); t = Vector((1 if d.x > 0 else -1, 0, 0))
-        pb.matrix = (M.inverted() @ Matrix.Translation(h) @ d.rotation_difference(t).to_matrix().to_4x4() @ Matrix.Translation(-h) @ M) @ pb.matrix; bpy.context.view_layer.update()
-bpy.ops.object.mode_set(mode='OBJECT')
-bpy.context.view_layer.objects.active = ob
-mod = next(m for m in ob.modifiers if m.type == 'ARMATURE'); keep = ob.modifiers.new('keep', 'ARMATURE'); keep.object = rig
-bpy.ops.object.modifier_apply(modifier=mod.name)
-bpy.context.view_layer.objects.active = rig; bpy.ops.object.mode_set(mode='POSE'); bpy.ops.pose.armature_apply(selected=False); bpy.ops.object.mode_set(mode='OBJECT')
+# rest pose: arms lifted to a T-pose only when they stand clear of the body; arms that touch it share its surface, and lifting them
+# would drag the torso along. Then the rest stays as modelled and its arm angle goes into the file for the app to allow for.
+M = rig.matrix_world
+def down_deg(s):
+    h = M @ rig.data.bones[s + 'UpperArm'].head_local; e = M @ rig.data.bones[s + 'LowerArm'].head_local; d = e - h; return math.degrees(math.atan2(-d.z, abs(d.x)))
+REST_ARM = round((down_deg('left') + down_deg('right')) / 2, 1); TPOSE = REST_ARM < 50; print('arm rest', REST_ARM, 'deg below horizontal; T-pose bake:', TPOSE)
+if TPOSE:
+    bpy.context.view_layer.objects.active = rig; bpy.ops.object.mode_set(mode='POSE')
+    for s in ('left', 'right'):
+        pb = rig.pose.bones[s + 'UpperArm']
+        for _ in range(3):
+            h = M @ pb.head; e = M @ rig.pose.bones[s + 'LowerArm'].head; d = (e - h).normalized(); t = Vector((1 if d.x > 0 else -1, 0, 0))
+            pb.matrix = (M.inverted() @ Matrix.Translation(h) @ d.rotation_difference(t).to_matrix().to_4x4() @ Matrix.Translation(-h) @ M) @ pb.matrix; bpy.context.view_layer.update()
+        for nb in ('LowerArm', 'Hand'):
+            pb = rig.pose.bones[s + nb]; h = M @ pb.head; e = M @ pb.tail; d = (e - h).normalized(); t = Vector((1 if d.x > 0 else -1, 0, 0))
+            pb.matrix = (M.inverted() @ Matrix.Translation(h) @ d.rotation_difference(t).to_matrix().to_4x4() @ Matrix.Translation(-h) @ M) @ pb.matrix; bpy.context.view_layer.update()
+    bpy.ops.object.mode_set(mode='OBJECT')
+    bpy.context.view_layer.objects.active = ob
+    mod = next(m for m in ob.modifiers if m.type == 'ARMATURE'); keep = ob.modifiers.new('keep', 'ARMATURE'); keep.object = rig
+    bpy.ops.object.modifier_apply(modifier=mod.name)
+    bpy.context.view_layer.objects.active = rig; bpy.ops.object.mode_set(mode='POSE'); bpy.ops.pose.armature_apply(selected=False); bpy.ops.object.mode_set(mode='OBJECT')
+    REST_ARM = 0
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=TMP, export_format='GLB', export_image_format='JPEG', export_jpeg_quality=88, export_skins=True, export_animations=False, export_yup=True, export_extras=True)
 b = open(TMP, 'rb').read(); jl = struct.unpack('<I', b[12:16])[0]; j = json.loads(b[20:20 + jl]); rest = b[20 + jl:]
 idx = {n.get('name'): i for i, n in enumerate(j['nodes'])}
 hb = {k: {'node': idx[k]} for k in ['hips', 'spine', 'chest', 'upperChest', 'neck', 'head'] + [s + p for s in ('left', 'right') for p in ('UpperLeg', 'LowerLeg', 'Foot', 'Toes', 'Shoulder', 'UpperArm', 'LowerArm', 'Hand')] if k in idx}
-j.setdefault('extensionsUsed', []).append('VRMC_vrm')
+j.setdefault('extensionsUsed', []).append('VRMC_vrm'); j.setdefault('extras', {})['previoRestArm'] = REST_ARM
 j.setdefault('extensions', {})['VRMC_vrm'] = {'specVersion': '1.0', 'meta': {'name': name, 'version': '1', 'authors': ['PREVIO'], 'licenseUrl': 'https://vrm.dev/licenses/1.0/', 'avatarPermission': 'everyone',
     'commercialUsage': 'corporation', 'creditNotation': 'unnecessary', 'allowRedistribution': True, 'modification': 'allowModificationRedistribution'}, 'humanoid': {'humanBones': hb}}
 js = json.dumps(j, separators=(',', ':')).encode(); js += b' ' * ((4 - len(js) % 4) % 4)
