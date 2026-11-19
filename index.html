@@ -1616,7 +1616,7 @@ input[type=range]::-moz-range-progress{background:transparent}
 /* dials: a knurled ring with a lime index line, turned by dragging */
 .dialin{position:absolute!important;opacity:0;width:1px!important;height:1px!important;pointer-events:none}
 .dialin:focus-visible + output{outline:1.5px solid var(--accent);outline-offset:2px}
-.dial{position:relative;width:44px;height:44px;flex:none;justify-self:start;cursor:ns-resize;touch-action:none;border-radius:50%;
+.dial{position:relative;width:44px;height:44px;flex:none;justify-self:start;cursor:grab;touch-action:none;border-radius:50%;
   background:conic-gradient(from -135deg,var(--accent) calc(var(--p,0) * 270deg),var(--line) 0 270deg,transparent 0);padding:3px}
 .dial .dk{display:block;width:100%;height:100%;border-radius:50%;position:relative;
   background:radial-gradient(circle at 50% 40%,#34373C 0 30%,#212327 54%,transparent 55%),repeating-conic-gradient(#4A4E55 0 4deg,#141518 4deg 8deg);box-shadow:inset 0 0 0 1px #000}
@@ -6970,16 +6970,20 @@ $('#kitSel').addEventListener('change', e => { const prev = KIT(); state.kit = e
   buildTicks(); vsz = null; changed(true, true);
   toast(k.id === 'free' ? '키트 없이 초점거리를 자유롭게 고릅니다' : `${k.name} — 모든 샷을 가장 가까운 초점거리로 맞췄어요${k.sq ? ` · 아나모픽 ${k.sq}x 스퀴즈 적용` : ''}`); });
 // ---------- dials: every 0–100 % setting (a slider whose reading ends in %) is turned like a lens ring / a knob on a light ----------
-// The range input stays (keyboard, screen readers, the existing handlers); a knob is drawn over it. Drag up or right to turn it up,
-// down or left to turn it down; the wheel turns it in steps. Turning fires the input's own input / change events.
+// The range input stays (keyboard, screen readers, the existing handlers); a knob is drawn over it. Turn it by circling round it:
+// clockwise raises the value, counter-clockwise lowers it, by the angle swept (270° = the whole range); the wheel turns it in steps. Turning fires the input's own input / change events.
 function dialize(root) { root.querySelectorAll('input[type=range]').forEach(r => { if (r.dataset.dial) return; const o = r.nextElementSibling;
     if (!(o && o.tagName === 'OUTPUT' && /%$/.test(o.textContent.trim()))) return; r.dataset.dial = 1;
     const k = document.createElement('span'); k.className = 'dial'; k.setAttribute('aria-hidden', 'true'); k.innerHTML = '<i class="dk"><i class="dx"></i></i>'; r.before(k); r.classList.add('dialin');
     const span = () => { const a = +r.min, b = +r.max; return (+r.value - a) / ((b - a) || 1); };
     const draw = () => { k.firstChild.style.transform = `rotate(${-135 + 270 * span()}deg)`; k.style.setProperty('--p', span()); }; draw(); r.addEventListener('input', draw);
     const set = v => { const a = +r.min, b = +r.max, st = +r.step || 1; v = Math.min(b, Math.max(a, Math.round((v - a) / st) * st + a)); if (+r.value === v) return; r.value = v; r.dispatchEvent(new Event('input', { bubbles: true })); };
-    let d = null; k.addEventListener('pointerdown', e => { e.preventDefault(); k.setPointerCapture(e.pointerId); d = { x: e.clientX, y: e.clientY, v: +r.value }; k.classList.add('on'); });
-    k.addEventListener('pointermove', e => { if (!d) return; const range = +r.max - +r.min; set(d.v + ((e.clientX - d.x) - (e.clientY - d.y)) / 160 * range); });
+    // the pointer's angle round the knob's centre (0° = straight up, clockwise positive); each move adds the angle swept since the last one
+    const ang = e => { const q = k.getBoundingClientRect(), dx = e.clientX - (q.left + q.width / 2), dy = e.clientY - (q.top + q.height / 2); return { a: Math.atan2(dx, -dy) / DEG, r: Math.hypot(dx, dy) }; };
+    let d = null; k.addEventListener('pointerdown', e => { e.preventDefault(); k.setPointerCapture(e.pointerId); const g = ang(e); d = { a: g.a, v: +r.value }; k.classList.add('on'); });
+    k.addEventListener('pointermove', e => { if (!d) return; const g = ang(e); if (g.r < 6) return;   // too close to the centre to read a direction
+      let da = g.a - d.a; if (da > 180) da -= 360; if (da < -180) da += 360; d.a = g.a;
+      d.v = Math.min(+r.max, Math.max(+r.min, d.v + da / 270 * (+r.max - +r.min))); set(d.v); });
     const end = () => { if (!d) return; d = null; k.classList.remove('on'); r.dispatchEvent(new Event('change', { bubbles: true })); };
     k.addEventListener('pointerup', end); k.addEventListener('pointercancel', end);
     k.addEventListener('wheel', e => { e.preventDefault(); set(+r.value + (e.deltaY < 0 ? 1 : -1) * Math.max(+r.step || 1, (+r.max - +r.min) / 40)); clearTimeout(k._t); k._t = setTimeout(() => r.dispatchEvent(new Event('change', { bubbles: true })), 300); }, { passive: false });
