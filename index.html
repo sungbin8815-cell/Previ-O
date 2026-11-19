@@ -21,22 +21,19 @@
 /* PREVIO design system. One full-height workspace: header, tool rail, stage (3D / monitor / top), a drawer that opens beside the stage
    (a bottom sheet on phones) and the shot strip. Surfaces: paper (app) < sheet (chrome) < raise (cards inside panels). */
 :root{
-  /* design tokens (2026-11-18 pass): an instrument look — neutral graphite surfaces told apart by lightness, warm off-white type,
-     ONE accent (copper) for what is active or focused. Recording red and caution amber keep their meaning and are not accents. */
-  --paper:#0E0E0F; --sheet:#151516; --raise:#1E1E20; --soft:#19191B; --line:#2A2A2D; --line2:#212123;
-  --ink:#E9E7E2; --ink2:#B5B2AC; --muted:#8A8781;
-  --accent:#D48A45; --accent-ink:#151210; --accent-soft:rgba(212,138,69,.12); --accent2:#D48A45; --pencil:#C8C4BC; --tally:#D48A45;
-  --ok:#62B58C; --caution:#D9B24E; --rec:#E5483A; --warn:#E0745E;
-  --figA:#34444F; --figB:#4E4334; --col:#2C3136; --cam:#A9A59E; --wall:#2E3134; --prop:#5E5446;
-  --sky:#121213; --ground:#0F0F10; --grid:rgba(233,231,226,.09); --shadow:rgba(0,0,0,.45);
-  --vf:#0A0A0B; --vf-ink:#E9E7E2; --vf-dim:#8A8781;
+  /* design tokens (2026-11-19, ARRI-style pass): camera-menu black, neutral greys told apart by lightness, white type,
+     ONE fluorescent green for what is active, selected or the main action. Recording red and caution amber keep their meaning. */
+  --paper:#000000; --sheet:#0A0A0A; --raise:#161616; --soft:#101010; --line:#262626; --line2:#1A1A1A;
+  --ink:#F2F2F2; --ink2:#BDBDBD; --muted:#808080;
+  --accent:#39FF14; --accent-ink:#000000; --accent-soft:rgba(57,255,20,.10); --accent2:#39FF14; --pencil:#CFCFCF; --tally:#39FF14;
+  --ok:#39FF14; --caution:#FFC400; --rec:#FF2A1F; --warn:#FF5A3C;
+  --figA:#2F3A40; --figB:#40382E; --col:#2A2D30; --cam:#A5A5A5; --wall:#2B2B2B; --prop:#555046;
+  --sky:#0C0C0C; --ground:#080808; --grid:rgba(57,255,20,.10); --shadow:rgba(0,0,0,.6);
+  --vf:#000000; --vf-ink:#F2F2F2; --vf-dim:#8A8A8A;
   --sh-1:none; --sh-2:0 0 0 1px var(--line);
   color-scheme:dark;
-  /* type: four sizes */
   --fs-1:11px; --fs-2:13px; --fs-3:15px; --fs-4:22px;
-  /* radius: 2 tags · 4 controls · 6 panels */
-  --r-1:2px; --r-2:4px; --r-3:6px; --r-s:4px; --r-m:6px; --r-l:6px;
-  /* spacing: steps of 4 */
+  --r-1:0px; --r-2:2px; --r-3:2px; --r-s:2px; --r-m:2px; --r-l:2px;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
   --hit:44px;
   --f-display:"Pretendard","Inter","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; --f-logo:"Inter","Pretendard",sans-serif;
@@ -1542,6 +1539,21 @@ input[type=range]::-moz-range-thumb{background:var(--ink);border:0;box-shadow:0 
 #camBar .toolbar{flex-wrap:nowrap}
 @container stage (max-width:1000px){ #camBar .lab{display:none} #camBar .fab{padding:8px;min-width:var(--hit);justify-content:center} }
 
+
+/* ---------- ARRI-style pass (2026-11-19): black camera-menu look, fluorescent green for active / selected / main action ---------- */
+.btn.primary,.sbtn.primary,.hm-big.primary,.hm-act.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:hover,.sbtn.primary:hover,.hm-big.primary:hover,.hm-act.primary:hover{background:#6BFF4F;border-color:#6BFF4F}
+:is(.btn,.fab,.chip,.seg button,.modeseg button,.vtoggle button,.sw button,.ticks button,.fpresets button,.riglist button,.objlist button,.sm-grid button,.mc-item,.chips button,.seqb,.vf-tools button,.posebar button,.rigbar .rt button,.fsbtn,.movepad button)[aria-pressed="true"]{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.seg button[aria-pressed="true"],.vtoggle button[aria-pressed="true"],.modeseg button[aria-pressed="true"]{color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 -2px 0 var(--accent)}
+.rail button[aria-pressed="true"],.rail button[aria-pressed="true"] svg{color:var(--accent);stroke:var(--accent)}
+.ptabs button[aria-pressed="true"],.dtabs button[aria-pressed="true"],.looktabs button[aria-selected="true"]{color:var(--accent)}
+.card[aria-current="true"] .no{background:var(--accent);color:var(--accent-ink)}
+.logo{background:var(--accent)} .logo svg{stroke:#000}
+/* labels like a camera menu: small, spaced capitals for the Latin parts, quiet grey */
+.mini,.rail .rg,.meta,.cat,.hud .mf i{letter-spacing:.08em;text-transform:uppercase}
+.bar,.rail,.drawer,.shots{border-color:var(--line)}
+input[type=range]::-webkit-slider-thumb{background:var(--accent)} input[type=range]::-moz-range-thumb{background:var(--accent)}
+input[type=range]::-moz-range-progress{background:var(--accent)}
 </style>
 </head>
 <body>
