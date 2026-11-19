@@ -2814,7 +2814,7 @@ function torsoGeo(f, child) { const key = (f ? 'f' : 'm') + (child ? 'c' : ''); 
   for (let r = 0; r < R; r++) for (let n = 0; n < N; n++) { const a = r * (N + 1) + n, b = a + N + 1; idx.push(a, a + 1, b, a + 1, b + 1, b); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); g.userData.shared = true; return gl.torso[key] = g; }
 function glCharacter(s, k) {
-  { const c = castOf(k), vc = c.vrm && c.who !== 'dog' && vrmGet(c.vrm, k); if (vc) return vrmFigure(vc, s, k); }
+  // (character models and VRM files were removed on 2026-11-19: every cast member is drawn by the app)
   if (s[k].pose === 'lie' && castOf(k).who !== 'dog') { // built standing, then laid on its back: (x, y, z) → (x, z + 0.12, LIE_Z − y), as in skeleton()
     const sb = s[k], o = new THREE.Group(), inner = glCharacter({ ...s, [k]: { ...sb, pose: 'stand', x: 0, z: 0, face: 0 } }, k);
     inner.rotation.x = -Math.PI / 2; inner.position.set(0, 0.12, LIE_Z); o.add(inner); o.position.set(sb.x, 0, sb.z); o.rotation.y = sb.face * DEG; return o; }
@@ -5082,7 +5082,7 @@ async function vrmImport(file, k) {
 // Stages 2–5 of the character system: bodies, faces, hair (07d-hair.js) and clothes (07e-wear.js), behind ?base=1 until it is tested through. Without the
 // flag, or while a file is loading or missing, the built-in figure is drawn. The body is posed by aiming each bone along the same
 // joint table the built-in figure uses (skeleton()), so every existing pose works and the eyes stay where the camera maths expects.
-const HUMAN_BASE = !/[?&]base=0\b/.test(location.search); // on by default since 2026-11-13; ?base=0 shows the older built-in figures
+const HUMAN_BASE = false; // 2026-11-19: the character files were removed; every cast member is the app's own drawn figure again
 // raise CHARS_V whenever the files in assets/chars are rebuilt: browsers keep the old ones under the same address otherwise
 const CHARS_V = '?v=6', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
 // [bone, the bone its length runs to, joint table from, to]; the table's L side is −x, which is the model's right
@@ -7262,15 +7262,12 @@ function syncCast() { const s = cur(); const ae = document.activeElement; if (ae
   const pick = `<div class="seg kr wide castpick">${castKeys().map(k => `<button data-ck="${k}" aria-pressed="${k === castK}" class="${k === 'A' || (s[k] && s[k].on) ? '' : 'out'}"><i style="background:${CAST_COL[k]}"></i>${k}</button>`).join('')}${castKeys().length < CAST_KEYS.length ? '<button data-addcast="1" aria-label="인물 추가">＋</button>' : ''}</div>`;
   $('#castList').innerHTML = pick + [castK].map(k => { const c = castOf(k), sb = s[k], on = k === 'A' || sb.on, dog = c.who === 'dog', pal = dog ? FURS : OUTFITS;
     return `<div class="castcard${on ? '' : ' off'}" data-k="${k}">
-      <div class="ch"><span class="badge" style="background:${CAST_COL[k]}">${k}</span>${on ? `<input class="cname" maxlength="12" placeholder="${c.who === 'dog' ? '이름 (예: 콩이)' : '배역 이름 (예: 지수)'}" value="${esc(c.name || '')}" aria-label="${k} 이름">` : `<b>${castType(k)}</b>`}${on && c.who !== 'dog' && !c.vrm ? '<button class="btn sm primary" data-look="1" title="성별, 나이, 체형, 얼굴, 머리, 옷을 골라요">꾸미기</button>' : ''}${k === 'A' ? '' : `<button class="btn sm" data-on="1">${on ? '이 샷에서 빼기' : '이 샷에 넣기'}</button>`}${CAST0[k] ? '' : `<button class="btn sm warn" data-rmcast="1" aria-label="${k} 삭제">삭제</button>`}</div>
+      <div class="ch"><span class="badge" style="background:${CAST_COL[k]}">${k}</span>${on ? `<input class="cname" maxlength="12" placeholder="${c.who === 'dog' ? '이름 (예: 콩이)' : '배역 이름 (예: 지수)'}" value="${esc(c.name || '')}" aria-label="${k} 이름">` : `<b>${castType(k)}</b>`}${k === 'A' ? '' : `<button class="btn sm" data-on="1">${on ? '이 샷에서 빼기' : '이 샷에 넣기'}</button>`}${CAST0[k] ? '' : `<button class="btn sm warn" data-rmcast="1" aria-label="${k} 삭제">삭제</button>`}</div>
       ${on ? `
       <div class="seg kr">${Object.entries(WHO).map(([w, n]) => `<button data-who="${w}" aria-pressed="${c.who === w}">${n}</button>`).join('')}</div>
       ${dog ? `<div class="seg kr">${Object.entries(DOG_SIZES).map(([z, n]) => `<button data-dsize="${z}" aria-pressed="${(c.size || 'm') === z}">${n}</button>`).join('')}</div>`
-        : `<div class="seg kr">${Object.entries(baseOnly(AGES)).map(([a, n]) => `<button data-age="${a}" aria-pressed="${(c.age || 'adult') === a}">${n}</button>`).join('')}</div>${c.vrm ? `<div class="lh"><span class="mini">키</span>${heightCtl(k)}</div>` : ''}`}
-      ${!dog ? vrmPanel(k, c) : ''}
-      ${!dog && c.vrm && !vrmLibOf(c.vrm) ? `<div class="lh vrmrow"><span class="mini">3D 모델</span><span class="vrmname">${esc(c.vrmName || 'VRM')}${{ loading: ' · 불러오는 중', missing: ' · 이 기기에 없음', error: ' · 읽기 실패' }[vrmState(c.vrm, k)] || ''}</span><button class="btn sm" data-vrmpick="1">바꾸기</button><button class="btn sm ghost" data-vrmoff="1">기본</button></div>` : ''}
-      ${c.vrm && !dog ? '' : `<div class="lh"><span class="mini">${dog ? '털색' : '옷'}</span><div class="sw">${(dog ? pal : pal.slice(0, 7)).map((rgb, i) => `<button data-outfit="${i}" aria-pressed="${c.outfit % pal.length === i}" style="background:${linCss(rgb)}" aria-label="${dog ? FUR_NAMES[i] : '옷 색 ' + (i + 1)}"></button>`).join('')}</div></div>
-      ${dog ? '' : `<div class="lh hrow"><span class="mini">피부</span><div class="sw">${SKINS.slice(0, 4).map((rgb, i) => `<button data-skin="${i}" aria-pressed="${(c.skin || 0) === i}" style="background:${linCss(rgb)}" aria-label="피부 톤 ${i + 1}"></button>`).join('')}</div><span class="hgrp"><span class="mini hlab">키</span>${heightCtl(k)}</span></div>`}`}` : ''}
+        : `<div class="seg kr">${Object.entries(baseOnly(AGES)).map(([a, n]) => `<button data-age="${a}" aria-pressed="${(c.age || 'adult') === a}">${n}</button>`).join('')}</div><div class="lh"><span class="mini">키</span>${heightCtl(k)}</div>`}
+      ${dog ? `<div class="lh"><span class="mini">털색</span><div class="sw">${pal.map((rgb, i) => `<button data-outfit="${i}" aria-pressed="${c.outfit % pal.length === i}" style="background:${linCss(rgb)}" aria-label="${FUR_NAMES[i]}"></button>`).join('')}</div></div>` : ''}` : ''}
     </div>`; }).join(''); }
 // the gallery of built-in characters and, on a model, its colours and expression
 const VRM_COLS = { hair: [[0.01, 0.008, 0.008], [0.09, 0.04, 0.02], [0.35, 0.16, 0.06], [0.75, 0.55, 0.3], [0.6, 0.2, 0.32], [0.18, 0.26, 0.6], [0.85, 0.85, 0.88]],
