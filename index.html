@@ -4997,7 +4997,7 @@ async function vrmParse(buf) {
   const toon = new Map(), conv = m => { if (!m) return m; if (toon.has(m)) return toon.get(m);
     const n = m.isMToonMaterial === undefined && !m.uniforms ? m : new THREE.MeshToonMaterial({ map: m.map || null, gradientMap: toonGrad(), transparent: !!m.transparent, alphaTest: m.alphaTest || 0, side: m.side, depthWrite: m.depthWrite });
     if (n !== m) { if (m.color) n.color.copy(m.color); if (m.isOutline || (m.userData && m.userData.vrmOutline) || m.name && /outline/i.test(m.name)) n.visible = false; }
-    n.userData.shared = true; n.userData.part = vrmPart(m.name || ''); if (n !== m) vrmTintable(n); toon.set(m, n); return n; };
+    n.userData.shared = true; n.userData.part = vrmPart(m.name || ''); if (n !== m || n.userData.part) vrmTintable(n); toon.set(m, n); return n; };
   vrm.scene.traverse(o => { if (o.isMesh) { o.castShadow = o.receiveShadow = true; o.frustumCulled = false; o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material); }
     if (o.geometry) o.geometry.userData.shared = true; });
   // rest measurements in the model's own units: eye height and ankle height when standing
@@ -5010,7 +5010,7 @@ const vrmPart = n => /hair/i.test(n) ? 'hair' : /eyeiris|iris/i.test(n) ? 'eye' 
 // the texture's own average brightness (opaque texels), so the chosen colour lands on its mid-tone: a white shirt dyed red is red, not pink
 function texLum(t) { try { const im = t && t.image; if (!im || !im.width) return 0.5; const c = document.createElement('canvas'); c.width = c.height = 32; const x = c.getContext('2d'); x.drawImage(im, 0, 0, 32, 32);
   const d = x.getImageData(0, 0, 32, 32).data; let s = 0, n = 0; for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 128) { const l = (0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]) / 255; s += Math.pow(l, 2.2); n++; } return n ? Math.max(0.03, s / n) : 0.5; } catch (e) { return 0.5; } }
-function vrmTintable(m) { m.userData.tint = { uTint: { value: new THREE.Color(1, 1, 1) }, uMix: { value: 0 }, uRef: { value: m.map ? texLum(m.map) : 0.5 } };
+function vrmTintable(m) { m.userData.tint = { uTint: { value: new THREE.Color(1, 1, 1) }, uMix: { value: 0 }, uRef: { value: m.userData.ref || (m.map ? texLum(m.map) : 0.5) } };   // ref: the part's own brightness, when the file gives it
   m.onBeforeCompile = sh => { Object.assign(sh.uniforms, m.userData.tint);
     sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nuniform vec3 uTint; uniform float uMix, uRef;').replace('#include <map_fragment>', `#include <map_fragment>
 	if ( uMix > 0.0 ) { float lum = dot( diffuseColor.rgb, vec3( 0.299, 0.587, 0.114 ) ); diffuseColor.rgb = mix( diffuseColor.rgb, clamp( lum / uRef * uTint, 0.0, 1.0 ), uMix ); }`); };
@@ -5031,6 +5031,7 @@ const vrmCache = {};
 // built-in characters, shipped with the app (chars/vrm/): VRoid-made models whose licences allow use, change and redistribution.
 // A cast slot wears one as c.vrm = 'lib:<id>', which, unlike an imported file, works on every device and in shared projects.
 const VRM_LIB = [
+  { id: 'f_young', name: '여성 청년', who: 'f', file: 'chars/vrm/f_young.vrm', credit: 'PREVIO 자체 제작 (그림 → 3D 변환)' },
   { id: 'vroid_f1', name: '하루 (긴 머리)', who: 'f', file: 'chars/vrm/vroid_f1.vrm', credit: '© pixiv Inc. · VRM1 Constraint Twist Sample (수정·재배포 허용)' },
 ];
 // the Microsoft Rocketbox library (MIT licence): 115 semi-realistic people, converted by tools/rb_convert.py; listed in chars/vrm/rb/index.json
