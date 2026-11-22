@@ -2908,7 +2908,8 @@ function torsoGeo(f, child) { const key = (f ? 'f' : 'm') + (child ? 'c' : ''); 
   for (let r = 0; r < R; r++) for (let n = 0; n < N; n++) { const a = r * (N + 1) + n, b = a + N + 1; idx.push(a, a + 1, b, a + 1, b + 1, b); }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setIndex(idx); g.computeVertexNormals(); g.userData.shared = true; return gl.torso[key] = g; }
 function glCharacter(s, k) {
-  // (character models and VRM files were removed on 2026-11-19: every cast member is drawn by the app)
+  // a made-for-PREVIO character for this sex and age, when there is one (VRM_LIB); otherwise the app's own drawn figure
+  { const c = castOf(k), lib = c.who !== 'dog' && VRM_LIB.find(v => v.who === c.who && v.age === (c.age || 'adult')), vc = lib && vrmGet('lib:' + lib.id, k); if (vc) return vrmFigure(vc, s, k); }
   if (s[k].pose === 'lie' && castOf(k).who !== 'dog') { // built standing, then laid on its back: (x, y, z) → (x, z + 0.12, LIE_Z − y), as in skeleton()
     const sb = s[k], o = new THREE.Group(), inner = glCharacter({ ...s, [k]: { ...sb, pose: 'stand', x: 0, z: 0, face: 0 } }, k);
     inner.rotation.x = -Math.PI / 2; inner.position.set(0, 0.12, LIE_Z); o.add(inner); o.position.set(sb.x, 0, sb.z); o.rotation.y = sb.face * DEG; return o; }
@@ -5120,8 +5121,8 @@ const vrmCache = {};
 // built-in characters, shipped with the app (chars/vrm/): VRoid-made models whose licences allow use, change and redistribution.
 // A cast slot wears one as c.vrm = 'lib:<id>', which, unlike an imported file, works on every device and in shared projects.
 const VRM_LIB = [
-  { id: 'f_young', name: '여성 청년', who: 'f', file: 'chars/vrm/f_young.vrm', credit: 'PREVIO 자체 제작 (그림 → 3D 변환)' },
-  { id: 'm_young', name: '남성 청년', who: 'm', file: 'chars/vrm/m_young.vrm', credit: 'PREVIO 자체 제작 (그림 → 3D 변환)' },
+  // one character per sex and age, picked automatically from the cast's sex and age (made from concept art, tools/char3d)
+  { id: 'm_young', name: '남성 청년', who: 'm', age: 'adult', file: 'chars/vrm/m_young.vrm', credit: 'PREVIO 자체 제작 (앞·뒤·옆 그림 → 3D)' },
 ];
 const vrmLibOf = id => VRM_LIB.find(v => 'lib:' + v.id === id);
 function vrmGet(id, k) {
@@ -5178,7 +5179,7 @@ async function vrmImport(file, k) {
 // joint table the built-in figure uses (skeleton()), so every existing pose works and the eyes stay where the camera maths expects.
 const HUMAN_BASE = false; // 2026-11-19: the character files were removed; every cast member is the app's own drawn figure again
 // raise CHARS_V whenever the files in assets/chars are rebuilt: browsers keep the old ones under the same address otherwise
-const CHARS_V = '?v=6', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
+const CHARS_V = '?v=7', HUMAN_URL = { f: 'chars/female.glb' + CHARS_V, m: 'chars/male.glb' + CHARS_V };
 // [bone, the bone its length runs to, joint table from, to]; the table's L side is −x, which is the model's right
 const HUMAN_AIM = [['spine_01', 'neck_01', 'pv', 'n0'], ['neck_01', 'head', 'n0', 'n1'],
   ...[['r', 'L'], ['l', 'R']].flatMap(([b, j]) => [['upperarm_' + b, 'lowerarm_' + b, 'sh' + j, 'el' + j], ['lowerarm_' + b, 'hand_' + b, 'el' + j, 'ha' + j],
