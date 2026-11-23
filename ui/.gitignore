@@ -1,0 +1,5 @@
+node_modules/
+themes/*/preview.*
+themes/*/sheet*.html
+themes/*/sheet*.png
+themes/*/*.pictures.json

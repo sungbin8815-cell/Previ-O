@@ -17,7 +17,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>@layer reset, app, astryx-base, astryx-theme; /* the app's own sheet sits above Astryx's page reset but under its components, so Astryx components draw as designed and the rest of the page is unchanged */</style>
+<link rel="stylesheet" href="ui/dist/previo-ui.css">
 <style>
+@layer app {
+
 /* PREVIO design system. One full-height workspace: header, tool rail, stage (3D / monitor / top), a drawer that opens beside the stage
    (a bottom sheet on phones) and the shot strip. Surfaces: paper (app) < sheet (chrome) < raise (cards inside panels). */
 :root{
@@ -1657,6 +1661,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .addgrid button,.sm-grid button{border:0!important;border-radius:var(--r-3)!important;background:var(--surface)!important;box-shadow:none!important}
 .addgrid button:hover,.sm-grid button:hover{background:var(--surface2)!important}
 .addgrid button[aria-pressed="true"],.sm-grid button[aria-pressed="true"]{box-shadow:var(--ring-sel)!important}
+
+}
 </style>
 </head>
 <body>
@@ -9329,5 +9335,6 @@ maybeTour = function () { let seen = null; try { seen = localStorage.getItem(GUI
   if (seen || isTutScene() || sharedView) return; setTimeout(() => { if ($('#startScreen').hidden && !lessonCur) guideShow(0); }, 700); };
 </script>
 
+<script type="module" src="ui/dist/previo-ui.js"></script>
 </body>
 </html>

@@ -3,6 +3,13 @@
 - 사용자에게 보내는 모든 글(답변, 작업 중 안내, 요약, 질문)은 **한국어로만** 쓴다. 자세한 규칙은 `.claude/skills/korean-only/SKILL.md`를 따른다.
 - 파일 이름·코드·명령어처럼 바꾸면 틀리는 것만 원래 표기를 쓰고 `코드 표기`로 감싼다.
 
+## PREVIO와 Astryx
+
+- PREVIO는 React 없이 `index.html` 하나로 된 앱이다. Astryx 부품은 `ui/`의 연결 장치(`ui/src/main.jsx`)가 앱의 기존 버튼·입력칸 자리에 그려 넣는다. 자세한 구조는 `ui/README.md`를 본다.
+- 앱 코드는 기존 요소(id·class·data 속성)를 그대로 쓴다. 기존 요소를 지우거나 이름을 바꾸지 말고, 바꿀 때는 기능이 그대로인지 테스트한다.
+- `ui/`를 고친 뒤에는 `cd ui && npm run build`로 `ui/dist/`를 다시 만들어 함께 커밋한다.
+- 아래 Astryx 안내의 React 전용 규칙(예: `<div>` 금지, 템플릿에서 시작)은 `ui/src/` 안의 React 코드에만 적용한다.
+
 <!-- ASTRYX:START -->
 Astryx v0.7.17 · 90+ components
 CLI: run every command as `npx @astryxdesign/cli@0.7.17 <cmd>` (shown below as `astryx ...`).

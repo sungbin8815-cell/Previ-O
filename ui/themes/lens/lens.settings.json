@@ -1,0 +1,24 @@
+{
+  "name": "lens",
+  "like": "neutral",
+  "mode": "dark-only",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#C9DD4F",
+      "source": "dial"
+    },
+    {
+      "thing": "neutral",
+      "value": "#6E7178",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "\"IBM Plex Sans KR\"",
+      "source": "dial"
+    }
+  ],
+  "lifted": [],
+  "palette": "4e1b49f9a72cfc922528466432e50860130c82fbd11d1f249d5aaaffa5197ac6"
+}
