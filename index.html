@@ -1541,62 +1541,87 @@ input[type=range]::-moz-range-thumb{background:var(--ink);border:0;box-shadow:0 
 @container stage (max-width:1000px){ #camBar .lab{display:none} #camBar .fab{padding:8px;min-width:var(--hit);justify-content:center} }
 
 
-/* ---------- lens pass (2026-11-19): a cine prime as the design brief ----------
-   barrel  : matte graphite surfaces with a faint anodised grain; no boxes inside boxes — sections are separated by hairlines
-   knurling: the fine ribbed band of a focus gear, only along the top edge of the drawer and the shot strip
-   engraving: lime marks the value that is set (pressed option, current shot, slider index, main action); condensed numerals for readouts
-   scales  : segmented choices read like a lens scale — plain labels, the set one lime with a short index tick under it */
-.bar,.rail,.drawer,.shots{background:var(--sheet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
-.db{background:transparent}
-.drawer,.shots{position:relative}
-.drawer::before,.shots::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;pointer-events:none;
-  background:repeating-linear-gradient(90deg,#2E3034 0 1px,#16171A 1px 3px);border-bottom:1px solid var(--line)}
-/* panels: flat, one level deep */
-.ptab,.castcard,.edit{background:transparent;border:0;box-shadow:none;padding:12px 4px;border-radius:0}
+/* ---------- Astryx pass (2026-11-23): Astryx component anatomy, lens colours ----------
+   Shapes and spacing follow the Astryx design system (neutral theme): controls 32 px tall on a 4 px grid, 10 px corners on controls,
+   12 px on containers, no outlines on buttons (tonal fills tell them apart), lists as rounded rows, tabs underlined, segmented
+   controls as a recessed track with the chosen item lifted. The colours stay the lens palette: graphite surfaces, lime for what is set. */
+:root{--r-1:6px; --r-2:10px; --r-3:12px; --r-s:6px; --r-m:10px; --r-l:12px;
+  --fill:rgba(255,255,255,.07); --fill-hover:rgba(255,255,255,.11); --fill-press:rgba(255,255,255,.15); --surface:#1F2023; --surface2:#2E3035;
+  --sel:color-mix(in srgb,var(--accent) 14%,transparent); --ring-sel:inset 0 0 0 2px color-mix(in srgb,var(--accent) 70%,transparent);
+  --sh-float:0 2px 4px rgba(0,0,0,.35),0 4px 12px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08)}
+/* surfaces: flat graphite, separated by hairlines */
+.bar,.rail,.drawer,.shots{background:var(--sheet)}
+.drawer::before,.shots::before{display:none}
+.glass,.toolbar.glass,.chipi,.sbtn,.mc-panel,.fsbtn,.vf-tools button,.fclegend{background:color-mix(in srgb,var(--sheet) 94%,transparent);border:0;box-shadow:var(--sh-float);border-radius:var(--r-3)}
+.toolbar{border-radius:var(--r-3)}
+.toast{background:var(--surface2);border:0;box-shadow:var(--sh-float);border-radius:var(--r-2)}
+/* type: Astryx roles — titles 600, controls 500, body 400; small labels are sentence case, not spaced capitals */
+.mini,.rail .rg,.cat{font-size:12px;letter-spacing:0;text-transform:none;color:var(--muted);font-weight:600}
+/* buttons (Astryx Button): 32 px, 10 px corners, a tonal fill instead of a border; primary is a solid lime */
+.btn{min-height:32px;padding:0 12px;background:var(--fill);border:0;border-radius:var(--r-2);color:var(--ink);font-weight:500;font-size:14px;box-shadow:none}
+.btn:hover{background:var(--fill-hover);border:0}
+.btn:active{background:var(--fill-press)}
+.btn.sm{min-height:28px;padding:0 10px}
+.btn.icon{padding:0;min-width:32px;justify-content:center}
+.btn.ghost{background:transparent} .btn.ghost:hover{background:var(--fill)}
+.btn.warn{background:color-mix(in srgb,var(--rec) 22%,transparent);color:#FFB0A8}
+.btn.primary,.sbtn.primary,.hm-big.primary,.hm-act.primary{background:var(--accent);color:var(--accent-ink);border:0;font-weight:600}
+.btn.primary:hover,.sbtn.primary:hover,.hm-big.primary:hover,.hm-act.primary:hover{background:color-mix(in srgb,var(--accent) 86%,#fff);color:var(--accent-ink);border:0}
+.btn.primary svg,.sbtn.primary svg{stroke:currentColor}
+.fab{border:0;border-radius:var(--r-2)} .fab:hover{background:var(--fill)}
+/* pressed / chosen: a lime-tinted fill and lime text, no outline */
+:is(.btn,.fab,.chip,.sw button,.mc-item,.chips button,.seqb,.vf-tools button,.posebar button,.rigbar .rt button,.fsbtn,.movepad button)[aria-pressed="true"]{
+  background:var(--sel);color:var(--accent);border-color:transparent;box-shadow:none;font-weight:600}
+.chip,.chips button{border:0;background:var(--fill);border-radius:var(--r-2)}
+.tag{background:var(--fill);border:0;color:var(--ink2);border-radius:var(--r-1)}
+/* tabs (Astryx TabList): plain labels, the open one in full white at 600 with a 2 px lime line under its whole label, a divider below */
+.ptabs,.dtabs{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:4px}
+.ptabs button,.dtabs button{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--muted);font-weight:400;position:relative;border-radius:var(--r-2) var(--r-2) 0 0;min-height:36px;padding:0 12px}
+.ptabs button:hover,.dtabs button:hover{color:var(--ink)}
+.ptabs button[aria-pressed="true"],.dtabs button[aria-pressed="true"]{color:var(--ink)!important;font-weight:600}
+.ptabs button[aria-pressed="true"]::after,.dtabs button[aria-pressed="true"]::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;margin:0;width:auto;background:var(--accent);border-radius:2px 2px 0 0}
+/* segmented controls (Astryx SegmentedControl): a recessed track, the chosen item lifted on a lighter surface */
+.seg,.vtoggle,.modeseg{background:var(--fill);border:0;border-radius:var(--r-2);padding:2px;gap:2px}
+.seg button,.vtoggle button,.modeseg button{background:transparent!important;border:0!important;box-shadow:none!important;border-radius:8px;color:var(--ink2);font-weight:500;position:relative}
+.seg button:hover,.vtoggle button:hover,.modeseg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"],.vtoggle button[aria-pressed="true"],.modeseg button[aria-pressed="true"]{background:var(--surface2)!important;color:var(--accent)!important;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.4)!important}
+.seg button[aria-pressed="true"]::after{display:none}
+.vtoggle,.modeseg{background:color-mix(in srgb,var(--sheet) 94%,transparent);box-shadow:var(--sh-float)}
+/* inputs and dropdowns (Astryx TextInput / Selector): a filled field, 36 px, 10 px corners, a lime ring on focus */
+:is(.kit select,select,.mc-in,.cname,textarea,.field textarea,input[type=text],input[type=number],input[type=search]){background:var(--surface);border:1px solid var(--line);border-radius:var(--r-2);min-height:36px}
+:is(.kit select,select,.mc-in,.cname,textarea,.field textarea,input[type=text],input[type=number],input[type=search]):hover{border-color:#3A3C41}
+:is(.kit select,select,.mc-in,.cname,textarea,.field textarea,input[type=text],input[type=number],input[type=search]):focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--r-2)}
+/* the scene title in the header edits in place: no field until it is hovered or focused */
+.title-in{background:transparent;border:1px solid transparent;border-radius:var(--r-1);min-height:0}
+.title-in:hover{background:var(--fill)} .title-in:focus{outline:none;background:var(--surface);border-color:var(--accent)}
+/* panels: Astryx sections — one surface, hairlines between groups, the object being edited in a rounded card */
+.ptab,.castcard{background:transparent;border:0;box-shadow:none;padding:12px 4px;border-radius:0}
 .ptab + .ptab,.castcard + .castcard{border-top:1px solid var(--line2)}
-.edit{border-left:2px solid var(--accent);padding-left:12px}
-.mini,.rail .rg,.cat{font-size:var(--fs-1);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
-/* tabs: engraved labels, a short lime index under the open one */
-.ptabs,.dtabs{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0}
-.ptabs button,.dtabs button{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--muted);position:relative;border-radius:0}
-.ptabs button[aria-pressed="true"],.dtabs button[aria-pressed="true"]{color:var(--accent)!important}
-.ptabs button[aria-pressed="true"]::after,.dtabs button[aria-pressed="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;width:18px;height:2px;margin-left:-9px;background:var(--accent);border-radius:0}
-/* segmented choices: a lens scale, not a pill box */
-.seg{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0}
-.seg button{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--ink2);border-radius:0;position:relative;font-weight:500}
-.seg button[aria-pressed="true"]{color:var(--accent)!important;font-weight:600}
-.seg button[aria-pressed="true"]::after{content:"";position:absolute;left:50%;bottom:-1px;width:2px;height:6px;margin-left:-1px;background:var(--accent)}
-.vtoggle,.modeseg{background:color-mix(in srgb,var(--sheet) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-3);padding:2px;gap:0}
-.vtoggle button,.modeseg button{border-radius:6px;color:var(--muted)}
-.vtoggle button[aria-pressed="true"],.modeseg button[aria-pressed="true"]{background:var(--raise)!important;color:var(--accent)!important;box-shadow:none!important}
-/* buttons: graphite with a hairline; the main action is lime engraving on graphite, not a filled slab */
-.btn{background:var(--raise);border:1px solid var(--line);border-radius:var(--r-2);color:var(--ink)}
-.btn:hover{border-color:var(--silver)}
-.btn.primary,.sbtn.primary,.hm-big.primary,.hm-act.primary{background:var(--raise);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 55%,var(--line))}
-.btn.primary:hover,.sbtn.primary:hover,.hm-big.primary:hover,.hm-act.primary:hover{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-:is(.btn,.fab,.chip,.sw button,.ticks button,.fpresets button,.riglist button,.objlist button,.sm-grid button,.mc-item,.chips button,.seqb,.vf-tools button,.posebar button,.rigbar .rt button,.fsbtn,.movepad button)[aria-pressed="true"]{
-  color:var(--accent);border-color:color-mix(in srgb,var(--accent) 60%,var(--line));background:var(--accent-soft);box-shadow:none}
-.fpresets button,.ticks button,.riglist button,.addgrid button{border-radius:var(--r-2)}
-.toolbar.glass,.glass,.chipi{background:color-mix(in srgb,var(--sheet) 92%,transparent);border:1px solid var(--line);border-radius:var(--r-3)}
-/* rail: the active tool gets the index mark, not a filled tile */
-.rail button[aria-pressed="true"]{background:transparent;color:var(--accent)}
+.edit{background:var(--surface);border:0;border-radius:var(--r-3);padding:12px;box-shadow:none}
+.db{background:transparent}
+/* tool rail (Astryx SideNav): rounded items, the open tool on a soft fill with a lime icon */
+.rail button{border-radius:var(--r-2)}
+.rail button:hover{background:var(--fill)}
+.rail button[aria-pressed="true"]{background:var(--fill-hover);color:var(--ink)}
 .rail button[aria-pressed="true"] svg{stroke:var(--accent)}
-.rail button[aria-pressed="true"]::before{width:2px;background:var(--accent)}
-/* shot cards */
-.card{border-radius:var(--r-2);border-color:var(--line)}
-.card[aria-current="true"]{border-color:var(--accent);box-shadow:none}
-.card[aria-current="true"] .no{background:transparent;color:var(--accent);border:1px solid var(--accent)}
-/* readouts: condensed numerals like the focal length on the barrel */
+.rail button[aria-pressed="true"]::before{display:none}
+/* shot cards (Astryx SelectableCard): a 12 px rounded tile, the current one ringed in lime */
+.card{border:0;border-radius:var(--r-3);background:var(--surface);box-shadow:none}
+.card:hover{background:var(--surface2)}
+.card[aria-current="true"]{box-shadow:var(--ring-sel)}
+.card[aria-current="true"] .no{background:var(--accent);color:var(--accent-ink);border:0}
+/* readouts: condensed numerals like the focal length engraved on the barrel */
 #fOut,#nOut,.hud .mf b,.chipi b,.card .no,.dur output,.ticks button,.fpresets button b{font-family:var(--f-num);font-weight:600;letter-spacing:.02em}
 #fOut,#nOut{font-size:26px;color:var(--accent);line-height:1}
-/* sliders: a scale with ticks and a thin index line */
-input[type=range]{background:transparent}
-input[type=range]::-webkit-slider-runnable-track{height:10px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 8px) bottom/100% 6px no-repeat,linear-gradient(var(--line),var(--line)) bottom/100% 1px no-repeat}
-input[type=range]::-moz-range-track{height:10px;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 8px) bottom/100% 6px no-repeat,linear-gradient(var(--line),var(--line)) bottom/100% 1px no-repeat}
-input[type=range]::-webkit-slider-thumb{width:3px;height:18px;border-radius:0;background:var(--accent);border:0;box-shadow:none;margin-top:-6px}
-input[type=range]::-moz-range-thumb{width:3px;height:18px;border-radius:0;background:var(--accent);border:0;box-shadow:none}
-input[type=range]::-moz-range-progress{background:transparent}
-/* brand: silver mount ring around a graphite badge */
+/* sliders (Astryx Slider): a 4 px rounded track filled in lime up to a round light thumb */
+input[type=range]{background:transparent;--v:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:linear-gradient(90deg,var(--accent) 0 var(--v),var(--fill-press) var(--v))}
+input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--fill-press)}
+input[type=range]::-moz-range-progress{height:4px;border-radius:2px;background:var(--accent)}
+input[type=range]::-webkit-slider-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);border:0;box-shadow:0 1px 3px rgba(0,0,0,.5);margin-top:-7px}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);border:0;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+/* brand: graphite badge in a silver mount ring */
 .logo{background:var(--raise);box-shadow:inset 0 0 0 1px var(--silver);border-radius:50%} .logo svg{stroke:var(--accent)}
 
 /* ---------- mechanical controls (2026-11-19) ---------- */
@@ -1623,18 +1648,15 @@ input[type=range]::-moz-range-progress{background:transparent}
 .dial .dx{position:absolute;left:50%;top:3px;width:2px;height:11px;margin-left:-1px;background:var(--accent)}
 .dial.on .dk{filter:brightness(1.2)}
 .xrow .dial{align-self:center}
-/* setting lists: rows like a camera menu — name left, value right, hairlines, the chosen row marked on its left edge */
-.objlist button,.riglist button{background:transparent!important;border:0!important;border-bottom:1px solid var(--line2)!important;border-radius:0!important;box-shadow:none!important;text-align:left}
-.objlist button[aria-pressed="true"],.riglist button[aria-pressed="true"]{box-shadow:inset 2px 0 0 var(--accent)!important;color:var(--accent)}
-/* viewfinder brackets instead of boxes: the current shot and chosen catalogue pieces get four corner marks */
-.card,.addgrid button,.sm-grid button{border-color:transparent!important;--bk:var(--line)}
-.card[aria-current="true"],.addgrid button[aria-pressed="true"],.sm-grid button[aria-pressed="true"]{--bk:var(--accent)}
-.card,.addgrid button,.sm-grid button{background-image:
-  linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),
-  linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk)),linear-gradient(var(--bk),var(--bk))!important;
-  background-repeat:no-repeat!important;background-size:10px 1px,1px 10px,10px 1px,1px 10px,10px 1px,1px 10px,10px 1px,1px 10px!important;
-  background-position:0 0,0 0,100% 0,100% 0,0 100%,0 100%,100% 100%,100% 100%!important;background-color:var(--soft)!important;box-shadow:none!important}
-.card[aria-current="true"]{background-size:12px 2px,2px 12px,12px 2px,2px 12px,12px 2px,2px 12px,12px 2px,2px 12px!important}
+/* setting lists (Astryx List / Item): rounded rows with no lines, a soft fill on hover, the chosen row on a lime-tinted fill */
+.objlist,.riglist{gap:2px}
+.objlist button,.riglist button{background:transparent!important;border:0!important;border-radius:var(--r-2)!important;box-shadow:none!important;text-align:left;padding:8px}
+.objlist button:hover,.riglist button:hover{background:var(--fill)!important}
+.objlist button[aria-pressed="true"],.riglist button[aria-pressed="true"]{background:var(--sel)!important;color:var(--accent)}
+/* catalogue tiles (Astryx SelectableCard): rounded tiles on a surface, the chosen one ringed in lime */
+.addgrid button,.sm-grid button{border:0!important;border-radius:var(--r-3)!important;background:var(--surface)!important;box-shadow:none!important}
+.addgrid button:hover,.sm-grid button:hover{background:var(--surface2)!important}
+.addgrid button[aria-pressed="true"],.sm-grid button[aria-pressed="true"]{box-shadow:var(--ring-sel)!important}
 </style>
 </head>
 <body>
@@ -6990,6 +7012,10 @@ function dialize(root) { root.querySelectorAll('input[type=range]').forEach(r =>
     k.addEventListener('wheel', e => { e.preventDefault(); set(+r.value + (e.deltaY < 0 ? 1 : -1) * Math.max(+r.step || 1, (+r.max - +r.min) / 40)); clearTimeout(k._t); k._t = setTimeout(() => r.dispatchEvent(new Event('change', { bubbles: true })), 300); }, { passive: false });
   }); }
 new MutationObserver(() => dialize(document.body)).observe(document.body, { childList: true, subtree: true }); dialize(document.body);
+// sliders fill their track up to the thumb (Astryx Slider); values set from code fire no event, so visible sliders are re-read a few times a second
+const rangeFill = r => { const lo = +r.min || 0, hi = r.max === '' ? 100 : +r.max; r.style.setProperty('--v', ((+r.value - lo) / ((hi - lo) || 1) * 100).toFixed(1) + '%'); };
+document.addEventListener('input', e => { if (e.target.type === 'range') rangeFill(e.target); }, true);
+setInterval(() => { for (const r of document.querySelectorAll('input[type=range]:not(.dialin)')) if (r.offsetParent) rangeFill(r); }, 300);
 $('#nRuler').addEventListener('click', e => { const b = e.target.closest('[data-ni]'); if (!b) return; const s = cur(); s.N = stopsFor(s)[+b.dataset.ni]; changed(true); });
 $('#stopSeg').addEventListener('click', e => { const b = e.target.closest('[data-stop]'); if (!b) return; state.freeStop = b.dataset.stop; changed(true, true); });
 $('#nRange').addEventListener('input', e => { const s = cur(); s.N = stopsFor(s)[+e.target.value]; changed(false); });
