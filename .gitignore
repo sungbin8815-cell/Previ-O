@@ -1,0 +1,4 @@
+# design-team skill run folders when no scratchpad is available
+.design-team/
+# design-taste-frontend skill build state
+.taste-skill/
