@@ -8,7 +8,11 @@ keeps the app's control in the page, hidden, as the source of truth:
 
 - the component reads text, icon, pressed / disabled state, value and options from the app's control;
 - every action goes back to it (a click on the app's button; a value set on the app's input plus the `input` / `change`
-  events the app listens for), so the app's code, keyboard shortcuts and tests run unchanged.
+  events the app listens for), so the app's code, keyboard shortcuts and tests run unchanged;
+- presses (pointer, mouse and touch down / up) are dispatched again on the app's control, so listeners higher up see the
+  target they always saw (e.g. "a press outside the export menu closes it, except on the export button");
+- `aria-haspopup`, `aria-expanded` and `aria-controls` are copied onto the component, so a button that opens a menu
+  still says so to screen readers.
 
 What is upgraded, and what is left alone on purpose, is the `SPECS` / `SKIP` list at the top of `src/main.jsx`.
 

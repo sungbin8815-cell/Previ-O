@@ -37,9 +37,13 @@ function adopt(el, kind) {
   el.before(host); el.classList.add('ax-legacy'); el.setAttribute('aria-hidden', 'true'); el.tabIndex = -1;
   // the component's own click (and the input / change of its inner fields) must not also reach the app's listeners on the
   // parent, or they would run twice: the action is handed to the legacy element instead, whose event bubbles as it always
-  // did. Presses (pointer, mouse, touch, keys) bubble on as the app's own buttons' did, so "click outside closes the menu" works.
+  // did.
   for (const t of ['click', 'input', 'change'])
     host.addEventListener(t, e => e.stopPropagation());
+  // Presses are passed on as if they had happened on the app's own control, so every listener above sees the target it
+  // always saw: "a press outside the menu closes it, except on the button that opens it" keeps working for the Astryx button.
+  for (const t of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend'])
+    host.addEventListener(t, e => { e.stopPropagation(); let ev; try { ev = new e.constructor(e.type, e); } catch { ev = new Event(e.type, { bubbles: true, cancelable: true }); } el.dispatchEvent(ev); });
   reg.set(el, { host, kind });
 }
 function scan() {
@@ -69,8 +73,10 @@ const rowLabel = el => { const row = el.closest('.xrow, .lh, label, .row'); cons
 const size = el => (el.classList.contains('sm') || el.closest('.toolbar, .seg.kr') ? 'sm' : 'md');
 
 // ---- the components --------------------------------------------------------------------------------------------------
+// what a screen reader needs to know about a button that opens something (the export menu, the guide menu) is passed on as well
+const ariaOf = el => { const o = {}; for (const k of ['aria-haspopup', 'aria-expanded', 'aria-controls']) if (el.hasAttribute(k)) o[k] = el.getAttribute(k); return o; };
 function LegacyButton({ el }) {
-  const label = labelOf(el), text = textOf(el), icon = iconOf(el), common = { label: label || '버튼', icon, isIconOnly: !text && !!icon, isDisabled: el.disabled, size: size(el) };
+  const label = labelOf(el), text = textOf(el), icon = iconOf(el), common = { label: label || '버튼', icon, isIconOnly: !text && !!icon, isDisabled: el.disabled, size: size(el), ...ariaOf(el) };
   if (el.hasAttribute('aria-pressed') && !el.classList.contains('primary'))
     return <ToggleButton {...common} isPressed={pressed(el)} onPressedChange={() => el.click()}>{text || undefined}</ToggleButton>;
   const variant = el.classList.contains('primary') ? 'primary' : el.classList.contains('ghost') ? 'ghost' : el.classList.contains('warn') ? 'destructive' : el.classList.contains('fab') ? 'ghost' : 'secondary';
@@ -143,7 +149,7 @@ function App() {
       // controls the app just built are swapped before the browser paints, so the panel never shows them for a frame or jumps
       if (now) { if (raf) { cancelAnimationFrame(raf); raf = 0; } flushSync(go); }
     });
-    mo.observe(document.documentElement, { subtree: true, childList: true, attributes: true, characterData: true, attributeFilter: ['aria-pressed', 'aria-selected', 'disabled', 'hidden', 'class', 'title', 'aria-label'] });
+    mo.observe(document.documentElement, { subtree: true, childList: true, attributes: true, characterData: true, attributeFilter: ['aria-pressed', 'aria-selected', 'aria-expanded', 'disabled', 'hidden', 'class', 'title', 'aria-label'] });
     // values the app sets from code fire no event and change no attribute: re-read sliders and selects a few times a second
     const iv = setInterval(() => { for (const [el, r] of reg) if ((r.kind === 'slider' || r.kind === 'select') && r.last !== el.value) { r.last = el.value; dirty.add(el); kick(); } }, 250);
     go(); return () => { mo.disconnect(); clearInterval(iv); };
