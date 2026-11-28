@@ -127,7 +127,7 @@ export const lensTheme = {
     "--color-overlay-pressed": "light-dark(#0000001a, #ffffff1a)",
     "--color-text-primary": "light-dark(#000000, #ffffff)",
     "--color-text-secondary": "light-dark(#43464c, #a3a6ab)",
-    "--color-text-disabled": "light-dark(#8a8d94, #4e5056)",
+    "--color-text-disabled": "light-dark(#8a8d94, #8b8e94)",
     "--color-text-accent": "light-dark(#5b6600, #c9dd4f)",
     "--color-on-dark": "light-dark(#ffffff, #ffffff)",
     "--color-on-light": "light-dark(#101114, #101113)",
@@ -349,6 +349,16 @@ export const lensTheme = {
       },
       "base": {
         "--radius-element": "6px"
+      },
+      "variant:secondary": {
+        "@dark": {
+          "backgroundColor": "#1c1d20",
+          ":is(:disabled,[aria-disabled=\"true\"])": {
+            "color": "#8b8e94"
+          }
+        },
+        "border": "1px solid #686b70",
+        ":is(:disabled,[aria-disabled=\"true\"])": {}
       }
     },
     "badge": {

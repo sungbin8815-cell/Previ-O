@@ -55,3 +55,32 @@ test('focus ring is 2px ink', { timeout: 180_000 }, async () => {
   const f = await p.evaluate(() => { const s = getComputedStyle(document.activeElement); return { w: s.outlineWidth, c: s.outlineColor }; });
   assert.equal(f.w, '2px'); assert.equal(f.c, 'rgb(236, 237, 238)');
 });
+
+test('secondary buttons are raised with a line', { timeout: 180_000 }, async () => {
+  const { b, p } = await open(); after(() => b.close());
+  await blank(p, true);
+  const s = await p.evaluate(() => { const r = PREVIO_UI.reg.get(document.getElementById('undoBtn')); const cs = getComputedStyle(r.host.querySelector('button')); return { bg: cs.backgroundColor, bw: cs.borderTopWidth, bc: cs.borderTopColor }; });
+  assert.deepEqual(s, { bg: 'rgb(28, 29, 32)', bw: '1px', bc: 'rgb(104, 107, 112)' });
+});
+
+test('shot thumbnails have 4px corners', { timeout: 180_000 }, async () => {
+  const { b, p } = await open(); after(() => b.close());
+  await blank(p, true);
+  assert.equal(await p.evaluate(() => getComputedStyle(document.querySelector('.card canvas')).borderTopLeftRadius), '4px');
+});
+
+test('plain buttons keep their size on hover', { timeout: 180_000 }, async () => {
+  const { b, p } = await open(); after(() => b.close());
+  await blank(p, true);
+  await p.evaluate(() => { const x = document.createElement('button'); x.className = 'btn sm'; x.id = 'hoverProbe'; x.textContent = '건너뛰기'; x.style.cssText = 'position:fixed;left:20px;top:200px;z-index:999'; document.body.append(x); });
+  const w = () => p.evaluate(() => document.getElementById('hoverProbe').getBoundingClientRect().width);
+  await p.mouse.move(5, 5); const w0 = await w(); await p.hover('#hoverProbe'); const w1 = await w();
+  assert.equal(w1, w0);
+});
+
+test('disabled text in Astryx parts reads at 3:1 or more', { timeout: 180_000 }, async () => {
+  const { b, p } = await open(); after(() => b.close());
+  await blank(p, true);
+  const c = await p.evaluate(() => { const host = document.querySelector('.ax-host'), probe = document.createElement('i'); probe.style.color = 'var(--color-text-disabled)'; host.append(probe); const v = getComputedStyle(probe).color; probe.remove(); return v; });
+  assert.equal(c, 'rgb(139, 142, 148)'); // #8B8E94 on #151618 ≈ 5.7:1
+});

@@ -54,6 +54,36 @@
       "value": "#a3a6ab",
       "source": "token",
       "mode": "dark"
+    },
+    {
+      "thing": "background-color",
+      "value": "#1c1d20",
+      "source": "property",
+      "on": "button",
+      "when": "variant:secondary",
+      "mode": "dark"
+    },
+    {
+      "thing": "border",
+      "value": "1px solid #686b70",
+      "source": "property",
+      "on": "button",
+      "when": "variant:secondary"
+    },
+    {
+      "thing": "color",
+      "value": "#8b8e94",
+      "source": "property",
+      "on": "button",
+      "when": "variant:secondary",
+      "state": "disabled",
+      "mode": "dark"
+    },
+    {
+      "thing": "--color-text-disabled",
+      "value": "#8b8e94",
+      "source": "token",
+      "mode": "dark"
     }
   ],
   "lifted": [],

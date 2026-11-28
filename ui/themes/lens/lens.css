@@ -205,7 +205,7 @@
     --color-overlay-pressed: light-dark(#0000001a, #ffffff1a);
     --color-text-primary: light-dark(#000000, #ffffff);
     --color-text-secondary: light-dark(#43464c, #a3a6ab);
-    --color-text-disabled: light-dark(#8a8d94, #4e5056);
+    --color-text-disabled: light-dark(#8a8d94, #8b8e94);
     --color-text-accent: light-dark(#5b6600, #c9dd4f);
     --color-on-dark: light-dark(#ffffff, #ffffff);
     --color-on-light: light-dark(#101114, #101113);
@@ -443,6 +443,74 @@
 
   .astryx-button {
     --radius-element: 6px;
+  }
+
+  .astryx-button[data-variant="secondary"] {
+    border: 1px solid #686b70;
+  }
+
+  :is(.astryx-button[data-variant="secondary"]):where(:scope[data-theme="dark"] *):where(:not(:scope [data-astryx-media] *)) {
+    background-color: #1c1d20;
+  }
+
+  :is(.astryx-button[data-variant="secondary"]):where(:scope[data-theme="dark"] *):where(:not(:scope [data-astryx-media] *)):is(:disabled,[aria-disabled="true"]) {
+    color: #8b8e94;
+  }
+
+  :is(.astryx-button[data-variant="secondary"]):where(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *) *):where(:not(:scope [data-astryx-media] *)):where(html[data-astryx-scheme="dark"] *) {
+    background-color: #1c1d20;
+  }
+
+  :is(.astryx-button[data-variant="secondary"]):where(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *) *):where(:not(:scope [data-astryx-media] *)):where(html[data-astryx-scheme="dark"] *):is(:disabled,[aria-disabled="true"]) {
+    color: #8b8e94;
+  }
+
+  @media (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *) *):where(:not(:scope [data-astryx-media] *)):where(html:not([data-astryx-scheme]) *) {
+    background-color: #1c1d20;
+  }
+  }
+
+  @media (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *) *):where(:not(:scope [data-astryx-media] *)):where(html:not([data-astryx-scheme]) *):is(:disabled,[aria-disabled="true"]) {
+    color: #8b8e94;
+  }
+  }
+
+  @media (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) *):where(:not(:scope [data-astryx-media] *)) {
+    background-color: #1c1d20;
+  }
+  }
+
+  @media (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) *):where(:not(:scope [data-astryx-media] *)):is(:disabled,[aria-disabled="true"]) {
+    color: #8b8e94;
+  }
+  }
+
+  @media not all and (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:scope [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *)):where(:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *))) {
+    background-color: #1c1d20;
+  }
+  }
+
+  @media not all and (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:scope [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *)):where(:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *))):is(:disabled,[aria-disabled="true"]) {
+    color: #8b8e94;
+  }
+  }
+
+  @media (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:scope [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *)):where(:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] *:not(:is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *))) {
+    background-color: #1c1d20;
+  }
+  }
+
+  @media (prefers-color-scheme: dark) {
+  :is(.astryx-button[data-variant="secondary"]):where(:scope [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *), :scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *:not(:scope [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *)):where(:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope[data-theme="dark"] [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html[data-astryx-scheme="dark"] *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:scope:not([data-theme="light"], [data-theme="dark"]):not(:is([data-theme="light"], [data-theme="dark"]) *):where(html:not([data-astryx-scheme]) *) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *), :is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] *:not(:is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] *), :is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] *:not(:is([data-theme="light"], [data-theme="dark"]) :scope:not([data-theme="light"], [data-theme="dark"]) [data-astryx-media-dark-page="light"] [data-astryx-media="dark"] [data-astryx-media="light"] [data-astryx-media="dark"] *))):is(:disabled,[aria-disabled="true"]) {
+    color: #8b8e94;
+  }
   }
 
   .astryx-badge[data-variant="neutral"] {
