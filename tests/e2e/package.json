@@ -2,7 +2,7 @@
   "name": "previo-e2e",
   "private": true,
   "scripts": {
-    "test": "node --test --test-concurrency=1 specs/*.test.js"
+    "test": "node --test --test-force-exit --test-concurrency=1 specs/*.test.js"
   },
   "devDependencies": {
     "@pixiv/three-vrm": "2.1.0",
