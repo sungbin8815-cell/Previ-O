@@ -23,7 +23,7 @@ import { lensTheme } from './themes/lens/lens.js';
 // rulers, shot cards), the start screen and full-screen tools, and anything inside a dialog the app builds on the fly.
 const SKIP = '.movepad, #craneBar, #joy, .dial, .fpresets, .ruler, .ticks, .card, .shots .cards, #home, .hm-top, .fp-top, .modal, .mc-panel, #lookModal, .ax-host, [data-ax-skip]';
 const SPECS = [
-  { kind: 'seg', sel: '.bar .vtoggle, #modeSeg, .drawer .seg' },
+  { kind: 'seg', sel: '.bar .vtoggle, .shots .vtoggle, #modeSeg, .drawer .seg' },
   { kind: 'tabs', sel: '.drawer .ptabs, .drawer .dtabs' },
   { kind: 'rail', sel: '#rail > button' },
   { kind: 'button', sel: '.bar .btn, .drawer .btn, .shots .btn, #camBar .fab, #kfBar .fab, #placeBar .btn, #placeBar .fab, #objBar .fab, #buildBar .btn, #buildBar .fab' },
