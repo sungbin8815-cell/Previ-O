@@ -1789,6 +1789,14 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   #camBar{display:none!important}
   .app.vpm #worldwrap{bottom:0} .app.vpm .ov-bc{bottom:12px}
   .app.vp3 #worldwrap{bottom:calc(50% + 4px)} .app.vp3 .ov-bc{bottom:calc(50% + 16px)}
+
+  /* right index: the panel's tools as a thin column at the right edge, shown only while the inspector is closed */
+  .rail{grid-area:rail;width:48px;padding:8px 4px;border-right:0;border-left:1px solid var(--line);gap:2px}
+  .rail .rg,.rail .questb,.rail kbd,.rail .ax-rail-t{display:none!important}
+  #rail .ax-rail button{min-height:40px;padding:4px}
+  .app.paneon .rail{display:none!important}
+  .insptarget{font:500 12px/16px var(--f-body);color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+
 }
 /* ---------- lens design system (first design meeting, rules 1 and 2): solid panels, three button kinds, one focus ring ---------- */
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -1917,7 +1925,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   </div>
 
   <aside class="drawer" id="drawer" hidden aria-labelledby="drawerTitle">
-    <div class="dh"><div class="ico" id="drawerIcon"></div><div class="tt"><h3 id="drawerTitle"></h3></div><nav class="dtabs" id="dTabs" aria-label="도구 전환"><button data-dpane="cam">카메라</button><button data-dpane="rig" data-pro>장비</button><button data-dpane="light">조명</button><button data-dpane="set">세트</button><button data-dpane="shot">샷</button></nav><button class="xbtn" id="drawerClose" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="dh"><div class="ico" id="drawerIcon"></div><div class="tt"><h3 id="drawerTitle"></h3><div class="insptarget" id="inspTarget" aria-live="polite"></div></div><nav class="dtabs" id="dTabs" aria-label="도구 전환"><button data-dpane="cam">카메라</button><button data-dpane="rig" data-pro>장비</button><button data-dpane="light">조명</button><button data-dpane="set">세트</button><button data-dpane="shot">샷</button></nav><button class="xbtn" id="drawerClose" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="db">
       <section class="pane" data-pane="cam" hidden>
         <div class="ptabs seg kr" role="tablist"><button data-tab="lens">렌즈</button><button data-tab="focus" data-pro>초점</button><button data-tab="expo" data-pro>노출</button><button data-tab="dist" data-pro>거리</button><button data-tab="fmt"><span data-pro>센서</span><span data-simple>화면비</span></button></div>
@@ -6579,7 +6587,7 @@ function syncRig(o) { const rb = $('#rigBar'), on = rigOpen && rigCan(o); rb.hid
   const r = o.rig || {}, arm = rigTab !== 'head', a = arm && (r['a' + rigTab] || rigArm0(o.pose || 'stand', rigTab));
   rb.innerHTML = `<div class="rt">${[['head', '고개·상체'], ['R', '왼팔'], ['L', '오른팔']].map(([t, n]) => `<button data-rt="${t}" aria-pressed="${rigTab === t}">${n}</button>`).join('')}<span class="sp"></span><button data-rreset ${rigOf(o) ? '' : 'disabled'}>초기화</button><button data-rclose aria-label="세부 조절 닫기">닫기</button></div>`
     + RIG_ROWS[arm ? 'arm' : 'head'].map(([k, lab, min, max]) => { const v = arm ? a[k] : r[k] || 0; return `<div class="xrow"><label>${lab}</label><input type="range" data-rk="${k}" min="${min}" max="${max}" step="5" value="${v}" aria-label="${arm ? (rigTab === 'R' ? '왼팔 ' : '오른팔 ') : ''}${lab}"><output>${Math.round(v)}°</output></div>`; }).join(''); }
-function syncBars() { autoInspect(); syncCrane(); syncPalette();
+function syncBars() { autoInspect(); syncCrane(); syncPalette(); syncInspTarget();
   const pb = $('#placeBar'), ob = $('#objBar'), cb = $('#camBar'), mk = mvSubj(); pb.hidden = !placing; if (build.on) { selObj = null; } cb.hidden = !!placing || build.on || craneOn || mode === 'mon' || !!mk;
   $('#movePad').hidden = !(mode === 'mon' || mk) || view !== 'edit'; $('#movePad').classList.toggle('subj', !!mk);
   if (placing) { $('#placeName').textContent = PROPS[placing.o.type].name; const st = $('#placeStat'); st.textContent = placing.why || '놓을 수 있어요'; st.className = 'pstat ' + (placing.why ? 'bad' : 'ok');
@@ -8332,6 +8340,14 @@ new MutationObserver(reTheme).observe(document.documentElement, { attributes: tr
 
 /* ---------- tool palette (computer): the existing tools in groups, as in a 3D package. Each tool runs exactly what its old button
    or panel tab runs; nothing here is a new action. Groups fold, the palette narrows to icons, favourites are kept on the device. ---------- */
+// the inspector names what it shows: the camera when nothing is picked, else the picked light, person or object
+function inspTargetName() { try {
+  if (selObj && selObj.kind === 'light') { const l = shotLights().find(x => x.id === selObj.id); return l ? FIX(l.fx).name : '조명'; }
+  if (selObj && selObj.kind === 'subj') return '인물 ' + castName(selObj.k);
+  if (selObj && selObj.kind === 'prop') { const o = state.set.props.find(x => x.id === selObj.id); return o ? ((PROPS[o.type] && PROPS[o.type].name) || o.type) : '가구'; }
+  if (selObj) return '고른 것';
+  return '카메라'; } catch (e) { return '카메라'; } }
+function syncInspTarget() { const el = $('#inspTarget'); if (el) el.textContent = inspTargetName(); }
 var TOOLS = null, palFavs = [], palFolded = [], palReady = false;
 const palGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } }, palSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 const PAL_GROUPS = [['fav', '즐겨찾기'], ['move', '선택·이동'], ['rotate', '회전'], ['camera', '카메라'], ['light', '조명'], ['set', '세트'], ['object', '오브젝트'], ['measure', '측정'], ['note', '주석']];
