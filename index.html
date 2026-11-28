@@ -16,7 +16,8 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Barlow+Condensed:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Archivo+Narrow:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
 <style>@layer reset, app, astryx-base, astryx-theme; /* the app's own sheet sits above Astryx's page reset but under its components, so Astryx components draw as designed and the rest of the page is unchanged */</style>
 <link rel="stylesheet" href="ui/dist/previo-ui.css">
 <style>
@@ -25,26 +26,31 @@
 /* PREVIO design system. One full-height workspace: header, tool rail, stage (3D / monitor / top), a drawer that opens beside the stage
    (a bottom sheet on phones) and the shot strip. Surfaces: paper (app) < sheet (chrome) < raise (cards inside panels). */
 :root{
-  /* design tokens (2026-11-19, lens pass): taken from a cine prime — matte graphite barrel, lime engraving for what is set or active,
-     mount silver for the finest rules. Surfaces differ by lightness only. Recording red and caution amber keep their meaning. */
-  --paper:#0D0E0F; --sheet:#151618; --raise:#1C1D20; --soft:#18191B; --line:#2A2C30; --line2:#212225;
-  --ink:#ECEDEE; --ink2:#B6B8BC; --muted:#7E8187; --silver:#AEB3BA;
-  --accent:#C9DD4F; --accent-ink:#121309; --accent-soft:rgba(201,221,79,.09); --accent2:#C9DD4F; --pencil:#CFD1D4; --tally:#C9DD4F;
-  --ok:#9CCB5A; --caution:#E3B341; --rec:#E5483A; --warn:#E0745E;
+  /* design tokens (2026-11-28, monitor cart): the app is a director's monitor cart. Tools sit on an aluminium-grey body in ink;
+     pictures sit in black wells (the stage re-declares the surface and text tokens dark, below). Red is the tally light: only
+     what is live (the current shot, the playhead, recording). What is picked is ink (on grey) or white (in a well). */
+  --paper:#D4D5D7; --sheet:#D4D5D7; --raise:#E2E3E5; --soft:#C9CACD; --line:#ADB0B4; --line2:#C2C4C7;
+  --ink:#0E0F10; --ink2:#45484D; --muted:#5B5E63; --silver:#ADB0B4;
+  --accent:#0E0F10; --accent-ink:#FFFFFF; --accent-soft:rgba(14,15,16,.07); --accent2:#0E0F10; --pencil:#45484D; --tally:#E3241B;
+  --ok:#3D7A2A; --caution:#8A5A00; --rec:#E3241B; --warn:#B0121A;
   --figA:#2F3A40; --figB:#40382E; --col:#2A2D30; --cam:#A9ACB1; --wall:#2B2C2E; --prop:#555046;
-  --sky:#101113; --ground:#0B0C0D; --grid:rgba(201,221,79,.09); --shadow:rgba(0,0,0,.55);
-  --vf:#050505; --vf-ink:#ECEDEE; --vf-dim:#8A8D92;
+  --sky:#101113; --ground:#0B0C0D; --grid:rgba(255,255,255,.07); --shadow:rgba(0,0,0,.55);
+  --vf:#0B0B0C; --vf-ink:#F2F2F2; --vf-dim:#8A8D92;
   --sh-1:none; --sh-2:0 0 0 1px var(--line);
-  color-scheme:dark;
-  --fs-1:11px; --fs-2:13px; --fs-3:15px; --fs-4:22px;
-  --r-1:2px; --r-2:4px; --r-3:8px; --r-s:4px; --r-m:8px; --r-l:8px;
+  color-scheme:light;
+  --fs-1:12px; --fs-2:13px; --fs-3:15px; --fs-4:20px;
+  --r-1:2px; --r-2:2px; --r-3:2px; --r-s:2px; --r-m:2px; --r-l:2px;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
   --hit:44px;
-  --f-num:"Barlow Condensed","IBM Plex Sans KR",sans-serif;
-  --f-display:"IBM Plex Sans KR","Inter","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; --f-logo:"Inter","IBM Plex Sans KR",sans-serif;
-  --f-body:"IBM Plex Sans KR","Inter","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
-  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-num:"Archivo Narrow","SUIT Variable",sans-serif;
+  --f-display:"SUIT Variable","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif; --f-logo:"Archivo","SUIT Variable",sans-serif;
+  --f-body:"SUIT Variable","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-mono:"Archivo Narrow","SUIT Variable",sans-serif;
 }
+/* the wells: everything on the stage (3D, monitor, top view and the tools on them) keeps dark surfaces and light text */
+.stage,.pip,.home{--paper:#0B0B0C; --sheet:#141416; --raise:#1C1D20; --soft:#1A1B1D; --line:#2E3034; --line2:#222326;
+  --ink:#F2F2F2; --ink2:#A6A6A6; --muted:#8A8A8A; --silver:#6E7178; --accent:#F2F2F2; --accent-ink:#0B0B0C; --accent-soft:rgba(242,242,242,.10);
+  --pencil:#CFD1D4; --ok:#9CCB5A; --caution:#E3B341; --warn:#FF6B5B; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;position:fixed;inset:0;touch-action:manipulation}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--fs-3);line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
@@ -738,7 +744,7 @@ textarea#aiText{font-size:var(--fs-1)!important}
 .vfbox .vf-tools.edge{gap:4px} .vfbox .vf-tools.edge button{width:34px;min-height:34px;opacity:.62;font-size:0;padding:4px} .vfbox .vf-tools.edge button svg{width:16px;height:16px}
 .vfbox .vf-tools.edge button:hover,.vfbox .vf-tools.edge button[aria-pressed="true"]{opacity:.9}
 /* the frame reads clearly against the dimmed surround */
-.vfbox canvas#view{box-shadow:0 0 0 1.5px rgba(229,72,58,.9), 0 0 0 3px rgba(0,0,0,.55)} /* the red frame line of a monitor on a rolling camera */
+.app.anim .vfbox canvas#view{box-shadow:0 0 0 2px var(--rec), 0 0 0 3px rgba(0,0,0,.55)} /* the red frame line of a rolling camera: only while the whole scene plays (user decision) */
 /* upright phones: compact shot cards — number, size and lens only — so five or more fit across */
 @media (max-width:719px) and (orientation:portrait){
   .strip{gap:8px} .card{width:62px;padding:4px 4px;gap:4px;justify-content:center} .card canvas{display:none}
@@ -993,7 +999,7 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
 .fp-meter i{position:absolute;inset:0 auto 0 0;background:rgba(229,72,77,.75);transition:width .06s linear} .fp-meter.ok i{background:rgba(52,199,89,.8)}
 .fp-meter span{position:relative;display:block;text-align:center;font:600 var(--fs-2)/22px var(--f-body);color:#fff} .fp-meter[hidden]{display:none}
 .fp-dir{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);padding:8px 12px;border-radius:var(--r-3);background:rgba(14,17,23,.85);font-size:var(--fs-2);font-weight:600;color:#FFD166;white-space:nowrap}
-.fp-flash{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font:800 clamp(30px,7vw,64px) "Space Grotesk",system-ui;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.7);opacity:0;pointer-events:none}
+.fp-flash{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);font:800 clamp(30px,7vw,64px) "Archivo",system-ui;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.7);opacity:0;pointer-events:none}
 .fp-flash.on{animation:fpflash 1s ease-out}
 @keyframes fpflash{0%{opacity:0;transform:translate(-50%,-50%) scale(1.3)}15%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1}100%{opacity:0}}
 .fp-side{display:flex;flex-direction:column;gap:8px;min-height:0;overflow-y:auto}
@@ -1003,7 +1009,7 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
 .fp-lens{margin:0;font-size:var(--fs-1);line-height:1.5;color:var(--muted)} .fp-lens b{color:var(--ink2)} .fp-lens small{color:var(--muted);opacity:.8}
 .fp-list,.fp-res{position:absolute;inset:12px;overflow-y:auto;border-radius:var(--r-3);padding:16px 20px;display:flex;flex-direction:column;gap:12px}
 .fp-list[hidden],.fp-res[hidden]{display:none}
-.fp-list h2{margin:0;font:700 var(--fs-4) "Space Grotesk",var(--f-body)} .fp-note{margin:0;font-size:var(--fs-2);color:var(--ink2);line-height:1.55}
+.fp-list h2{margin:0;font:700 var(--fs-4) "Archivo",var(--f-body)} .fp-note{margin:0;font-size:var(--fs-2);color:var(--ink2);line-height:1.55}
 .fp-diff{display:grid;grid-template-columns:repeat(3,1fr)} .fp-diff button{display:flex;flex-direction:column;align-items:center;gap:1px;min-height:48px} .fp-diff small{font-size:var(--fs-1);opacity:.75}
 .fp-levels{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .fp-levels button{width:100%;display:flex;align-items:center;gap:12px;text-align:left;min-height:56px;padding:8px 12px;border-radius:var(--r-3);border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--ink);cursor:pointer}
@@ -1011,7 +1017,7 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
 .fp-levels span:not(.n){flex:1;min-width:0;display:flex;flex-direction:column;gap:4px} .fp-levels b{font-size:var(--fs-3)} .fp-levels small{font-size:var(--fs-2);color:var(--muted)} .fp-levels small.lens{font-family:var(--f-mono);font-size:var(--fs-1)}
 .fp-levels em{font:700 var(--fs-2) var(--f-mono);font-style:normal;color:#FFD166}
 .fp-how{font-size:var(--fs-2);color:var(--muted);line-height:1.6} .fp-how summary{cursor:pointer;color:var(--ink2);min-height:32px}
-.fp-grade{font:800 var(--fs-4)/1 "Space Grotesk",system-ui;text-align:center} .fp-grade.gS{color:#FFD166} .fp-grade.gA{color:#34C759} .fp-grade.gB{color:var(--accent)} .fp-grade.gC{color:#F5A623} .fp-grade.gF{color:#E5484D}
+.fp-grade{font:800 var(--fs-4)/1 "Archivo",system-ui;text-align:center} .fp-grade.gS{color:#FFD166} .fp-grade.gA{color:#34C759} .fp-grade.gB{color:var(--accent)} .fp-grade.gC{color:#F5A623} .fp-grade.gF{color:#E5484D}
 .fp-stats p{margin:4px 0;text-align:center;font-size:var(--fs-2);color:var(--ink2)} .fp-stats b{color:#fff;font-size:var(--fs-3)} .fp-stats em{font-style:normal;color:#FFD166;font-weight:700}
 .fp-tips{margin:0;padding-left:20px;font-size:var(--fs-2);color:var(--ink2);line-height:1.55}
 .fp-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap} .fp-row .btn{min-height:44px}
@@ -1022,9 +1028,9 @@ body.dragging-prop,body.dragging-prop *{cursor:grabbing!important}
 .fp-lenspick select{flex:1 1 140px;min-height:44px;border-radius:var(--r-3);border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--ink);padding:0 12px;font:500 var(--fs-2) var(--f-body)}
 .fp-chal{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-height:56px;padding:12px 16px;border-radius:var(--r-3);border:0;cursor:pointer;color:var(--accent-ink);background:var(--raise)}
 .fp-chal b{font-size:var(--fs-3)} .fp-chal small{font-size:var(--fs-2);opacity:.8}
-.fp-ct{margin:0;text-align:center;font:700 var(--fs-3) var(--f-body);color:var(--ink2)} .fp-total{font:800 var(--fs-4)/1 "Space Grotesk",system-ui;text-align:center;color:#FFD166} .fp-total small{font-size:var(--fs-3);color:var(--muted)}
+.fp-ct{margin:0;text-align:center;font:700 var(--fs-3) var(--f-body);color:var(--ink2)} .fp-total{font:800 var(--fs-4)/1 "Archivo",system-ui;text-align:center;color:#FFD166} .fp-total small{font-size:var(--fs-3);color:var(--muted)}
 .fp-rounds{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.fp-rounds li{display:flex;align-items:center;gap:12px;padding:8px 8px;border-radius:var(--r-3);background:rgba(255,255,255,.03)} .fp-rounds li b{width:24px;text-align:center;font:800 var(--fs-3) "Space Grotesk",system-ui}
+.fp-rounds li{display:flex;align-items:center;gap:12px;padding:8px 8px;border-radius:var(--r-3);background:rgba(255,255,255,.03)} .fp-rounds li b{width:24px;text-align:center;font:800 var(--fs-3) "Archivo",system-ui}
 .fp-rounds li span{flex:1;min-width:0;display:flex;flex-direction:column;font-size:var(--fs-2)} .fp-rounds small{font-size:var(--fs-1);color:var(--muted)} .fp-rounds em{font:700 var(--fs-3) var(--f-mono);font-style:normal}
 .fp-rounds .gS{color:#FFD166} .fp-rounds .gA{color:#34C759} .fp-rounds .gB{color:var(--accent)} .fp-rounds .gC{color:#F5A623} .fp-rounds .gF{color:#E5484D}
 .fp-lenspick select{min-width:0;max-width:100%} .fp-lenspick #fpKit{flex:1 1 100%} .fp-lenspick span{flex:1 1 100%}
@@ -1662,6 +1668,98 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .addgrid button:hover,.sm-grid button:hover{background:var(--surface2)!important}
 .addgrid button[aria-pressed="true"],.sm-grid button[aria-pressed="true"]{box-shadow:var(--ring-sel)!important}
 
+
+
+/* computer, panel open: the panel's own tabs replace the rail, and the panel is narrower so two viewports still have room */
+@media (min-width:1000px) and (min-height:560px){
+  .app.paneon{grid-template-columns:0 minmax(0,1fr) auto} .app.paneon .rail{visibility:hidden;padding:0;border:0;overflow:hidden}
+  .app.vpm .drawer{width:340px}
+  .app.vpm #camBar .fab .lab{display:none}
+}
+
+/* ---------- monitor cart pass (2026-11-28): header, shot strip and timeline in the new language ---------- */
+.brand b{font-family:var(--f-logo);font-stretch:125%;font-weight:800;font-size:14px;letter-spacing:.02em}
+.brand b small{display:none} .logo{display:none}
+.bar{border-bottom:0;background:var(--paper)}
+.vsep{background:var(--line)}
+.shots{background:var(--body,#D4D5D7)!important;border-top:0!important}
+.shots .sl b{letter-spacing:0;text-transform:none;font-family:var(--f-body);font-weight:700}
+.card{background:var(--vf)!important;border:0!important;border-radius:0!important;padding:0 0 4px!important;box-shadow:none!important;color:#F2F2F2}
+.card:hover{transform:none;background:#1C1D20!important}
+.card canvas{border-radius:0!important}
+.card[aria-current="true"]::after{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--tally);pointer-events:none}
+.card .no,.card[aria-current="true"] .no{background:transparent!important;color:#F2F2F2!important;font-family:var(--f-num);letter-spacing:0;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.card .m{color:#A6A6A6} .card .m b{color:#F2F2F2;font-family:var(--f-num);letter-spacing:0}
+.card .grip{background:transparent;border-radius:0}
+.card.add{background:transparent!important;color:var(--ink)!important;border:0!important;min-width:80px}
+.card.add:hover{color:var(--ink)!important;text-decoration:underline}
+@media (min-width:1024px) and (min-height:640px){
+  .tl{height:36px;gap:2px;padding-top:14px}
+  .tl-seg{border:0!important;border-radius:0!important;background:var(--vf)!important;color:#A6A6A6!important}
+  .tl-seg b{font-family:var(--f-num);color:#F2F2F2}
+  .tl-seg:hover{background:#1C1D20!important}
+  .tl-seg[aria-current="true"]{box-shadow:inset 0 3px 0 var(--tally);color:#F2F2F2!important}
+  .tl-tick{border-left-color:var(--muted)} .tl-tick span{font-family:var(--f-num)}
+  .tl-ph{background:var(--tally);box-shadow:none;border-radius:0} .tl-ph::before{border-top-color:var(--tally)}
+}
+.app.vpm #stageInfo{display:none}
+
+/* ---------- phone held sideways (monitor cart pass): one view at a time, held in two hands.
+   Left grip: the camera tools. Right grip: every panel, the storyboard and 더보기. The views (3D · 모니터 · 탑) stay top-left. ---------- */
+@media (orientation:landscape) and (max-height:520px){
+  .app{grid-template-columns:minmax(0,1fr) 64px;grid-template-areas:"bar rail" "stage rail" "shots rail"}
+  .app.docked{grid-template-columns:minmax(0,1fr) min(340px,44vw) 64px;grid-template-areas:"bar bar rail" "stage drawer rail" "shots drawer rail"}
+  .app.boarding .bar{grid-column:1/2} .app.boarding .boardov{grid-column:1/2;grid-row:2/-1}
+  .rail{border-right:0;border-left:1px solid var(--line);padding:4px 2px;gap:0;justify-content:space-between;background:var(--body,#D4D5D7)}
+  .rail button[data-pane]:not([data-pane="cam"]){display:flex!important}
+  .rail button[data-pane="rig"]:not(.pro-on *){display:flex}
+  .rail .questb{display:none!important}
+  .rail button,.rail .navx{min-height:40px;padding:0!important;font-size:11px!important;gap:0}
+  .rail button svg,.rail .navx svg{width:18px!important;height:18px!important}
+  #rail .ax-rail button{min-height:40px;padding:0 2px;font-size:11px;gap:0}
+  .rail .navx[aria-pressed="true"] svg{stroke:var(--ink)}
+  /* left grip: the camera tools as a column at the stage's left edge; the pictures start right of it */
+  .stage{background:var(--body,#D4D5D7)}
+  #worldwrap,#vf{left:60px}
+  #camBar{left:0;top:0;bottom:0;width:60px;align-items:stretch;justify-content:center;background:var(--body,#D4D5D7)}
+  #camBar .toolbar{flex-direction:column;background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none;gap:2px;padding:0;align-items:center}
+  #camBar .tsep{width:28px;height:1px;background:var(--line)}
+  #camBar .ax-host[data-astryx-theme] button{min-width:52px;min-height:40px;height:40px}
+  #camBar .tsep{margin:0}
+  .ov-tl{left:68px} .ov-rig{left:68px}
+  .stage[data-mode="mon"] #camBar{display:none} .stage[data-mode="mon"] #worldwrap,.stage[data-mode="mon"] #vf{left:0}
+  .ov-bc{left:calc(50% + 30px)}
+  .pip{right:8px;bottom:8px}
+  .shots{padding:4px 8px}
+}
+/* ---------- viewport layouts (computer): wells on the grey body, like monitors on a cart ---------- */
+:root{--body:#D4D5D7}
+.vpane,#world2wrap{display:none}
+.app.vpm .stage{background:var(--body)}
+.app.vpm .vpane{display:block;position:absolute;background:var(--vf);z-index:0}
+.app.vpm #vf{right:calc(40% + 4px);z-index:1}
+.app.vpm #wPane{left:calc(60% + 4px);right:0;top:0;bottom:0}
+.app.vpm #worldwrap{left:calc(60% + 4px);right:0;top:48px;bottom:52px;z-index:1}
+.app.vp3 #wPane{bottom:calc(50% + 4px)} .app.vp3 #worldwrap{bottom:calc(50% + 56px)}
+.app.vp3 #w2Pane{left:calc(60% + 4px);right:0;top:calc(50% + 4px);bottom:0}
+.app.vp3 #world2wrap{display:block;left:calc(60% + 4px);right:0;top:calc(50% + 32px);bottom:0;z-index:1;cursor:pointer}
+.app.vp3 #world2wrap:focus-visible{outline:2px solid #F2F2F2;outline-offset:-4px}
+.vplabel{position:absolute;left:12px;top:-26px;font:600 13px/20px var(--f-body);color:#A6A6A6;pointer-events:none}
+.vplabel::after{content:" · 누르면 큰 칸으로";font-weight:500;color:#7C7C7C}
+.app.vpm .ov-tl{left:calc(60% + 16px);top:8px}
+.app.vpm .ov-tr{top:8px;right:56px;max-width:calc(40% - 200px)}
+.app.vpm .ov-fs{top:8px;right:12px}
+.app.vpm .ov-bl{left:calc(60% + 12px);bottom:8px}
+.app.vp3 .ov-bl{bottom:calc(50% + 12px)}
+.app.vpm .ov-bc{left:80%;bottom:64px;max-width:calc(40% - 24px)}
+.app.vp3 .ov-bc{bottom:calc(50% + 64px)}
+.app.vpm .ov-tc{left:80%;top:56px}
+.app.vpm .ov-rig{left:calc(60% + 12px);top:56px}
+.app.vpm .ov .toolbar.glass,.app.vpm .ov .modeseg.glass,.app.vpm .ov .chip{background:transparent;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.app.vpm #modeSeg + .ax-host > *,.app.vpm .ov-tl > .ax-host > *{background:transparent}
+.app.vpm .pip{display:none}
+.vplay{display:none}
+@media (min-width:1000px) and (min-height:560px){ .vplay{display:inline-flex} }
 }
 </style>
 </head>
@@ -1676,6 +1774,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     </div>
     <div class="actions">
       <div class="hist"><button class="btn icon" id="undoBtn" title="실행 취소 (⌘Z)" aria-label="실행 취소" disabled><svg class="i" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button><button class="btn icon" id="redoBtn" title="다시 실행 (⌘⇧Z)" aria-label="다시 실행" disabled><svg class="i" viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button></div>
+      <div class="vtoggle vplay" id="vpLay" role="group" aria-label="화면 배치"><button data-vp="1" aria-pressed="false" title="화면 하나: 3D · 모니터 · 탑을 바꿔 가며"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14"/></svg><span class="lab">1</span></button><button data-vp="2" aria-pressed="true" title="화면 둘: 모니터와 3D(또는 탑)를 나란히"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14"/><path d="M13 5v14"/></svg><span class="lab">2</span></button><button data-vp="3" aria-pressed="false" title="화면 셋: 모니터 · 3D · 탑을 한꺼번에"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14"/><path d="M13 5v14M13 12h7.5"/></svg><span class="lab">3</span></button></div>
       <div class="vtoggle" role="group" aria-label="화면"><button id="editBtn" aria-pressed="true"><svg class="i" viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg><span class="lab">편집</span></button><button id="boardBtn" aria-pressed="false"><svg class="i" viewBox="0 0 24 24"><rect x="3.5" y="4" width="7.5" height="7" rx="1.5"/><rect x="13" y="4" width="7.5" height="7" rx="1.5"/><rect x="3.5" y="13" width="7.5" height="7" rx="1.5"/><rect x="13" y="13" width="7.5" height="7" rx="1.5"/></svg><span class="lab">보드</span></button></div>
       <button class="btn primary" id="exportBtn" title="내보내기 · 공유" aria-haspopup="menu" aria-expanded="false"><svg class="i" viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5M5 14v4.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V14"/></svg><span class="lab">내보내기</span></button>
     </div>
@@ -1702,6 +1801,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
   <div class="stage" id="stage">
     <div class="sharedbar glass" id="sharedBar" hidden><span><b>공유받은 프로젝트</b> · 아직 저장 전이에요</span><button class="btn sm primary" id="saveSharedBtn">내 프로젝트로 저장</button></div>
+    <div class="vpane" id="wPane" aria-hidden="true"></div><div class="vpane" id="w2Pane" aria-hidden="true"></div>
+    <div class="layer" id="world2wrap" role="button" tabindex="0" aria-label="두 번째 세트 화면. 누르면 이 화면이 큰 칸으로 바뀝니다."><canvas id="world2" aria-hidden="true"></canvas><span class="vplabel" id="w2Label">탑</span></div>
     <div class="layer" id="worldwrap"><canvas id="world" aria-label="3D 세트. 빈 곳을 드래그하면 시점이 돌아가고, 핀치나 휠로 확대, 두 손가락을 위아래로 밀면 카메라가 앞뒤로 달리합니다. 카메라의 화살표와 고리를 끌면 카메라가 움직입니다."></canvas></div>
     <div class="layer vf" id="vf" hidden>
       <canvas id="viewBg" class="surround" aria-hidden="true" hidden></canvas>
@@ -1894,7 +1995,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="tl" id="tl" role="group" aria-label="타임라인"></div>
     <button class="stog" id="stripToggle" aria-expanded="true" aria-controls="strip" title="샷 목록 접기 · 펴기"><svg class="i" viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><span id="stripCur"></span></button>
     <span class="snav" id="snav"><button data-nav="-1" aria-label="이전 샷">‹</button><button data-nav="1" aria-label="다음 샷">›</button></span>
-    <div class="sl"><b>Shots</b><span id="sum"></span></div>
+    <div class="sl"><b>샷</b><span id="sum"></span></div>
     <div class="strip" id="strip"></div>
     <div class="stools"><button class="btn sm seqb" id="seqBtn" aria-pressed="false" title="모든 샷을 이어서 재생 (애니매틱 · P)"><svg class="i" viewBox="0 0 24 24"><path d="M5 5l9 7-9 7zM14 5l7 7-7 7"/></svg><span class="lab">전체 재생</span></button><button class="btn sm primary addb" id="addBtn" title="새 샷 추가">＋ 샷</button><button class="btn sm" id="dupBtn" title="현재 샷 복제"><svg class="i" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5.5A1.5 1.5 0 0 0 14.5 4h-9A1.5 1.5 0 0 0 4 5.5v9A1.5 1.5 0 0 0 5.5 16H8"/></svg><span class="lab">복제</span></button><button class="btn sm" id="delBtn" title="현재 샷 삭제"><svg class="i" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></svg><span class="lab">삭제</span></button></div>
   </footer>
@@ -2695,7 +2796,7 @@ function phoneLook(e) { const a = (e.alpha || 0) * DEG, b = (e.beta || 0) * DEG,
 let C = {};
 const AX = { x: '#E5484D', y: '#2FA36B', z: '#3E7BFA', pan: '#E8A317', tilt: '#13A8B8', roll: '#A65FE0' };
 function readColors() {
-  const cs = getComputedStyle(document.documentElement);
+  const cs = getComputedStyle(document.getElementById('stage') || document.documentElement); // canvas colours come from the stage (the dark wells)
   ['ink', 'muted', 'accent', 'pencil', 'figA', 'figB', 'col', 'cam', 'sky', 'ground', 'grid', 'shadow', 'vf', 'sheet', 'paper', 'wall', 'prop', 'warn'].forEach(k => C[k] = cs.getPropertyValue('--' + k).trim());
 }
 
@@ -3871,7 +3972,7 @@ function playShot() {
 // It reuses `play` one shot at a time (seq marks it), so anything that stops a play (an edit, a tap on the picture) stops the animatic.
 let seq = null;
 const mmss = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
-function playSeq(from = 0) { if (seq) return stopSeq(); if (play) stopPlay(); kfReset(); openPane(null); if (mode !== 'mon') setMode('mon');
+function playSeq(from = 0) { if (seq) return stopSeq(); if (play) stopPlay(); kfReset(); openPane(null); if (mode !== 'mon' && !multi()) setMode('mon');
   const len = s => Math.max(1, s.dur || 3); seq = { i: from, total: state.shots.reduce((a, s) => a + len(s), 0), done: state.shots.slice(0, from).reduce((a, s) => a + len(s), 0) };
   $('#app').classList.add('anim'); $('#animHud').hidden = false; $('#seqBtn').setAttribute('aria-pressed', 'true'); seqShot(from); }
 function seqShot(i) { if (!seq) return; if (i >= state.shots.length) return stopSeq(true);
@@ -4656,7 +4757,7 @@ function renderScene(ctx, W, H, V, s, opt = {}) {
     p.draw(); if (b > 0.6) ctx.filter = 'none';
   });
   const fs = Math.max(9, Math.min(13, W / 48));
-  ctx.font = `600 ${fs}px "IBM Plex Mono", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.font = `600 ${fs}px "Archivo Narrow", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
   labels.forEach(l => { if (l.p.y < fs || l.p.y > H || l.p.x < 0 || l.p.x > W) return;
     ctx.fillStyle = C.sheet; ctx.globalAlpha = .85; ctx.fillRect(l.p.x - fs * .6, l.p.y - fs * 1.15, fs * 1.2, fs * 1.15); ctx.globalAlpha = 1;
     ctx.fillStyle = C.ink; ctx.fillText(l.t, l.p.x, l.p.y - 1); });
@@ -4756,7 +4857,7 @@ function drawMove(ctx, W, H, k, s) {
     else { arrow(ctx, W * .23, H * .23, W * .08, H * .08, hw); arrow(ctx, W * .77, H * .77, W * .92, H * .92, hw); } }
   if (k === 'hand') { ctx.beginPath(); for (let x = W * .3; x <= W * .7; x += 2) { const y = H * .1 + Math.sin((x - W * .3) / (W * .4) * Math.PI * 5) * H * .025; x === W * .3 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
   const label = s ? moveName(s, 'en') : (MOVES.find(x => x.k === k) || {}).en; ctx.shadowBlur = 0;
-  const fs = Math.max(9, W / 45); ctx.font = `600 ${fs}px "IBM Plex Mono", monospace`;
+  const fs = Math.max(9, W / 45); ctx.font = `600 ${fs}px "Archivo Narrow", sans-serif`;
   const tw = ctx.measureText(label).width; ctx.fillStyle = C.accent; ctx.fillRect(W - tw - fs * 1.4, H - fs * 2.1, tw + fs * .8, fs * 1.5);
   ctx.fillStyle = C.sheet; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(label, W - tw - fs, H - fs * 1.35);
   ctx.restore();
@@ -5068,7 +5169,7 @@ function glWorld(ctx, W, H, s, V) {
 // guides drawn over a GL shot: subject tags, lens chart, thirds, camera move
 function shotOverlay(ctx, W, H, s, V, opt) {
   const o = V.o, toC = p => { const d = sub3(p, V.P); return { x: dot(d, V.r), y: dot(d, V.u), z: dot(d, V.f) }; }, scr = V.proj || (q => ({ x: W / 2 + q.x / q.z * V.fp, y: H / 2 - q.y / q.z * V.fp }));
-  if (opt.labels !== false) { const fs = Math.max(9, Math.min(13, W / 48)); ctx.font = `600 ${fs}px "IBM Plex Mono", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  if (opt.labels !== false) { const fs = Math.max(9, Math.min(13, W / 48)); ctx.font = `600 ${fs}px "Archivo Narrow", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
     subjKeys(s).forEach(k => { const sb = s[k]; const q = toC({ x: sb.x, y: skeleton(k, sb).top + 0.2, z: sb.z }); if (q.z < 0.2) return; const p = scr(q); if (p.y < fs || p.y > H || p.x < 0 || p.x > W) return;
       ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.fillRect(p.x - fs * .6, p.y - fs * 1.15, fs * 1.2, fs * 1.15); ctx.fillStyle = '#16202B'; ctx.fillText(k, p.x, p.y - 1); }); }
   // AF frame: corner brackets around the target's face (red when the lens can't focus that close)
@@ -5076,7 +5177,7 @@ function shotOverlay(ctx, W, H, s, V, opt) {
     if (q.z > 0.15) { const c = scr(q), r = clamp(sk.headR * 1.6 * V.fp / q.z, 10, H * 0.35), L = r * 0.45;
       ctx.save(); ctx.strokeStyle = o.tooClose ? '#F05A4A' : '#4BE08A'; ctx.lineWidth = 2; ctx.beginPath();
       for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const x = c.x + sx * r, y = c.y + sy * r; ctx.moveTo(x, y - sy * L); ctx.lineTo(x, y); ctx.lineTo(x - sx * L, y); }
-      ctx.stroke(); ctx.font = '600 10px "IBM Plex Mono", monospace'; ctx.fillStyle = ctx.strokeStyle; ctx.textAlign = 'left'; const below = c.y + r + 16 < H - 26; ctx.textBaseline = below ? 'top' : 'bottom'; ctx.fillText(`AF ${k}`, c.x - r, below ? c.y + r + 3 : Math.max(28, c.y - r - 3)); ctx.restore(); } } // under the box, clear of the top readout; above it only near the bottom
+      ctx.stroke(); ctx.font = '600 10px "Archivo Narrow", sans-serif'; ctx.fillStyle = ctx.strokeStyle; ctx.textAlign = 'left'; const below = c.y + r + 16 < H - 26; ctx.textBaseline = below ? 'top' : 'bottom'; ctx.fillText(`AF ${k}`, c.x - r, below ? c.y + r + 3 : Math.max(28, c.y - r - 3)); ctx.restore(); } } // under the box, clear of the top readout; above it only near the bottom
   if (opt.lensGrid) { const tH = o.tanH * 1.1, tV = o.tanV * 1.1, pr = q => V.proj ? V.proj(q) : { x: W / 2 + q.x * V.fp, y: H / 2 - q.y * V.fp };
     ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 1; ctx.beginPath();
     const line = fn => { for (let i = 0; i <= 32; i++) { const [a, b] = fn(i / 16 - 1), p = pr({ x: a, y: b, z: 1 }); i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); } };
@@ -5921,6 +6022,20 @@ let wsz = null, worldHandles = [], wDrag = null, worldV = null, view3d = null;
 const ptrs = new Map(), coarse = matchMedia('(pointer: coarse)'), pad = () => coarse.matches ? 1.8 : 1;
 // phone = upright phone layout; shortH = any phone held sideways (also narrow ones like the iPhone SE); small = either, for lighter rendering
 const phone = matchMedia('(max-width: 719px) and (orientation: portrait)'), shortH = matchMedia('(orientation: landscape) and (max-height: 520px)');
+/* viewport layouts, as in a 3D package (C4D): on a computer the stage can show one view, two (the camera monitor beside the 3D or top
+   view) or three (monitor, 3D and top at once). Phones always show one view at a time. '1' keeps the old one-view stage with its switch. */
+let vpLay = (() => { try { return localStorage.getItem('previo.vp') || '2'; } catch (e) { return '2'; } })(), worldCv = null, w2sz = null, w2T = 0;
+const vpRoom = () => !phone.matches && !shortH.matches && innerWidth >= 1000 && innerHeight >= 560;
+const multi = () => vpLay !== '1' && vpRoom(), vp3 = () => vpLay === '3' && vpRoom();
+function applyVp() { const app = $('#app'); if (!app) return; const m2 = multi() && vpLay === '2', m3 = vp3();
+  if (app.classList.contains('vp2') === m2 && app.classList.contains('vp3') === m3) return;
+  app.classList.toggle('vp2', m2); app.classList.toggle('vp3', m3); app.classList.toggle('vpm', m2 || m3);
+  document.querySelectorAll('#vpLay button').forEach(b => b.setAttribute('aria-pressed', b.dataset.vp === vpLay));
+  if (multi() && mode === 'mon') { mode = '3d'; $('#stage').dataset.mode = '3d'; document.querySelectorAll('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === '3d')); $('#worldwrap').hidden = false; }
+  $('#vf').hidden = mode !== 'mon' && !multi(); $('#pip').hidden = mode === 'mon' || multi(); $('#world2wrap').hidden = !m3;
+  wsz = null; vsz = null; requestAnimationFrame(() => { wsz = null; vsz = null; renderAll(); }); }
+function setVp(l) { vpLay = l; try { localStorage.setItem('previo.vp', l); } catch (e) {} if (!vpRoom()) toast('화면 여러 개는 넓은 화면(컴퓨터)에서만 돼요'); $('#app').classList.remove('vp2', 'vp3'); applyVp();
+  document.querySelectorAll('#vpLay button').forEach(b => b.setAttribute('aria-pressed', b.dataset.vp === vpLay)); }
 const wide = matchMedia('(min-width: 1024px) and (min-height: 640px)'); // tablets and computers: docked inspector, timeline
 const small = () => phone.matches || shortH.matches;
 // the app is exactly as tall as what is visible: follows the on-screen keyboard and browser bars, and never lets the page itself scroll
@@ -5939,18 +6054,28 @@ function viewerBasis(W, H) {
   return Object.assign(B, { tanH, fp: Math.max(W, H * 0.8) / 2 / tanH, W, H });
 }
 function sizeWorld() {
-  const st = $('#stage'), cv = $('#world'), dpr = devicePixelRatio || 1, W = Math.max(50, st.clientWidth), H = Math.max(50, st.clientHeight);
+  const cv = worldCv || $('#world'), st = cv.parentElement, dpr = devicePixelRatio || 1, W = Math.max(50, st.clientWidth), H = Math.max(50, st.clientHeight);
   cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; return { W, H, dpr };
 }
 // drawn on demand: a burst of pointer events or edits in one frame draws the set once, on the next frame.
 // The very first draw is immediate so hit-testing has a view to work with.
 let worldRaf = 0;
-function renderWorld() { if (!worldV) return drawWorld(); if (!worldRaf) worldRaf = requestAnimationFrame(() => { worldRaf = 0; drawWorld(); }); }
+function renderWorld() { if (!worldV) return drawWorld(); if (!worldRaf) worldRaf = requestAnimationFrame(() => { worldRaf = 0; drawWorld(); w2Soon(); }); }
+function w2Soon() { if (!vp3() || w2T) return; w2T = setTimeout(() => { w2T = 0; drawWorld2(); }, 140); }
+function drawWorld2() {
+  if (!vp3() || mode === 'mon') return; const cv = $('#world2'); if (!cv || !cv.parentElement.clientWidth) return;
+  const save = { v: { ...viewer }, wsz, worldV, worldHandles, gizmoSpot, gridInfo, mode, camSel, selObj };
+  try { worldCv = cv; w2sz = sizeWorld(); wsz = w2sz; let alt;
+    if (save.mode === 'top') alt = view3d || { tx: 0, ty: 1, tz: -1.5, az: 235, el: 28, dist: 9, fov: 30 };
+    else { const s = cur(), { c, r } = framePts(s, true), fov = 18, k = Math.min(w2sz.W, w2sz.H) / Math.max(w2sz.W, w2sz.H * 0.8) * Math.tan(fov * DEG); alt = { tx: c.x, ty: 0, tz: c.z, el: 89.9, az: 180, fov, dist: (r + 1.4) / k }; }
+    mode = save.mode === 'top' ? '3d' : 'top'; camSel = false; selObj = null; Object.assign(viewer, alt); $('#w2Label').textContent = mode === 'top' ? '탑' : '3D'; drawWorld(); }
+  catch (e) { console.warn(e); }
+  finally { worldCv = null; Object.assign(viewer, save.v); wsz = save.wsz; worldV = save.worldV; worldHandles = save.worldHandles; gizmoSpot = save.gizmoSpot; gridInfo = save.gridInfo; mode = save.mode; camSel = save.camSel; selObj = save.selObj; } }
 function flushWorld() { if (worldRaf) { cancelAnimationFrame(worldRaf); worldRaf = 0; } drawWorld(); }
 function drawWorld() {
   if (mode === 'mon') return;
   if (!wsz) wsz = sizeWorld();
-  const { W, H, dpr } = wsz, ctx = $('#world').getContext('2d');
+  const { W, H, dpr } = wsz, ctx = (worldCv || $('#world')).getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const s = cur(), o = optics(s), V = viewerBasis(W, H), SB = shotBasis(s), LC = lightCtx(s); worldV = V;
   const opts = {
@@ -5962,7 +6087,7 @@ function drawWorld() {
       // lens height marker, only while the camera is picked
       if (camSel) { ctx.strokeStyle = C.muted; ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.beginPath(); seg(P, { x: P.x, y: 0, z: P.z }); ctx.stroke(); ctx.setLineDash([]);
       const g = toC({ x: P.x, y: 0, z: P.z });
-      if (g.z > 0.1) { const gp = scr(g); ctx.fillStyle = C.ink; ctx.font = '500 10.5px "IBM Plex Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(` ${fmt(P.y, 2)}m`, gp.x + 4, gp.y); } }
+      if (g.z > 0.1) { const gp = scr(g); ctx.fillStyle = C.ink; ctx.font = '500 10.5px "Archivo Narrow", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(` ${fmt(P.y, 2)}m`, gp.x + 4, gp.y); } }
       // frustum through the real (distorted) image edges, out to the focus plane
       const L = clamp(o.fd, 0.4, 60), Lx = L * 1.25;
       const corner = (sx, sy, d) => { const q = o.dirAt(sx, sy), w = add(add({ x: SB.r.x * q.x, y: SB.r.y * q.x, z: SB.r.z * q.x }, SB.u, q.y), SB.f, q.z);
@@ -5975,7 +6100,7 @@ function drawWorld() {
       ctx.stroke();
       const fq = border.map(toC);
       if (camSel && fq.every(q => q.z > 0.05)) { ctx.globalAlpha = .05; ctx.fillStyle = C.accent; ctx.beginPath(); fq.map(scr).forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.fill();
-        const up = scr(toC(corner(-1, 1, L))); ctx.globalAlpha = 1; ctx.fillStyle = C.accent; ctx.font = '500 10.5px "IBM Plex Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.fillText(`초점면 ${fmtM(o.fd)}`, up.x + 2, up.y - 2); }
+        const up = scr(toC(corner(-1, 1, L))); ctx.globalAlpha = 1; ctx.fillStyle = C.accent; ctx.font = '500 10.5px "Archivo Narrow", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.fillText(`초점면 ${fmtM(o.fd)}`, up.x + 2, up.y - 2); }
       ctx.globalAlpha = 1;
       drawLights(ctx, toC, scr, s, LC);
       if (placing) drawPlaceGrid(ctx, toC, scr, placing.o, !!placing.why);
@@ -5989,7 +6114,7 @@ function drawWorld() {
   if (!gl) return renderScene(ctx, W, H, V, s, opts);
   glWorld(ctx, W, H, s, V);
   const toC = p => { const d = sub3(p, V.P); return { x: dot(d, V.r), y: dot(d, V.u), z: dot(d, V.f) }; }, scr = q => ({ x: W / 2 + q.x / q.z * V.fp, y: H / 2 - q.y / q.z * V.fp });
-  ctx.font = '600 11px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  ctx.font = '600 11px "Archivo Narrow", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
   subjKeys(s).forEach(k => { const sb = s[k]; const q = toC({ x: sb.x, y: skeleton(k, sb).top + 0.25, z: sb.z }); if (q.z < 0.2) return; const p = scr(q);
     const t = castName(k) === k ? k : `${k} ${castName(k)}`, w = Math.max(18, ctx.measureText(t).width + 10);
     ctx.fillStyle = CAST_COL[k]; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(p.x - w / 2, p.y - 17, w, 16, 5) : ctx.rect(p.x - w / 2, p.y - 17, w, 16); ctx.fill(); ctx.fillStyle = '#fff'; ctx.fillText(t, p.x, p.y - 3); });
@@ -6040,14 +6165,14 @@ function drawGridLabels(ctx, toC, scr, W, H) {
   const gi = gridInfo; if (!gi) return; const step = gi.ma * gi.ppm < 46 ? gi.ma * 2 : gi.ma;
   const tg = gridTarget(); if (!tg) return;
   const zRow = Math.round(tg.z / step) * step, xCol = Math.round(tg.x / step) * step, span = step * 2;
-  ctx.save(); ctx.font = '500 10.5px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.save(); ctx.font = '500 10.5px "Archivo Narrow", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   let last = null; const tag = (w, t, col) => { const q = toC(w); if (q.z < 0.3) return; const p = scr(q); if (p.x < 8 || p.x > W - 8 || p.y < 8 || p.y > H - 8) return;
     if (last && Math.hypot(p.x - last.x, p.y - last.y) < 40) return; last = p;
     const tw = ctx.measureText(t).width; ctx.fillStyle = 'rgba(7,9,12,.55)'; ctx.fillRect(p.x - tw / 2 - 4, p.y - 8, tw + 8, 16); ctx.fillStyle = col; ctx.fillText(t, p.x, p.y); };
   for (let u = xCol - span; u <= xCol + span + 1e-6; u += step) tag({ x: u, y: 0.01, z: zRow }, fmtGrid(u), Math.abs(u) < 1e-6 ? '#fff' : '#FF9B8F');
   last = null;
   for (let u = zRow - span; u <= zRow + span + 1e-6; u += step) if (Math.abs(u - zRow) > 1e-6) tag({ x: xCol, y: 0.01, z: u }, fmtGrid(u), '#9DB8FF');
-  const t = `격자 ${fmtGrid(gi.mi)} · 굵은 선 ${fmtGrid(gi.ma)}`; ctx.font = '600 11px "IBM Plex Mono", monospace'; const tw = ctx.measureText(t).width;
+  const t = `격자 ${fmtGrid(gi.mi)} · 굵은 선 ${fmtGrid(gi.ma)}`; ctx.font = '600 11px "Archivo Narrow", sans-serif'; const tw = ctx.measureText(t).width;
   ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(7,9,12,.6)'; ctx.fillRect(12, 112, tw + 14, 20); ctx.fillStyle = '#fff'; ctx.fillText(t, 19, 122); ctx.restore();
 }
 // beam edges and a name tag for each fixture; the model itself is drawn with the scene
@@ -6062,7 +6187,7 @@ function drawLights(ctx, toC, scr, s, L) {
     const rr = Math.max(12, 0.36 * worldV.fp / q.z);
     if (sel) { ctx.strokeStyle = C.accent; ctx.lineWidth = 2.5; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.arc(p.x, p.y, rr, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
     if (!sel && rr < 20) { ctx.restore(); return; }
-    const t = lightLabel(li.l); ctx.font = '600 10.5px "IBM Plex Sans KR", sans-serif'; const tw = ctx.measureText(t).width, lx = p.x + rr * 0.7 + 4, ly = p.y - rr * 0.7;
+    const t = lightLabel(li.l); ctx.font = '600 10.5px "SUIT Variable", sans-serif'; const tw = ctx.measureText(t).width, lx = p.x + rr * 0.7 + 4, ly = p.y - rr * 0.7;
     ctx.fillStyle = C.sheet; ctx.globalAlpha = 0.85; ctx.fillRect(lx - 3, ly - 8, tw + 6, 16); ctx.globalAlpha = 1;
     ctx.fillStyle = sel ? C.accent : C.ink; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(t, lx, ly); ctx.restore();
   });
@@ -6070,7 +6195,7 @@ function drawLights(ctx, toC, scr, s, L) {
 function drawHeatLegend(ctx) {
   const x = 20, y = 70; ctx.save(); ctx.fillStyle = C.sheet; ctx.globalAlpha = 0.88; ctx.fillRect(x - 8, y - 16, 164, 40); ctx.globalAlpha = 1;
   for (let i = 0; i < 140; i++) { ctx.fillStyle = heatCol(Math.pow(10, i / 140 * 4)); ctx.fillRect(x + i, y, 1.2, 8); }
-  ctx.fillStyle = C.ink; ctx.font = '500 10px "IBM Plex Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillText('바닥 조도 (lux)', x, y - 4);
+  ctx.fillStyle = C.ink; ctx.font = '500 10px "Archivo Narrow", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; ctx.fillText('바닥 조도 (lux)', x, y - 4);
   ctx.textBaseline = 'top'; [[0, '1'], [35, '10'], [70, '100'], [105, '1k'], [136, '10k']].forEach(([o, t]) => ctx.fillText(t, x + o, y + 10)); ctx.restore();
 }
 function distSeg(p, a, b) { const vx = b.x - a.x, vy = b.y - a.y, l2 = vx * vx + vy * vy || 1; const t = clamp(((p.x - a.x) * vx + (p.y - a.y) * vy) / l2, 0, 1); return Math.hypot(p.x - a.x - vx * t, p.y - a.y - vy * t); }
@@ -6087,7 +6212,7 @@ function drawAxis(ctx, toC, scr, s) {
       for (let t = -R; t < L + R; t += 0.25) { const p1 = P({ x: A.x + u.x * t, z: A.z + u.z * t }), p2 = P({ x: A.x + u.x * (t + 0.25), z: A.z + u.z * (t + 0.25) }); if (p1 && p2) { ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); } }
       ctx.stroke(); ctx.setLineDash([]);
       const lp = P({ x: B.x + u.x * Math.min(R * 0.6, 2.2), z: B.z + u.z * Math.min(R * 0.6, 2.2) });
-      if (lp) { ctx.font = '600 10.5px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillStyle = bad ? C.warn : '#E8A317';
+      if (lp) { ctx.font = '600 10.5px "Archivo Narrow", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillStyle = bad ? C.warn : '#E8A317';
         ctx.fillText(`180° ${ax.a}–${ax.b}${bad ? ' · 넘었어요' : ''}`, lp.x, lp.y - 4); } } }
   // eyelines: where each person looks, from eye height, 1.2 m out
   subjKeys(s).forEach(k => { const sb = s[k], y = headY(s, sb), f = sb.face * DEG, h = P({ x: sb.x + Math.sin(f) * 0.22, z: sb.z + Math.cos(f) * 0.22 }, y), e = P({ x: sb.x + Math.sin(f) * 1.3, z: sb.z + Math.cos(f) * 1.3 }, y);
@@ -6105,7 +6230,7 @@ function drawPaths(ctx, toC, scr) {
     ps.forEach(p => { if (!p) { on = false; return; } on ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); on = true; }); ctx.stroke(); ctx.setLineDash([]);
     const a = ps[ps.length - 1], b = ps[ps.length - 2]; if (a && b) { const t = Math.atan2(a.y - b.y, a.x - b.x); ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(a.x - 9 * Math.cos(t - 0.45), a.y - 9 * Math.sin(t - 0.45)); ctx.lineTo(a.x - 9 * Math.cos(t + 0.45), a.y - 9 * Math.sin(t + 0.45)); ctx.closePath(); ctx.fill(); }
     return ps; };
-  const tag = (p, txt, col) => { if (!p) return; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(p.x, p.y, 7.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '700 9.5px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, p.x, p.y + 0.5); };
+  const tag = (p, txt, col) => { if (!p) return; ctx.fillStyle = col; ctx.beginPath(); ctx.arc(p.x, p.y, 7.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#fff'; ctx.font = '700 9.5px "Archivo Narrow", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, p.x, p.y + 0.5); };
   const cp = line(d.cams, C.accent, [], 2.2); if (cp) { tag(cp[0], 'S', C.accent); tag(cp[cp.length - 1], 'E', '#E8A317'); }
   for (const k of Object.keys(d.acts)) { const ap = line(d.acts[k], CAST_COL[k], [5, 4], 2); if (ap) { tag(ap[0], 'S', CAST_COL[k]); tag(ap[ap.length - 1], 'E', CAST_COL[k]); } }
 }
@@ -6118,7 +6243,7 @@ function drawMarks(ctx, toC, scr) { if (mode !== 'top') return;
   for (const m of marks) { const f = m.p.face * DEG, fx = Math.sin(f), fz = Math.cos(f), rx = Math.cos(f), rz = -Math.sin(f), cx = m.p.x + fx * 0.2, cz = m.p.z + fz * 0.2;
     const a = P(cx - rx * 0.18, cz - rz * 0.18), b = P(cx + rx * 0.18, cz + rz * 0.18), c = P(cx, cz), d = P(cx - fx * 0.2, cz - fz * 0.2); if (!a || !b || !c || !d) continue;
     ctx.strokeStyle = CAST_COL[m.k]; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.moveTo(c.x, c.y); ctx.lineTo(d.x, d.y); ctx.stroke();
-    ctx.fillStyle = CAST_COL[m.k]; ctx.font = '700 10px "IBM Plex Mono", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(`${m.k}${m.n}`, b.x + 4, b.y); }
+    ctx.fillStyle = CAST_COL[m.k]; ctx.font = '700 10px "Archivo Narrow", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(`${m.k}${m.n}`, b.x + 4, b.y); }
   ctx.restore(); }
 // the measuring tape (top view): drag between two points on the floor; the length stays until the tape is put away
 const tape = { on: false, a: null, b: null };
@@ -6126,7 +6251,7 @@ function drawTape(ctx, toC, scr) { if (mode !== 'top' || !tape.on || !tape.a || 
   const pa = toC({ ...tape.a, y: 0.02 }), pb = toC({ ...tape.b, y: 0.02 }); if (pa.z < 0.05 || pb.z < 0.05) return; const a = scr(pa), b = scr(pb), L = Math.hypot(tape.b.x - tape.a.x, tape.b.z - tape.a.z);
   ctx.save(); ctx.strokeStyle = '#F2B22E'; ctx.fillStyle = '#F2B22E'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
   for (const p of [a, b]) { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fill(); }
-  const t = `${fmt(L, 2)}m`, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2; ctx.font = '700 12.5px "IBM Plex Mono", monospace'; const w = ctx.measureText(t).width;
+  const t = `${fmt(L, 2)}m`, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2; ctx.font = '700 12.5px "Archivo Narrow", sans-serif'; const w = ctx.measureText(t).width;
   ctx.fillStyle = 'rgba(10,12,16,.85)'; ctx.fillRect(mx - w / 2 - 6, my - 20, w + 12, 18); ctx.fillStyle = '#F2B22E'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, mx, my - 11); ctx.restore(); }
 $('#tapeBtn').onclick = () => { tape.on = !tape.on; tape.a = tape.b = null; $('#tapeBtn').setAttribute('aria-pressed', tape.on); renderWorld(); if (tape.on) toast('바닥에서 두 점 사이를 끌어 거리를 재요'); };
 /* ---------- 짓기 (build mode): walls, floors and blocks drawn straight onto the floor, like a building game ----------
@@ -6183,7 +6308,7 @@ function drawBuild(ctx, toC, scr) { if (!build.on) return; const C1 = '#F2B22E',
   for (const q of buildEnds()) { const s = at(q); if (s) { ctx.strokeStyle = 'rgba(242,178,46,.7)'; ctx.beginPath(); ctx.arc(s.x, s.y, 4, 0, Math.PI * 2); ctx.stroke(); } }
   const pts = build.pts, hv = build.hover, last = pts[pts.length - 1];
   const quad = (cs, fill, stroke) => { const ss = cs.map(q => at(q, q.y)); if (ss.some(v => !v)) return; ctx.beginPath(); ss.forEach((v, i) => i ? ctx.lineTo(v.x, v.y) : ctx.moveTo(v.x, v.y)); ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.stroke(); };
-  const label = (a, b, t) => { const sa = at(a), sb = at(b); if (!sa || !sb) return; const mx = (sa.x + sb.x) / 2, my = (sa.y + sb.y) / 2; ctx.font = '700 12px "IBM Plex Mono", monospace'; const w = ctx.measureText(t).width;
+  const label = (a, b, t) => { const sa = at(a), sb = at(b); if (!sa || !sb) return; const mx = (sa.x + sb.x) / 2, my = (sa.y + sb.y) / 2; ctx.font = '700 12px "Archivo Narrow", sans-serif'; const w = ctx.measureText(t).width;
     ctx.fillStyle = 'rgba(10,12,16,.85)'; ctx.fillRect(mx - w / 2 - 6, my - 22, w + 12, 18); ctx.fillStyle = C1; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, mx, my - 13); };
   if (build.tool === 'wall') { const H = build.h.wall;
     for (let i = 1; i < pts.length; i++) { const a = at(pts[i - 1]), b = at(pts[i]); if (a && b) { ctx.strokeStyle = C1; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); } }
@@ -6201,7 +6326,7 @@ function drawCrane(ctx, toC, scr, s, r, g, k) {
     { id: 'boom', col: AX.y, lab: '붐', pt: th => ({ x: P.x + Math.sin(a0) * g.L * Math.cos(th), y: P.y + g.L * Math.sin(th), z: P.z + Math.cos(a0) * g.L * Math.cos(th) }), from: -mx, to: mx, lt: mx },
   ];
   const active = id => wDrag && (wDrag.t === 'cring' || wDrag.t === 'clen') && wDrag.id === id;
-  ctx.font = '600 11px "IBM Plex Sans KR", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = '600 11px "SUIT Variable", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   const tag = (q, t, col) => { if (q.z < 0.1) return; const p = scr(q), tw = ctx.measureText(t).width; ctx.fillStyle = C.sheet; ctx.globalAlpha = .85; ctx.fillRect(p.x - tw / 2 - 4, p.y - 8, tw + 8, 16); ctx.globalAlpha = 1; ctx.fillStyle = col; ctx.fillText(t, p.x, p.y); };
   curves.forEach(c => {
     const pts = []; for (let i = 0; i <= 72; i++) { const th = c.from + (c.to - c.from) * i / 72, q = toC(c.pt(th)); pts.push(q.z > 0.05 ? { ...scr(q), th } : null); }
@@ -6275,7 +6400,7 @@ function drawHandles(ctx, toC, scr, s, SB) {
     ctx.strokeStyle = C.sheet; ctx.lineWidth = active ? 6 : 4.5; ctx.stroke();
     ctx.strokeStyle = AX[rg.id]; ctx.lineWidth = active ? 3.5 : 2.2; ctx.stroke();
     const kq = toC(pt(rg.th0)); if (kq.z > 0.05) { const kp = scr(kq); ctx.fillStyle = AX[rg.id]; ctx.beginPath(); ctx.arc(kp.x, kp.y, 5, 0, Math.PI * 2); ctx.fill();
-      ctx.font = '600 10.5px "IBM Plex Sans KR", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(rg.lab, clamp(kp.x, 14, cw - 14), clamp(kp.y - 7, 18, ch - 4)); }
+      ctx.font = '600 10.5px "SUIT Variable", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(rg.lab, clamp(kp.x, 14, cw - 14), clamp(kp.y - 7, 18, ch - 4)); }
     worldHandles.push({ t: 'ring', id: rg.id, pt, pts, hit: p => { let m = 99; for (let i = 1; i < pts.length; i++) if (pts[i] && pts[i - 1]) m = Math.min(m, distSeg(p, pts[i - 1], pts[i])); return m < 8 * k ? m + 1 : 99; } });
   });
   if (!crane) axes.forEach(ax => {
@@ -6284,7 +6409,7 @@ function drawHandles(ctx, toC, scr, s, SB) {
     ctx.lineCap = 'round'; ctx.strokeStyle = C.sheet; ctx.fillStyle = C.sheet; ctx.lineWidth = active ? 7 : 6; arrow(ctx, o0.x, o0.y, tp.x, tp.y, 15);
     ctx.strokeStyle = AX[ax.id]; ctx.fillStyle = AX[ax.id]; ctx.lineWidth = active ? 4 : 3; arrow(ctx, o0.x, o0.y, tp.x, tp.y, 12);
     const dx = tp.x - o0.x, dy = tp.y - o0.y, l = Math.hypot(dx, dy) || 1;
-    ctx.font = '600 11px "IBM Plex Sans KR", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '600 11px "SUIT Variable", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     const tw = ctx.measureText(ax.lab).width, lx = clamp(tp.x + dx / l * 18, tw / 2 + 6, cw - tw / 2 - 6), ly = clamp(tp.y + dy / l * 14, 12, ch - 12);
     ctx.fillStyle = C.sheet; ctx.globalAlpha = .85; ctx.fillRect(lx - tw / 2 - 3, ly - 8, tw + 6, 16); ctx.globalAlpha = 1; ctx.fillStyle = AX[ax.id]; ctx.fillText(ax.lab, lx, ly);
     worldHandles.push({ t: 'axis', id: ax.id, v: ax.v, o0, tp, Lm, hit: p => { const d = distSeg(p, o0, tp); return d < 9 * k && Math.hypot(p.x - o0.x, p.y - o0.y) > 8 ? d : 99; } });
@@ -6294,14 +6419,14 @@ function drawHandles(ctx, toC, scr, s, SB) {
     ctx.strokeStyle = C.sheet; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath();
     [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([a, b]) => { const tx = o0.x + a * 10, ty = o0.y + b * 10; ctx.moveTo(o0.x + a * 3, o0.y + b * 3); ctx.lineTo(tx, ty);
       ctx.moveTo(tx - a * 3.5 + b * 3.5, ty - b * 3.5 + a * 3.5); ctx.lineTo(tx, ty); ctx.lineTo(tx - a * 3.5 - b * 3.5, ty - b * 3.5 - a * 3.5); }); ctx.stroke(); ctx.globalAlpha = 1;
-    ctx.font = '600 11px "IBM Plex Sans KR", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; const lab = '끌어서 이동', tw = ctx.measureText(lab).width, lx = clamp(o0.x, tw / 2 + 6, cw - tw / 2 - 6), ly = clamp(o0.y + 20, 4, ch - 18);
+    ctx.font = '600 11px "SUIT Variable", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; const lab = '끌어서 이동', tw = ctx.measureText(lab).width, lx = clamp(o0.x, tw / 2 + 6, cw - tw / 2 - 6), ly = clamp(o0.y + 20, 4, ch - 18);
     ctx.fillStyle = C.sheet; ctx.globalAlpha = .85; ctx.fillRect(lx - tw / 2 - 4, ly - 2, tw + 8, 16); ctx.globalAlpha = 1; ctx.fillStyle = C.accent; ctx.fillText(lab, lx, ly); return; }
   ctx.fillStyle = C.sheet; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(o0.x, o0.y, 4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
 }
 function drawFocusPlanes(ctx, toC, scr, s, SB) { const o = optics(s), g = { x: SB.P.x, y: 0.02, z: SB.P.z }, cosT = Math.max(0.2, Math.cos(s.cam.tilt * DEG));
   const seg = (d, col, w, dash, lab) => { if (!(d > 0) || d > 60) return; const h = d / cosT, half = h * o.tanH, c = add(g, SB.fh, h), a = toC(add(c, SB.rh, -half)), b = toC(add(c, SB.rh, half));
     if (a.z < 0.1 || b.z < 0.1) return; const A = scr(a), B = scr(b); ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke();
-    ctx.setLineDash([]); ctx.fillStyle = col; ctx.font = '600 11px "IBM Plex Sans KR", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.fillText(lab, B.x + 4, B.y - 2); ctx.restore(); };
+    ctx.setLineDash([]); ctx.fillStyle = col; ctx.font = '600 11px "SUIT Variable", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom'; ctx.fillText(lab, B.x + 4, B.y - 2); ctx.restore(); };
   const fd = o.fd >= 999 ? Infinity : o.fd;
   // the band between near and far, faint, so the plane and the depth of field read as different things
   if (isFinite(o.near) && o.near < 60) { const far = Math.min(isFinite(o.far) ? o.far : 60, 60), pts = [[o.near, -1], [o.near, 1], [far, 1], [far, -1]].map(([d, sg]) => { const h = d / cosT; return toC(add(add(g, SB.fh, h), SB.rh, sg * h * o.tanH)); });
@@ -6461,7 +6586,7 @@ function drawSunAndCompass(ctx, toC, scr) {
   const q0 = toC(T), q1 = toC(add(T, nDir, 1)); if (q0.z > 0.05 && q1.z > 0.05) { const a = scr(q0), b = scr(q1), ang = Math.atan2(b.y - a.y, b.x - a.x), cx = 34, cy = mode === 'top' ? 82 : 82;
     ctx.save(); ctx.translate(cx, cy); ctx.fillStyle = 'rgba(17,21,27,.55)'; ctx.beginPath(); ctx.arc(0, 0, 19, 0, Math.PI * 2); ctx.fill(); ctx.rotate(ang + Math.PI / 2);
     ctx.fillStyle = '#E5483A'; ctx.beginPath(); ctx.moveTo(0, -14); ctx.lineTo(5, 0); ctx.lineTo(-5, 0); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(0, 14); ctx.lineTo(5, 0); ctx.lineTo(-5, 0); ctx.fill();
-    ctx.rotate(-(ang + Math.PI / 2)); ctx.fillStyle = '#fff'; ctx.font = '700 9px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.rotate(-(ang + Math.PI / 2)); ctx.fillStyle = '#fff'; ctx.font = '700 9px "Archivo Narrow", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('N', Math.cos(ang) * 27 , Math.sin(ang) * 27); ctx.restore(); }
   if (!sn.on) return;
   const se = sunEnv(sn), up = se.el > 0, d = dirFrom(se.az, Math.max(se.el, -4)), Rr = clamp(viewer.dist * 0.42, 2.5, 22), Ps = add(T, d, Rr), qs = toC(Ps);
@@ -6469,7 +6594,7 @@ function drawSunAndCompass(ctx, toC, scr) {
   ctx.save(); ctx.strokeStyle = up ? 'rgba(255,200,90,.7)' : 'rgba(160,170,190,.6)'; ctx.setLineDash([4, 5]); ctx.lineWidth = 1.5; ctx.beginPath(); const qt = toC(T); if (qt.z > 0.05) { const pt = scr(qt); ctx.moveTo(pt.x, pt.y); ctx.lineTo(ps.x, ps.y); } ctx.stroke(); ctx.setLineDash([]);
   ctx.strokeStyle = up ? '#FFC24A' : '#9AA5B8'; ctx.lineWidth = 2.2; ctx.beginPath(); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; ctx.moveTo(ps.x + Math.cos(a) * (r + 3), ps.y + Math.sin(a) * (r + 3)); ctx.lineTo(ps.x + Math.cos(a) * (r + 8), ps.y + Math.sin(a) * (r + 8)); } ctx.stroke();
   ctx.fillStyle = up ? '#FFC24A' : '#9AA5B8'; ctx.beginPath(); ctx.arc(ps.x, ps.y, r, 0, Math.PI * 2); ctx.fill(); if (sel) { ctx.strokeStyle = C.accent; ctx.lineWidth = 3; ctx.stroke(); }
-  if (sel) { const t = `${hhmm(sn.hour)} · ${up ? '고도 ' + fmt(se.el, 0) + '°' : '해 짐'}`; ctx.font = '600 11px "IBM Plex Mono", monospace'; const tw = ctx.measureText(t).width;
+  if (sel) { const t = `${hhmm(sn.hour)} · ${up ? '고도 ' + fmt(se.el, 0) + '°' : '해 짐'}`; ctx.font = '600 11px "Archivo Narrow", sans-serif'; const tw = ctx.measureText(t).width;
   ctx.fillStyle = 'rgba(17,21,27,.7)'; ctx.fillRect(ps.x - tw / 2 - 6, ps.y + r + 10, tw + 12, 18); ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, ps.x, ps.y + r + 19); } ctx.restore();
   worldHandles.push({ t: 'sun', hit: m => Math.hypot(m.x - ps.x, m.y - ps.y) < r + 10 ? 0.5 : 99 }); }
 /* ---------- two-finger gestures: decide once whether it is a pinch or a same-direction drag, then stay with it ---------- */
@@ -6617,9 +6742,10 @@ function topViewer() {
 }
 const frameViewer = () => mode === 'top' ? topViewer() : mode === '3d' ? fitViewer() : null;
 function setMode(m) {
+  if (m === 'mon' && multi()) { vpLay = '1'; try { localStorage.setItem('previo.vp', '1'); } catch (e) {} applyVp(); }
   if (m === mode) return; if (mode === '3d') view3d = { ...viewer }; mode = m;
   document.querySelectorAll('#modeSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === m));
-  $('#stage').dataset.mode = m; $('#tapeBtn').hidden = m !== 'top'; $('#buildBtn').hidden = m === 'mon'; if (m === 'mon' && build.on) buildToggle(false); $('#moveModeBtn').hidden = m === 'mon'; if (m !== 'top' && tape.on) $('#tapeBtn').click(); syncBars(); $('#worldwrap').hidden = m === 'mon'; $('#vf').hidden = m !== 'mon'; $('#pip').hidden = m === 'mon'; $('#fitBtn').hidden = m === 'mon';
+  $('#stage').dataset.mode = m; $('#tapeBtn').hidden = m !== 'top'; $('#buildBtn').hidden = m === 'mon'; if (m === 'mon' && build.on) buildToggle(false); $('#moveModeBtn').hidden = m === 'mon'; if (m !== 'top' && tape.on) $('#tapeBtn').click(); syncBars(); $('#worldwrap').hidden = m === 'mon'; $('#vf').hidden = m !== 'mon' && !multi(); $('#pip').hidden = m === 'mon' || multi(); $('#fitBtn').hidden = m === 'mon';
   wsz = null; vsz = null;
   renderAll();
   if (m === 'top') topViewer(); else if (m === '3d') { if (view3d) tweenViewer(view3d, 560); else fitViewer(); }
@@ -6745,7 +6871,7 @@ $('#playBtn').onclick = () => playShot();
 $('#kfAdd').onclick = () => { const s = cur(); if (!s.end) s.end = autoEnd(s, s.move) || endFrom(s); setKf('end'); changed(true, true); toast('끝 위치를 만들었어요 — [끝]에서 인물을 옮기고 ▶로 확인하세요'); };
 /* ---------- monitor ---------- */
 function sizeView() {
-  const st = $('#stage'), cv = $('#view'), asp = aspectV(), dpr = devicePixelRatio || 1;
+  const st = $('#vf'), cv = $('#view'), asp = aspectV(), dpr = devicePixelRatio || 1;
   // sideways phone: the monitor takes the whole stage like the 3D and top views. Upright: full width, with room for the move pad underneath.
   // with a panel open on a phone, the monitor moves into the space the panel leaves, so lens and exposure changes show at once
   const side = shortH.matches, dr = $('#drawer'), dock = (phone.matches || side) && !dr.hidden, dw = 0, dh = 0; // the panel no longer covers the stage on phones: it has its own space
@@ -6765,7 +6891,7 @@ function sizeView() {
 }
 let vsz = null, hudForms = null;
 function drawMonitor() {
-  if (mode !== 'mon') return;
+  if (mode !== 'mon' && !multi()) return;
   if (!vsz) vsz = sizeView();
   const ctx = $('#view').getContext('2d'); ctx.setTransform(vsz.dpr, 0, 0, vsz.dpr, 0, 0);
   const s = cur(), V = renderShot(ctx, vsz.W, vsz.H, s, { af: true, thirds: showThirds, guideFlip, blur: state.blur, lensGrid: showLensGrid, lit: state.lit !== false, fc: showFC, slot: 'mon' }), o = V.o;
@@ -6791,7 +6917,7 @@ function drawMonitor() {
 // like a camera monitor, the lines run across the whole monitor, not just the picture: each stretches from the stage edge (or whatever
 // floats at its height — the view switch, the keys, the guide buttons) on one side to the same on the other. A status line still too
 // long for the room stacks each label over its value.
-function placeHud() { const v = $('#view').getBoundingClientRect(), st = $('#stage').getBoundingClientRect(), pad = $('#movePad'), cx = (v.left + v.right) / 2;
+function placeHud() { const v = $('#view').getBoundingClientRect(), st = $('#vf').getBoundingClientRect(), pad = $('#movePad'), cx = (v.left + v.right) / 2;
   const floats = ['#modeSeg', '#movePad', '.vfbox .vf-tools', '#kfBar .toolbar', '#stageInfo'].map(q => $(q)).filter(e => e && e.offsetParent && !e.closest('[hidden]'));
   const span = h => { h.style.left = h.style.right = ''; if (phone.matches) return; const r = h.getBoundingClientRect(); let L = st.left + 8, R = st.right - 8;
     floats.forEach(e => { const b = e.getBoundingClientRect(); if (!b.width || b.bottom <= r.top || b.top >= r.bottom) return;
@@ -6804,16 +6930,16 @@ function placeHud() { const v = $('#view').getBoundingClientRect(), st = $('#sta
       if (hudForms.cross) $('#hudL').insertAdjacentHTML('beforeend', '<span class="hudwarn">가상선을 넘었어요</span>'); if (!cut()) break; } }
   // upright phones: the keys sit under the picture; when the readouts would reach them, move the picture up (not under the top chips)
   if (phone.matches && !pad.hidden) { const box = $('#vfbox'), base = box.dataset.t || ''; box.style.transform = base;
-    const hb = $('.vfbox .hud.b').getBoundingClientRect(), p = pad.getBoundingClientRect(), st = $('#stage').getBoundingClientRect(), top = box.getBoundingClientRect().top;
+    const hb = $('.vfbox .hud.b').getBoundingClientRect(), p = pad.getBoundingClientRect(), st = $('#vf').getBoundingClientRect(), top = box.getBoundingClientRect().top;
     const over = hb.bottom + 6 - p.top, room = top - 25 - (st.top + 84); /* 25: the status line above the picture */ if (over > 0 && room > 0) box.style.transform = `${base} translateY(${-Math.min(over, room)}px)`; } }
 // upright phones: the start/end bar takes the free left end of the guide-button row under the picture
 function placeKfBar() { const bar = $('#kfBar'); if (!phone.matches || mode !== 'mon') { bar.style.top = ''; return; }
-  const vt = $('.vfbox .vf-tools').getBoundingClientRect(), st = $('#stage').getBoundingClientRect(); bar.style.top = Math.round(vt.top - st.top + (vt.height - bar.offsetHeight) / 2) + 'px'; }
+  const vt = $('.vfbox .vf-tools').getBoundingClientRect(), st = $('#vf').getBoundingClientRect(); bar.style.top = Math.round(vt.top - st.top + (vt.height - bar.offsetHeight) / 2) + 'px'; }
 // surround view, as on a cine monitor: the stage around the frame shows, dimmed, what lies just outside it, so the monitor fills the screen.
 // Rendered at half resolution through a sensor stretched to the stage, with the same focal length, so the frame sits exactly in its middle.
 function drawSurround(s, o) {
   const bg = $('#viewBg'); if (!gl || o.fish) { bg.hidden = true; return; }
-  const st = $('#stage').getBoundingClientRect(), fr = $('#view').getBoundingClientRect(), cx = fr.left + fr.width / 2 - st.left, cy = fr.top + fr.height / 2 - st.top;
+  const st = $('#vf').getBoundingClientRect(), fr = $('#view').getBoundingClientRect(), cx = fr.left + fr.width / 2 - st.left, cy = fr.top + fr.height / 2 - st.top;
   const hw = Math.ceil(Math.max(cx, st.width - cx)), hh = Math.ceil(Math.max(cy, st.height - cy)); if (hw * 2 <= fr.width + 2 && hh * 2 <= fr.height + 2) { bg.hidden = true; return; }
   const k = 0.5 * (devicePixelRatio || 1), W = hw * 2, H = hh * 2;
   if (bg.width !== Math.round(W * k) || bg.height !== Math.round(H * k)) { bg.width = Math.round(W * k); bg.height = Math.round(H * k); }
@@ -6827,7 +6953,7 @@ function drawSurround(s, o) {
 // small live monitor in the corner of the 3D and top views
 function drawPip() {
   const cv = $('#pip'); if (mode === 'mon') { $('#camBar').style.maxWidth = ''; return; }
-  const st = $('#stage'), asp = aspectV(), dpr = devicePixelRatio || 1;
+  const st = $('#vf'), asp = aspectV(), dpr = devicePixelRatio || 1;
   let W = clamp(st.clientWidth * 0.3, 110, 300), H = W / asp; const mh = st.clientHeight * 0.34; if (H > mh) { H = mh; W = H * asp; }
   W = Math.round(W); H = Math.round(H);
   if (cv.width !== W * dpr || cv.height !== H * dpr) { cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + 'px'; cv.style.height = H + 'px'; }
@@ -6884,7 +7010,7 @@ function syncGuide() { if (!GUIDES.some(g => g[0] === showThirds)) showThirds = 
     + `<div class="gm-row str" role="group" aria-label="선명도">${GUIDE_STR.map(([, , n], i) => `<button data-gstr="${i}" aria-pressed="${i === guideStr}">${n}</button>`).join('')}</div>`;
   try { localStorage.setItem('framecontis.guide', showThirds); localStorage.setItem('framecontis.guideflip', guideFlip); localStorage.setItem('framecontis.guidecol', guideCol); localStorage.setItem('framecontis.guidestr', guideStr); } catch (e) {} }
 function guideMenu(open) { const m = $('#guideMenu'); m.hidden = !open; $('#gThirds').setAttribute('aria-expanded', open); if (!open) return;
-  const b = $('#gThirds').getBoundingClientRect(), st = $('#stage').getBoundingClientRect(); m.style.top = Math.max(6, Math.min(b.top - st.top, st.height - m.offsetHeight - 6)) + 'px';
+  const b = $('#gThirds').getBoundingClientRect(), st = $('#vf').getBoundingClientRect(); m.style.top = Math.max(6, Math.min(b.top - st.top, st.height - m.offsetHeight - 6)) + 'px';
   if (b.left - st.left > st.width / 2) { m.style.left = ''; m.style.right = Math.round(st.right - b.left + 8) + 'px'; } else { m.style.right = ''; m.style.left = Math.round(b.right - st.left + 8) + 'px'; } }
 $('#gThirds').onclick = e => { e.stopPropagation(); guideMenu($('#guideMenu').hidden); };
 $('#guideMenu').addEventListener('click', e => { e.stopPropagation(); const g = e.target.closest('[data-guide]'), f = e.target.closest('[data-gflip]');
@@ -6924,7 +7050,7 @@ $('#levelBtn').onclick = () => { cur().cam.roll = 0; changed(true); };
 // so an over-the-shoulder and its reverse can be checked for opposite looks
 function drawEyelines(ctx, W, H, s, o) {
   const B = shotBasis(s), pr = p => { const d = sub3(p, B.P), z = dot(d, B.f); return z > 0.1 ? { x: W / 2 + dot(d, B.r) / z / o.tanH * W / 2, y: H / 2 - dot(d, B.u) / z / o.tanV * H / 2 } : null; };
-  ctx.save(); ctx.font = '700 11px "IBM Plex Mono", monospace'; ctx.textBaseline = 'middle';
+  ctx.save(); ctx.font = '700 11px "Archivo Narrow", sans-serif'; ctx.textBaseline = 'middle';
   subjKeys(s).forEach(k => { const sb = s[k], top = skeleton(k, sb).top + 0.08, f = sb.face * DEG, h = pr({ x: sb.x, y: top, z: sb.z }), e = pr({ x: sb.x + Math.sin(f) * 0.6, y: top, z: sb.z + Math.cos(f) * 0.6 });
     if (!h || !e || h.x < 8 || h.x > W - 8 || h.y < 14 || h.y > H - 8) return;
     const dx = e.x - h.x, toward = Math.abs(dx) < 6, lab = toward ? `${k} ●` : dx > 0 ? `${k} ▶` : `◀ ${k}`;
@@ -6934,7 +7060,7 @@ function drawEyelines(ctx, W, H, s, o) {
 }// the false-colour key stands outside the picture: in the left pillarbox (stops only when the gutter is narrow), or above the picture
 // on an upright phone, where the band over the frame is free
 function placeLegend() { const lg = $('#fcLegend'); if (lg.hidden) return;
-  const st = $('#stage').getBoundingClientRect(), fr = $('#view').getBoundingClientRect(), gut = fr.left - st.left, band = fr.top - st.top;
+  const st = $('#vf').getBoundingClientRect(), fr = $('#view').getBoundingClientRect(), gut = fr.left - st.left, band = fr.top - st.top;
   // a row over the picture (upright phones, or a wide screen whose side gutters are thin but has room above); otherwise the left gutter:
   // the full key when it is wide, a 2 × 3 grid of coloured chips when it is narrow, just under the view switch
   const row = phone.matches || (gut < 70 && band >= 28); lg.classList.toggle('row', row); lg.classList.toggle('compact', !row && gut < 170);
@@ -6943,7 +7069,7 @@ function placeLegend() { const lg = $('#fcLegend'); if (lg.hidden) return;
 // 3×3 / false-colour buttons: in the right pillarbox when it is wide enough, so they never cover the composition; otherwise small and
 // see-through on the frame's edge. Upright phones keep them in the row under the picture.
 function placeVfTools() { const vt = $('.vfbox .vf-tools'); if (phone.matches) { vt.style.right = ''; vt.classList.remove('edge'); return; }
-  const st = $('#stage').getBoundingClientRect(), fr = $('#view').getBoundingClientRect(), gut = st.right - fr.right, w = 46;
+  const st = $('#vf').getBoundingClientRect(), fr = $('#view').getBoundingClientRect(), gut = st.right - fr.right, w = 46;
   if (gut >= w + 10) { vt.classList.remove('edge'); vt.style.right = -Math.round((gut + w) / 2) + 'px';
     const si = $('#stageInfo').getBoundingClientRect(); vt.style.top = Math.max(6, si.height && si.right > fr.right ? si.bottom - fr.top + 6 : 6) + 'px'; } // below the shot chips when they share the corner
   else { vt.classList.add('edge'); vt.style.right = '4px'; vt.style.top = '24px'; } }
@@ -7648,7 +7774,7 @@ function boardEndInset(ctx, W, H, s) { const w = Math.round(W * 0.36), h = Math.
   cv.width = w * dpr; cv.height = h * dpr; const c2 = cv.getContext('2d'); c2.setTransform(dpr, 0, 0, dpr, 0, 0);
   renderShot(c2, w, h, shotAt(s, 1), { labels: false, move: false, lit: state.lit !== false, slot: 'boardEnd' });
   const x = W - w - 6, y = H - h - 6; ctx.save(); ctx.fillStyle = '#E8A317'; ctx.fillRect(x - 2, y - 2, w + 4, h + 4); ctx.drawImage(cv, x, y, w, h);
-  ctx.font = '700 10px "IBM Plex Mono", monospace'; ctx.textBaseline = 'top'; ctx.fillStyle = '#1a1300'; ctx.fillRect(x, y, 30, 14); ctx.fillStyle = '#fff'; ctx.fillText('END', x + 3, y + 2);
+  ctx.font = '700 10px "Archivo Narrow", sans-serif'; ctx.textBaseline = 'top'; ctx.fillStyle = '#1a1300'; ctx.fillRect(x, y, 30, 14); ctx.fillStyle = '#fff'; ctx.fillText('END', x + 3, y + 2);
   ctx.strokeStyle = '#E8A317'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(x - 30, y + h / 2); ctx.lineTo(x - 8, y + h / 2); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(x - 6, y + h / 2); ctx.lineTo(x - 13, y + h / 2 - 5); ctx.lineTo(x - 13, y + h / 2 + 5); ctx.fillStyle = '#E8A317'; ctx.fill(); ctx.restore(); }
 function updateBoardIfOpen() { if (view === 'board') buildBoard(); }
@@ -7660,6 +7786,7 @@ function xMenu(open = $('#xMenu').hidden) { if (open) { if (play) stopPlay(); kf
 $('#exportBtn').onclick = e => { e.stopPropagation(); xMenu(); };
 $('#xMenu').addEventListener('click', e => { if (e.target.closest('button') && !['resetBtn'].includes(e.target.closest('button').id)) setTimeout(() => { if ($('#copyFallback').hidden) xMenu(false); }, 0); });
 document.addEventListener('pointerdown', e => { if (!$('#xMenu').hidden && !e.target.closest('#xMenu,#exportBtn')) xMenu(false); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#xMenu').hidden) { e.stopPropagation(); xMenu(false); $('#exportBtn').focus(); } }, true); // Esc closes the export menu before the panel
 $('#csvBtn').onclick = () => saveCsv();
 $('#printBtn').onclick = () => { if (view !== 'board') setView('board'); openPane(null); setTimeout(() => window.print(), 350); };
 
@@ -7711,7 +7838,8 @@ function stripFold(fold) {
   try { localStorage.setItem('framecontis.strip', fold ? '0' : '1'); } catch (e) {}
   syncStripCur(); wsz = null; vsz = null; requestAnimationFrame(() => { fitApp(); renderAll(); });
 }
-function syncStripCur() { $('#stripCur').textContent = `S${String(state.sel + 1).padStart(2, '0')} / ${state.shots.length}컷`; }
+function syncStripCur() { $('#stripCur').textContent = `S${String(state.sel + 1).padStart(2, '0')} / ${state.shots.length}컷`;
+  document.querySelectorAll('#tl .tl-seg').forEach(b => b.setAttribute('aria-current', +b.dataset.i === state.sel)); } // the timeline marks the picked shot too
 $('#snav').addEventListener('click', e => { const b = e.target.closest('button'); if (b) select(state.sel + +b.dataset.nav); });
 $('#stripToggle').onclick = () => stripFold(!$('.shots').classList.contains('folded'));
 try { if (localStorage.getItem('framecontis.strip') === '0') { $('.shots').classList.add('folded'); $('#stripToggle').setAttribute('aria-expanded', 'false'); } } catch (e) {}
@@ -7943,7 +8071,7 @@ function drawSetups(ctx, toC, scr) {
     ctx.globalAlpha = d.on ? 0.3 : 0.12; ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.closePath(); ctx.fill();
     ctx.globalAlpha = d.on ? 1 : 0.55; ctx.strokeStyle = col; ctx.lineWidth = d.on ? 2 : 1.2; ctx.stroke();
     ctx.globalAlpha = 1; ctx.fillStyle = d.on ? col : 'rgba(17,21,27,.85)'; ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(c.x, c.y, d.on ? 11 : 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#fff'; ctx.font = `700 ${d.on ? 11.5 : 10}px "IBM Plex Mono", monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(d.n, c.x, c.y + 0.5); });
+    ctx.fillStyle = '#fff'; ctx.font = `700 ${d.on ? 11.5 : 10}px "Archivo Narrow", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(d.n, c.x, c.y + 0.5); });
   ctx.globalAlpha = 1;
 }
 
@@ -8098,7 +8226,7 @@ function toastClear() { const t = $('#toast'); clearTimeout(tt); t.classList.rem
 // the corner monitor is lit (slower), so while dragging it redraws at most every 120 ms
 let pipT = 0, pipTimer = 0;
 function pipSoon() { clearTimeout(pipTimer); const now = performance.now(); if (now - pipT > 120) { pipT = now; drawPip(); } else pipTimer = setTimeout(() => { pipT = performance.now(); drawPip(); }, 120); }
-function renderAll() { if (kf === 'end' && kfId !== cur().id) kfReset(); syncKfBar(); syncPanels(); syncHud(); syncBars(); if (view === 'edit') { flushWorld(); drawMonitor(); pipSoon(); } }
+function renderAll() { if (kf === 'end' && kfId !== cur().id) kfReset(); syncKfBar(); syncPanels(); syncHud(); syncBars(); if (view === 'edit') { flushWorld(); drawWorld2(); drawMonitor(); pipSoon(); } }
 
 /* ---------- tool drawer: beside the stage on wide screens, a bottom sheet over it on phones ---------- */
 const PANES = { cam: '카메라', rig: '카메라 장비', light: '조명', set: '세트 · 인물', shot: '샷' };
@@ -8118,7 +8246,7 @@ let pane = null;
 // phones: an open panel takes its own part of the screen (beside the picture sideways, under it upright) instead of covering it,
 // so what a slider changes stays in view; computers keep the drawer docked on the right as before
 function placeDrawer() { $('#drawer').style.bottom = ''; $('#app').classList.toggle('docked', !!pane && (phone.matches || shortH.matches)); }
-function openPane(p) { pane = p; $('#drawer').hidden = !p; $('#app').classList.toggle('docked', !!p && (phone.matches || shortH.matches));
+function openPane(p) { pane = p; $('#drawer').hidden = !p; $('#app').classList.toggle('docked', !!p && (phone.matches || shortH.matches)); $('#app').classList.toggle('paneon', !!p);
   document.querySelectorAll('.pane').forEach(x => x.hidden = x.dataset.pane !== p);
   document.querySelectorAll('#rail button').forEach(b => b.setAttribute('aria-pressed', b.dataset.pane === p));
   if (p) { $('#drawerTitle').textContent = PANES[p]; $('#drawerIcon').innerHTML = $(`#rail button[data-pane="${p}"] svg`).outerHTML; placeDrawer(); }
@@ -8148,6 +8276,15 @@ document.addEventListener('keydown', e => {
 const reTheme = () => { readColors(); buildStrip(); renderAll(); updateBoardIfOpen(); };
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', reTheme);
 new MutationObserver(reTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+document.querySelectorAll('#vpLay button').forEach(b => b.addEventListener('click', () => setVp(b.dataset.vp)));
+// F6 / Shift+F6 move between the areas (header, stage, panel, shot strip), as in desktop apps (user decision)
+document.addEventListener('keydown', e => { if (e.key !== 'F6') return; e.preventDefault();
+  const zones = ['.bar', '#stage', '#drawer', '.shots'].map(q => $(q)).filter(z => z && !z.hidden && z.offsetParent !== null);
+  const i = zones.findIndex(z => z.contains(document.activeElement)), z = zones[(i + (e.shiftKey ? -1 : 1) + zones.length) % zones.length]; if (!z) return;
+  const f = [...z.querySelectorAll('button, [tabindex="0"], input, select, textarea')].find(x => !x.disabled && !x.classList.contains('ax-legacy') && x.offsetParent !== null);
+  if (f) f.focus(); else { z.tabIndex = -1; z.focus(); } });
+{ const swap = () => setMode(mode === 'top' ? '3d' : 'top'); $('#world2wrap').addEventListener('click', swap); $('#world2wrap').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); swap(); } }); }
+addEventListener('resize', applyVp); applyVp();
 let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(() => { vsz = null; wsz = null; renderAll(); if (view === 'board') buildBoard(); }, 60); }).observe($('#stage'));
 
 /* ---------- tutorial: short lessons, each a coached walk through one part of the app; "직접 해 보세요" steps wait until you have done it ---------- */
@@ -8447,7 +8584,7 @@ function normalizeState() {
 }
 function afterLoad() {
   selObj = null; placing = null; showHeat = false; if (gl) gl.keys = {}; cellCache = { key: '', cells: null };
-  if (mode !== '3d') setMode('3d'); setView('edit'); openPane(null);
+  if (mode !== '3d') setMode('3d'); setView('edit'); openPane(vpRoom() ? 'cam' : null); // computers open the settings panel from the start (user decision); phones start closed
   buildTicks(); buildStrip(); wsz = sizeWorld(); vsz = null; fitViewer(true); renderAll(); histReset(); syncShared();
 }
 const newId = () => 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
@@ -8978,12 +9115,12 @@ function fpWheel() { const cv = $('#fpWheel'), r = cv.getBoundingClientRect(), d
   ctx.fillStyle = 'rgba(36,43,56,.18)'; ctx.beginPath(); ctx.moveTo(c, c); ctx.arc(c, c, R0, at(L.throw), at(360), false); ctx.closePath(); ctx.fill(); // beyond the stops
   const dists = [Infinity, 20, 10, 6, 4, 3, 2.5, 2, 1.7, 1.5, 1.3, 1.2, 1.1, 1, 0.9, 0.8, 0.7, 0.6, 0.5, 0.45, 0.4, 0.35, 0.3, 0.25, 0.2].filter(d => d >= L.mod - 1e-6);
   if (!dists.some(d => Math.abs(d - L.mod) < 1e-6)) dists.push(L.mod);
-  ctx.font = `600 ${Math.round(S * 0.05)}px "Space Grotesk", system-ui`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; let lastA = -1e9;
+  ctx.font = `600 ${Math.round(S * 0.05)}px "Archivo", system-ui`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; let lastA = -1e9;
   for (const d of dists) { const a = RING.angle(L, d), th = at(a); ctx.strokeStyle = '#242B38'; ctx.lineWidth = S * 0.008; ctx.beginPath(); ctx.moveTo(c + Math.cos(th) * R0 * 0.97, c + Math.sin(th) * R0 * 0.97); ctx.lineTo(c + Math.cos(th) * R0 * 0.86, c + Math.sin(th) * R0 * 0.86); ctx.stroke();
     if (a - lastA >= 13) { lastA = a; ctx.fillStyle = '#171B24'; ctx.fillText(isFinite(d) ? (d < 1 ? d.toFixed(d < 0.5 ? 2 : 1).replace(/^0/, '') : String(d)) : '∞', c + Math.cos(th) * R0 * 0.74, c + Math.sin(th) * R0 * 0.74); } }
   ctx.restore();
   ctx.fillStyle = '#E5484D'; ctx.beginPath(); ctx.moveTo(c, c - R0 - S * 0.02); ctx.lineTo(c - S * 0.03, c - R0 - S * 0.07); ctx.lineTo(c + S * 0.03, c - R0 - S * 0.07); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = '#8B9CFF'; ctx.font = `700 ${Math.round(S * 0.06)}px "Space Grotesk", system-ui`; ctx.fillText(`${Math.round(rot)}°`, c, c); }
+  ctx.fillStyle = '#8B9CFF'; ctx.font = `700 ${Math.round(S * 0.06)}px "Archivo", system-ui`; ctx.fillText(`${Math.round(rot)}°`, c, c); }
 function fpMap(F) { const cv = $('#fpMap'), r = cv.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1), W = Math.round(r.width * dpr), H = Math.round(r.height * dpr); if (!W || !H) return;
   if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; } const ctx = cv.getContext('2d'), s = cur(), zMax = 11, px = (H - 18 * dpr) / zMax, cx = W / 2, y = z => H - 10 * dpr - z * px;
   ctx.clearRect(0, 0, W, H); ctx.fillStyle = 'rgba(23,27,36,.85)'; ctx.fillRect(0, 0, W, H);
@@ -9062,7 +9199,7 @@ function fpGraph() { const cv = $('#fpGraph'); if (!cv || !fp) return; const T =
   // vertical axis in dioptres (1/m) — the scale blur responds to — labelled in metres, far at the top
   const ds = T.flatMap(p => [p[1], p[2], p[3]]).filter(m => m > 0 && isFinite(m)), dLo = 1 / Math.max(...ds, 1) * 0.85, dHi = 1 / Math.min(...ds) * 1.1;
   const X = t => pad + (W - pad - 6 * dpr) * t / t1, Y = m => { const d = isFinite(m) && m > 0 ? 1 / m : 0; return 6 * dpr + (H - 20 * dpr) * clamp((d - dLo) / (dHi - dLo), -0.02, 1.02); };
-  ctx.fillStyle = 'rgba(14,17,24,.9)'; ctx.fillRect(0, 0, W, H); ctx.font = `${9.5 * dpr}px "IBM Plex Mono", monospace`; ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1;
+  ctx.fillStyle = 'rgba(14,17,24,.9)'; ctx.fillRect(0, 0, W, H); ctx.font = `${9.5 * dpr}px "Archivo Narrow", sans-serif`; ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.strokeStyle = 'rgba(255,255,255,.08)'; ctx.lineWidth = 1;
   [0.5, 0.7, 1, 1.5, 2, 3, 5, 8, 12].filter(m => 1 / m >= dLo && 1 / m <= dHi).forEach(m => { ctx.beginPath(); ctx.moveTo(pad, Y(m)); ctx.lineTo(W, Y(m)); ctx.stroke(); ctx.fillText(m + 'm', 2 * dpr, Y(m) + 3 * dpr); });
   for (let s = 1; s < t1; s++) ctx.fillText(s + 's', X(s) - 5 * dpr, H - 3 * dpr);
   (fp.v.cues || []).slice(1).forEach(([t]) => { ctx.strokeStyle = 'rgba(255,209,102,.5)'; ctx.setLineDash([4 * dpr, 4 * dpr]); ctx.beginPath(); ctx.moveTo(X(t), 0); ctx.lineTo(X(t), H - 14 * dpr); ctx.stroke(); ctx.setLineDash([]); });

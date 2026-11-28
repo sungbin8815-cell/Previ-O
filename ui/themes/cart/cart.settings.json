@@ -1,0 +1,29 @@
+{
+  "name": "cart",
+  "like": "neutral",
+  "mode": "light-only",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#0E0F10",
+      "source": "dial"
+    },
+    {
+      "thing": "neutral",
+      "value": "#8A8D92",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "\"SUIT Variable\"",
+      "source": "dial"
+    },
+    {
+      "thing": "corners",
+      "value": "square",
+      "source": "dial"
+    }
+  ],
+  "lifted": [],
+  "palette": "39fd8ced4ed0f39af559c006eb87cea9e2aa8e8b2806b43359c33e3b17eee678"
+}

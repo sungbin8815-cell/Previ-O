@@ -16,7 +16,7 @@ import { SegmentedControl, SegmentedControlItem } from '@astryxdesign/core/Segme
 import { TabList, Tab } from '@astryxdesign/core/TabList';
 import { Slider } from '@astryxdesign/core/Slider';
 import { Selector } from '@astryxdesign/core/Selector';
-import { lensTheme } from './themes/lens/lens.js';
+import { cartTheme } from './themes/cart/cart.js';
 
 // ---- which controls are upgraded -------------------------------------------------------------------------------------
 // Left alone on purpose: things the app drives with pointer down / up or drag (move pad, crane keys, joystick, dials,
@@ -32,8 +32,12 @@ const SPECS = [
 ];
 
 const reg = new Map();   // legacy element -> { host, kind }
+// Two themes, as in the design: tools sit on the grey body (cart, light), pictures sit in black wells (well, dark). A control
+// that lives on the stage (the viewports) is drawn with the well theme, every other control with cart.
+const grip = matchMedia('(orientation: landscape) and (max-height: 520px)');
+const themeFor = el => (el.closest('.stage') && !el.closest('.drawer') && !(grip.matches && el.closest('#camBar')) ? 'well' : 'cart');
 function adopt(el, kind) {
-  const host = document.createElement('span'); host.className = 'ax-host ax-' + kind; host.dataset.astryxTheme = 'lens';
+  const host = document.createElement('span'); host.className = 'ax-host ax-' + kind; host.dataset.astryxTheme = themeFor(el); host.dataset.theme = host.dataset.astryxTheme === 'well' ? 'dark' : 'light';
   el.before(host); el.classList.add('ax-legacy'); el.setAttribute('aria-hidden', 'true'); el.tabIndex = -1;
   // the component's own click (and the input / change of its inner fields) must not also reach the app's listeners on the
   // parent, or they would run twice: the action is handed to the legacy element instead, whose event bubbles as it always
@@ -79,7 +83,7 @@ function LegacyButton({ el }) {
   const label = labelOf(el), text = textOf(el), icon = iconOf(el), common = { label: label || '버튼', icon, isIconOnly: !text && !!icon, isDisabled: el.disabled, size: size(el), ...ariaOf(el) };
   if (el.hasAttribute('aria-pressed') && !el.classList.contains('primary'))
     return <ToggleButton {...common} isPressed={pressed(el)} onPressedChange={() => el.click()}>{text || undefined}</ToggleButton>;
-  const variant = el.classList.contains('primary') ? 'primary' : el.classList.contains('ghost') ? 'ghost' : el.classList.contains('warn') ? 'destructive' : el.classList.contains('fab') ? 'ghost' : 'secondary';
+  const variant = el.classList.contains('primary') ? 'primary' : el.classList.contains('ghost') ? 'ghost' : el.classList.contains('warn') ? 'destructive' : el.classList.contains('fab') ? 'ghost' : 'ghost';
   return <Button {...common} variant={variant} onClick={() => el.click()}>{text || undefined}</Button>;
 }
 function LegacySeg({ el }) {
@@ -154,7 +158,7 @@ function App() {
     const iv = setInterval(() => { for (const [el, r] of reg) if ((r.kind === 'slider' || r.kind === 'select') && r.last !== el.value) { r.last = el.value; dirty.add(el); kick(); } }, 250);
     go(); return () => { mo.disconnect(); clearInterval(iv); };
   }, []);
-  return <Theme theme={lensTheme} mode="dark">
+  return <Theme theme={cartTheme} mode="light">
     {[...reg].map(([el, r]) => { if (!r.key) r.key = 'ax' + (++keys); return createPortal(<Slot el={el} kind={r.kind} v={r.v} />, r.host, r.key); })}
   </Theme>;
 }

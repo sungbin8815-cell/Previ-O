@@ -1,0 +1,29 @@
+{
+  "name": "well",
+  "like": "neutral",
+  "mode": "dark-only",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#F2F2F2",
+      "source": "dial"
+    },
+    {
+      "thing": "neutral",
+      "value": "#7C7C7C",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "\"SUIT Variable\"",
+      "source": "dial"
+    },
+    {
+      "thing": "corners",
+      "value": "square",
+      "source": "dial"
+    }
+  ],
+  "lifted": [],
+  "palette": "5e2754ea4a051238535a1f9afbb9fb4575b76cadac56daab76b19391a22587fe"
+}

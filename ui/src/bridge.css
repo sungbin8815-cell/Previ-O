@@ -3,6 +3,7 @@
 .ax-legacy{position:absolute!important;width:1px!important;height:1px!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;
   overflow:hidden!important;clip-path:inset(50%)!important;opacity:0!important;pointer-events:none!important;border:0!important}
 .ax-host{display:contents}
+.ax-host[data-astryx-theme="well"]{color-scheme:dark}.ax-host[data-astryx-theme="cart"]{color-scheme:light}
 .ax-ic{display:inline-flex;width:16px;height:16px}
 .ax-ic svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .ax-row{display:flex;flex-wrap:wrap;gap:4px;width:100%}
@@ -11,7 +12,7 @@
 #rail .ax-rail button{flex-direction:column;height:auto;min-height:52px;width:100%;gap:2px;padding:6px 2px;font-size:11px}
 #rail .ax-rail .ax-ic,#rail .ax-rail .ax-ic svg{width:20px;height:20px}
 .ax-rail-t{display:flex;flex-direction:column;align-items:center;line-height:1.2}
-.ax-rail-b{font-family:var(--f-num,inherit);color:var(--accent,#C9DD4F);font-size:11px}
+.ax-rail-b{font-family:var(--f-num,inherit);color:var(--ink2,#45484D);font-size:11px}
 /* controls that float on the 3D picture keep a solid plate behind them */
-#modeSeg + .ax-host > *, .ov-tl > .ax-host > *{background:color-mix(in srgb,#151618 94%,transparent);border-radius:10px;padding:2px}
+#modeSeg + .ax-host > *, .ov-tl > .ax-host > *{background:#0B0B0C;border-radius:0;padding:2px}
 .ax-dot{display:inline-block;flex:none}
