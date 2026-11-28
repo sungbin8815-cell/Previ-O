@@ -26,20 +26,19 @@
 /* PREVIO design system. One full-height workspace: header, tool rail, stage (3D / monitor / top), a drawer that opens beside the stage
    (a bottom sheet on phones) and the shot strip. Surfaces: paper (app) < sheet (chrome) < raise (cards inside panels). */
 :root{
-  /* design tokens (2026-11-28, monitor cart): the app is a director's monitor cart. Tools sit on an aluminium-grey body in ink;
-     pictures sit in black wells (the stage re-declares the surface and text tokens dark, below). Red is the tally light: only
-     what is live (the current shot, the playhead, recording). What is picked is ink (on grey) or white (in a well). */
-  --paper:#D4D5D7; --sheet:#D4D5D7; --raise:#E2E3E5; --soft:#C9CACD; --line:#ADB0B4; --line2:#C2C4C7;
-  --ink:#0E0F10; --ink2:#45484D; --muted:#5B5E63; --silver:#ADB0B4;
-  --accent:#0E0F10; --accent-ink:#FFFFFF; --accent-soft:rgba(14,15,16,.07); --accent2:#0E0F10; --pencil:#45484D; --tally:#E3241B;
-  --ok:#3D7A2A; --caution:#8A5A00; --rec:#E3241B; --warn:#B0121A;
+  /* design tokens (lens, first design meeting 2026-11-26): matte graphite surfaces that differ by lightness only, lime for what is
+     set, on or the main action, mount silver for the finest rules. Recording red and caution amber keep their meaning. */
+  --paper:#0D0E0F; --sheet:#151618; --raise:#1C1D20; --soft:#18191B; --line:#2A2C30; --line2:#212225; --line-strong:#686B70;
+  --ink:#ECEDEE; --ink2:#B6B8BC; --muted:#8B8E94; --silver:#AEB3BA;
+  --accent:#C9DD4F; --accent-ink:#121309; --accent-soft:rgba(201,221,79,.09); --accent2:#C9DD4F; --pencil:#CFD1D4; --tally:#C9DD4F;
+  --ok:#9CCB5A; --caution:#E3B341; --rec:#E5483A; --warn:#E0745E; --danger-ink:#E5675C;
   --figA:#2F3A40; --figB:#40382E; --col:#2A2D30; --cam:#A9ACB1; --wall:#2B2C2E; --prop:#555046;
-  --sky:#101113; --ground:#0B0C0D; --grid:rgba(255,255,255,.07); --shadow:rgba(0,0,0,.55);
-  --vf:#0B0B0C; --vf-ink:#F2F2F2; --vf-dim:#8A8D92;
-  --sh-1:none; --sh-2:0 0 0 1px var(--line);
-  color-scheme:light;
+  --sky:#101113; --ground:#0B0C0D; --grid:rgba(201,221,79,.09); --shadow:rgba(0,0,0,.55);
+  --vf:#050505; --vf-ink:#ECEDEE; --vf-dim:#8A8D92;
+  --sh-1:none; --sh-2:0 0 0 1px var(--line); --sh-float:0 0 0 1px var(--line), 0 8px 24px rgba(0,0,0,.45);
+  color-scheme:dark;
   --fs-1:12px; --fs-2:13px; --fs-3:15px; --fs-4:20px;
-  --r-1:2px; --r-2:2px; --r-3:2px; --r-s:2px; --r-m:2px; --r-l:2px;
+  --r-1:2px; --r-2:4px; --r-3:6px; --r-s:6px; --r-m:6px; --r-l:6px;
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
   --hit:44px;
   --f-num:"Archivo Narrow","SUIT Variable",sans-serif;
@@ -47,10 +46,6 @@
   --f-body:"SUIT Variable","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --f-mono:"Archivo Narrow","SUIT Variable",sans-serif;
 }
-/* the wells: everything on the stage (3D, monitor, top view and the tools on them) keeps dark surfaces and light text */
-.stage,.pip,.home{--paper:#0B0B0C; --sheet:#141416; --raise:#1C1D20; --soft:#1A1B1D; --line:#2E3034; --line2:#222326;
-  --ink:#F2F2F2; --ink2:#A6A6A6; --muted:#8A8A8A; --silver:#6E7178; --accent:#F2F2F2; --accent-ink:#0B0B0C; --accent-soft:rgba(242,242,242,.10);
-  --pencil:#CFD1D4; --ok:#9CCB5A; --caution:#E3B341; --warn:#FF6B5B; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;position:fixed;inset:0;touch-action:manipulation}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:var(--fs-3);line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
@@ -1555,10 +1550,10 @@ input[type=range]::-moz-range-thumb{background:var(--ink);border:0;box-shadow:0 
    Shapes and spacing follow the Astryx design system (neutral theme): controls 32 px tall on a 4 px grid, 10 px corners on controls,
    12 px on containers, no outlines on buttons (tonal fills tell them apart), lists as rounded rows, tabs underlined, segmented
    controls as a recessed track with the chosen item lifted. The colours stay the lens palette: graphite surfaces, lime for what is set. */
-:root{--r-1:6px; --r-2:10px; --r-3:12px; --r-s:6px; --r-m:10px; --r-l:12px;
+:root{--r-1:4px; --r-2:6px; --r-3:6px; --r-s:6px; --r-m:6px; --r-l:6px; /* lens meeting: 4 thumbnails · 6 controls and floating panels */
   --fill:rgba(255,255,255,.07); --fill-hover:rgba(255,255,255,.11); --fill-press:rgba(255,255,255,.15); --surface:#1F2023; --surface2:#2E3035;
   --sel:color-mix(in srgb,var(--accent) 14%,transparent); --ring-sel:inset 0 0 0 2px color-mix(in srgb,var(--accent) 70%,transparent);
-  --sh-float:0 2px 4px rgba(0,0,0,.35),0 4px 12px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.08)}
+  --sh-float:0 0 0 1px var(--line), 0 8px 24px rgba(0,0,0,.45)}
 /* surfaces: flat graphite, separated by hairlines */
 .bar,.rail,.drawer,.shots{background:var(--sheet)}
 .drawer::before,.shots::before{display:none}
@@ -1680,7 +1675,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 /* ---------- monitor cart pass (2026-11-28): header, shot strip and timeline in the new language ---------- */
 .brand b{font-family:var(--f-logo);font-stretch:125%;font-weight:800;font-size:14px;letter-spacing:.02em}
 .brand b small{display:none} .logo{display:none}
-.bar{border-bottom:0;background:var(--paper)}
+.bar{border-bottom:1px solid var(--line);background:var(--sheet)}
 .vsep{background:var(--line)}
 .shots{background:var(--body,#D4D5D7)!important;border-top:0!important}
 .shots .sl b{letter-spacing:0;text-transform:none;font-family:var(--f-body);font-weight:700}
@@ -1733,7 +1728,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .shots{padding:4px 8px}
 }
 /* ---------- viewport layouts (computer): wells on the grey body, like monitors on a cart ---------- */
-:root{--body:#D4D5D7}
+:root{--body:var(--paper)}
 .vpane,#world2wrap{display:none}
 .app.vpm .stage{background:var(--body)}
 .app.vpm .vpane{display:block;position:absolute;background:var(--vf);z-index:0}
@@ -1760,6 +1755,17 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .app.vpm .pip{display:none}
 .vplay{display:none}
 @media (min-width:1000px) and (min-height:560px){ .vplay{display:inline-flex} }
+
+/* ---------- lens design system (first design meeting, rules 1 and 2): solid panels, three button kinds, one focus ring ---------- */
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.glass,.toolbar.glass{background:var(--raise);border:1px solid var(--line-strong);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.xmenu,.toast,.coach,.guidemenu{background:var(--raise);color:var(--ink);border:1px solid var(--line);box-shadow:var(--sh-float);backdrop-filter:none;-webkit-backdrop-filter:none}
+.btn{background:var(--raise);border:1px solid var(--line-strong);border-radius:6px;color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.warn{background:transparent;border-color:transparent;color:var(--danger-ink)}
+.btn:disabled,.btn[aria-disabled="true"]{color:var(--muted)}
+.card canvas,.pip{border-radius:4px}
 }
 </style>
 </head>

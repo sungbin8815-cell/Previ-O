@@ -40,6 +40,6 @@ test('desktop viewport layouts', { timeout: 180_000 }, async () => {
   assert.equal(r.three.w2, true); assert.equal(r.swap, 'top');
   assert.equal(r.monOnly.vp, '1'); assert.equal(r.monOnly.mode, 'mon');
   assert.equal(r.back2.vp, '2'); assert.equal(r.back2.mode, '3d');
-  assert.equal(r.play.anim, true); assert.ok(r.play.border.startsWith('rgb(227, 36, 27)'));
+  assert.equal(r.play.anim, true); assert.ok(r.play.border.startsWith('rgb(229, 72, 58)'));
   assert.equal(r.after.anim, false); assert.equal(r.f6b, 'shots'); assert.deepEqual(errs, []);
 });
