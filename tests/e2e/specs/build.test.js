@@ -8,7 +8,7 @@ test('drawn room, door and window cut the walls', { timeout: 180_000 }, async ()
   const { b, p, errs } = await open(); after(() => b.close());
   await blank(p);
   await p.evaluate(() => { state.set.props = []; setMode('top'); }); await p.waitForTimeout(1200); await p.evaluate(() => { viewer.dist = 34; viewer.tx = 0; viewer.tz = 0; renderWorld(); }); await p.waitForTimeout(300);
-  await p.click('#buildBtn'); await p.waitForTimeout(300);
+  await p.click('#palette [data-group="set"] [data-tool="build"]'); // on computers the build tool lives in the palette await p.waitForTimeout(300);
   const tap = async (x, z) => { const r = await p.evaluate(([x, z]) => { const q = projW(worldV, { x, y: 0, z }), w = $('#world').getBoundingClientRect(); return { x: w.left + q.x, y: w.top + q.y }; }, [x, z]);
     await p.mouse.move(r.x, r.y); await p.mouse.down(); await p.mouse.up(); await p.waitForTimeout(150); };
   // a 4 × 3 m room: four corners and back to the start (closes it)

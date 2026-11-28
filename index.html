@@ -1765,6 +1765,31 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .app.boarding .shots > .ax-host:not(:has(+ .tlview)){display:none!important}
   .app.boarding .boardov{grid-row:2/3}
 }
+
+/* tool palette: computer only; phones keep their own layout */
+.palette{display:none}
+@media (min-width:1000px) and (min-height:560px){
+  .app,.app.paneon{grid-template-columns:var(--palw,168px) minmax(0,1fr) auto auto;grid-template-areas:"bar bar bar bar" "palette stage drawer rail" "palette shots drawer rail"}
+  .app.palnarrow{--palw:52px}
+  .palette{grid-area:palette;display:flex;flex-direction:column;gap:2px;padding:6px 6px 12px;background:var(--sheet);border-right:1px solid var(--line);overflow-y:auto;overflow-x:hidden;min-height:0}
+  .pwidth{align-self:flex-end;width:28px;height:28px;border:0;border-radius:6px;background:transparent;color:var(--ink2);display:grid;place-items:center}
+  .pwidth svg,.ptool svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .pwidth:hover,.ptool:hover:not(:disabled),.phead:hover{background:var(--raise)}
+  .pgroup{display:flex;flex-direction:column;gap:1px;padding-top:6px}
+  .phead{border:0;background:transparent;text-align:left;font:600 12px/20px var(--f-body);color:var(--ink2);padding:0 6px;border-radius:6px;display:flex;align-items:center;gap:6px}
+  .phead::after{content:"";margin-left:auto;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px)}
+  .phead[aria-expanded="false"]::after{transform:rotate(-45deg)}
+  .plist{display:flex;flex-direction:column;gap:1px}
+  .ptool{position:relative;display:flex;align-items:center;gap:8px;height:32px;padding:0 8px;border:0;border-radius:6px;background:transparent;color:var(--ink);font:500 13px var(--f-body);text-align:left;white-space:nowrap}
+  .ptool .pic{display:grid;place-items:center;flex:none;width:18px;height:18px}
+  .ptool .pname{overflow:hidden;text-overflow:ellipsis}
+  .ptool:disabled{color:var(--muted);cursor:default}
+  .ptool[aria-pressed="true"]{color:var(--accent)} .ptool[aria-pressed="true"]::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;background:var(--accent)}
+  .app.palnarrow .pname,.app.palnarrow .phead{font-size:0} .app.palnarrow .phead{height:8px} .app.palnarrow .phead::after{display:none} .app.palnarrow .ptool{justify-content:center;padding:0}
+  #camBar{display:none!important}
+  .app.vpm #worldwrap{bottom:0} .app.vpm .ov-bc{bottom:12px}
+  .app.vp3 #worldwrap{bottom:calc(50% + 4px)} .app.vp3 .ov-bc{bottom:calc(50% + 16px)}
+}
 /* ---------- lens design system (first design meeting, rules 1 and 2): solid panels, three button kinds, one focus ring ---------- */
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .glass,.toolbar.glass{background:var(--raise);border:1px solid var(--line-strong);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -1817,6 +1842,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <button class="navx" id="navMore" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>더보기</button>
     <button class="questb" id="questBtn" aria-haspopup="dialog" aria-expanded="false" title="튜토리얼: 기능을 하나씩 따라 해 봐요"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" class="qr-bg"/><circle cx="12" cy="12" r="9" class="qr" pathLength="100"/><path d="M8 9.5l4-2 4 2-4 2zM9.5 10.5v3c0 .9 1.1 1.6 2.5 1.6s2.5-.7 2.5-1.6v-3"/></svg>튜토리얼<b id="questN"></b></button>
   </nav>
+
+  <nav class="palette" id="palette" aria-label="도구"></nav>
 
   <div class="stage" id="stage">
     <div class="sharedbar glass" id="sharedBar" hidden><span><b>공유받은 프로젝트</b> · 아직 저장 전이에요</span><button class="btn sm primary" id="saveSharedBtn">내 프로젝트로 저장</button></div>
@@ -6552,7 +6579,7 @@ function syncRig(o) { const rb = $('#rigBar'), on = rigOpen && rigCan(o); rb.hid
   const r = o.rig || {}, arm = rigTab !== 'head', a = arm && (r['a' + rigTab] || rigArm0(o.pose || 'stand', rigTab));
   rb.innerHTML = `<div class="rt">${[['head', '고개·상체'], ['R', '왼팔'], ['L', '오른팔']].map(([t, n]) => `<button data-rt="${t}" aria-pressed="${rigTab === t}">${n}</button>`).join('')}<span class="sp"></span><button data-rreset ${rigOf(o) ? '' : 'disabled'}>초기화</button><button data-rclose aria-label="세부 조절 닫기">닫기</button></div>`
     + RIG_ROWS[arm ? 'arm' : 'head'].map(([k, lab, min, max]) => { const v = arm ? a[k] : r[k] || 0; return `<div class="xrow"><label>${lab}</label><input type="range" data-rk="${k}" min="${min}" max="${max}" step="5" value="${v}" aria-label="${arm ? (rigTab === 'R' ? '왼팔 ' : '오른팔 ') : ''}${lab}"><output>${Math.round(v)}°</output></div>`; }).join(''); }
-function syncBars() { autoInspect(); syncCrane();
+function syncBars() { autoInspect(); syncCrane(); syncPalette();
   const pb = $('#placeBar'), ob = $('#objBar'), cb = $('#camBar'), mk = mvSubj(); pb.hidden = !placing; if (build.on) { selObj = null; } cb.hidden = !!placing || build.on || craneOn || mode === 'mon' || !!mk;
   $('#movePad').hidden = !(mode === 'mon' || mk) || view !== 'edit'; $('#movePad').classList.toggle('subj', !!mk);
   if (placing) { $('#placeName').textContent = PROPS[placing.o.type].name; const st = $('#placeStat'); st.textContent = placing.why || '놓을 수 있어요'; st.className = 'pstat ' + (placing.why ? 'bad' : 'ok');
@@ -8302,6 +8329,65 @@ document.addEventListener('keydown', e => {
 const reTheme = () => { readColors(); buildStrip(); renderAll(); updateBoardIfOpen(); };
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', reTheme);
 new MutationObserver(reTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+/* ---------- tool palette (computer): the existing tools in groups, as in a 3D package. Each tool runs exactly what its old button
+   or panel tab runs; nothing here is a new action. Groups fold, the palette narrows to icons, favourites are kept on the device. ---------- */
+var TOOLS = null, palFavs = [], palFolded = [], palReady = false;
+const palGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } }, palSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const PAL_GROUPS = [['fav', '즐겨찾기'], ['move', '선택·이동'], ['rotate', '회전'], ['camera', '카메라'], ['light', '조명'], ['set', '세트'], ['object', '오브젝트'], ['measure', '측정'], ['note', '주석']];
+function palTools() {
+  const objSel = () => !$('#objBar').hidden, press = q => () => { const b = $(q); if (b) b.click(); }, panel = (pn, tab) => () => { openPane(pn); paneTab(pn, tab); };
+  const svgOf = q => { const e = $(q); const v = e && e.querySelector('svg'); return v ? v.outerHTML : ''; };
+  const ic = d => `<svg viewBox="0 0 24 24">${d}</svg>`;
+  return [
+    { id: 'select', group: 'move', name: '선택', key: 'Esc', icon: ic('<path d="M5 3l13 8-6 1.5L9.5 19z"/>'), active: () => !placing && !build.on && !(tape && tape.on),
+      run: () => { if (placing) cancelPlace(); if (build.on) buildToggle(false); if (tape && tape.on) $('#tapeBtn').click(); selObj = null; camSel = false; syncSet(); syncBars(); renderWorld(); } },
+    { id: 'camMove', group: 'move', name: '카메라 끌기 / 축', key: 'J', icon: svgOf('#moveModeBtn'), run: press('#moveModeBtn'), on: () => mode !== 'mon', active: () => camMove === 'free' },
+    { id: 'objMove', group: 'move', name: '물체 옮기기', icon: svgOf('#oMove'), run: press('#oMove'), on: objSel },
+    { id: 'rotL', group: 'rotate', name: '왼쪽으로 90°', icon: svgOf('#oRotL'), run: press('#oRotL'), on: objSel },
+    { id: 'rotR', group: 'rotate', name: '오른쪽으로 90°', icon: svgOf('#oRotR'), run: press('#oRotR'), on: objSel },
+    { id: 'level', group: 'rotate', name: '수평 맞추기', key: 'O', icon: svgOf('#levelBtn'), run: press('#levelBtn') },
+    { id: 'aimA', group: 'camera', name: 'A 바라보기', key: 'U', icon: svgOf('#aimA'), run: press('#aimA') },
+    { id: 'aimB', group: 'camera', name: 'B 바라보기', icon: svgOf('#aimB'), run: press('#aimB'), on: () => !!(cur().B && cur().B.on) },
+    { id: 'fit', group: 'camera', name: '맞춤', key: '0', icon: svgOf('#fitBtn'), run: press('#fitBtn'), on: () => mode !== 'mon' },
+    { id: 'wider', group: 'camera', name: '렌즈 더 넓게', key: 'Z', icon: ic('<path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/>'), run: () => lensStep(-1) },
+    { id: 'narrower', group: 'camera', name: '렌즈 더 좁게', key: 'X', icon: ic('<path d="M4 12h16M8 8l4 4-4 4M16 8l-4 4 4 4"/>'), run: () => lensStep(1) },
+    { id: 'lightAdd', group: 'light', name: '조명 추가', key: 'L', icon: svgOf('#rail [data-pane="light"]'), run: panel('light', 'add') },
+    { id: 'sky', group: 'light', name: '시간 · 날씨', icon: ic('<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>'), run: panel('light', 'sky') },
+    { id: 'cast', group: 'set', name: '인물', key: 'T', icon: ic('<circle cx="12" cy="7" r="3"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>'), run: panel('set', 'cast') },
+    { id: 'propAdd', group: 'set', name: '가구 추가', icon: svgOf('#rail [data-pane="set"]'), run: panel('set', 'add') },
+    { id: 'build', group: 'set', name: '짓기 (벽 · 바닥 · 블록)', icon: svgOf('#buildBtn'), run: press('#buildBtn'), on: () => mode !== 'mon', active: () => build.on },
+    { id: 'dup', group: 'object', name: '복제', icon: svgOf('#oDup'), run: press('#oDup'), on: () => objSel() && !$('#oDup').hidden },
+    { id: 'del', group: 'object', name: '삭제', key: 'Delete', icon: svgOf('#oDel'), run: press('#oDel'), on: () => objSel() && !$('#oDel').hidden },
+    { id: 'edit', group: 'object', name: '편집', icon: svgOf('#oEdit'), run: press('#oEdit'), on: () => objSel() && !$('#oEdit').hidden },
+    { id: 'tape', group: 'measure', name: '줄자 (탑 화면)', icon: svgOf('#tapeBtn'), run: press('#tapeBtn'), on: () => mode === 'top', active: () => !!(tape && tape.on) },
+    { id: 'axis', group: 'note', name: '가상선', icon: ic('<path d="M3 17L21 7"/><circle cx="8" cy="9" r="2"/><circle cx="16" cy="15" r="2"/>'), run: panel('shot', 'axis') },
+    { id: 'path', group: 'note', name: '인물 동선', icon: ic('<path d="M4 18c3-6 5 2 8-4s5-4 8-8"/><circle cx="4" cy="18" r="1.5"/><circle cx="20" cy="6" r="1.5"/>'), run: press('#kfAdd') },
+  ];
+}
+function toolBtn(t) { return `<button class="ptool" type="button" data-tool="${t.id}" title="${t.name}${t.key ? ` (${t.key})` : ''}" aria-pressed="false"><span class="pic">${t.icon}</span><span class="pname">${t.name}</span></button>`; }
+function buildPalette() {
+  const el = $('#palette'); if (!el) return; TOOLS = palTools(); palFavs = palGet('previo.favs', []).filter(id => TOOLS.some(t => t.id === id)); palFolded = palGet('previo.palgroups', []);
+  const narrow = palGet('previo.palette', 'wide') === 'narrow'; $('#app').classList.toggle('palnarrow', narrow);
+  el.innerHTML = `<button class="pwidth" id="paletteWidth" type="button" aria-pressed="${narrow}" title="${narrow ? '팔레트 펼치기' : '아이콘만 보기'}"><svg viewBox="0 0 24 24"><path d="${narrow ? 'M9 6l6 6-6 6' : 'M15 6l-6 6 6 6'}"/></svg></button>`
+    + PAL_GROUPS.map(([g, n]) => { const list = g === 'fav' ? palFavs.map(id => TOOLS.find(t => t.id === id)) : TOOLS.filter(t => t.group === g);
+      return `<section class="pgroup" data-group="${g}"${g === 'fav' && !list.length ? ' hidden' : ''}><button class="phead" type="button" aria-expanded="${!palFolded.includes(g)}">${n}</button><div class="plist"${palFolded.includes(g) ? ' hidden' : ''}>${list.map(toolBtn).join('')}</div></section>`; }).join('');
+  palReady = true; syncPalette(); }
+function syncPalette() { if (!palReady) return;
+  document.querySelectorAll('#palette .ptool').forEach(b => { const t = TOOLS.find(x => x.id === b.dataset.tool); if (!t) return;
+    const safe = (f, d) => { try { return f(); } catch (e) { return d; } }; // before a project is open there is no current shot
+    b.disabled = t.on ? !safe(t.on, false) : false; b.setAttribute('aria-pressed', t.active ? !!safe(t.active, false) : false); b.hidden = !!t.pro && !isPro(); }); }
+function paletteFav(id) { palFavs = palFavs.includes(id) ? palFavs.filter(x => x !== id) : [...palFavs, id]; palSet('previo.favs', palFavs); buildPalette();
+  toast(palFavs.includes(id) ? '즐겨찾기에 넣었어요' : '즐겨찾기에서 뺐어요'); }
+{ const el = $('#palette'); let lp = null;
+  el.addEventListener('click', e => { const h = e.target.closest('.phead'); if (h) { const g = h.parentElement.dataset.group; palFolded = palFolded.includes(g) ? palFolded.filter(x => x !== g) : [...palFolded, g]; palSet('previo.palgroups', palFolded); buildPalette(); return; }
+    if (e.target.closest('#paletteWidth')) { palSet('previo.palette', $('#app').classList.contains('palnarrow') ? 'wide' : 'narrow'); buildPalette(); wsz = null; vsz = null; requestAnimationFrame(() => renderAll()); return; }
+    const b = e.target.closest('.ptool'); if (!b || b.disabled) return; const t = TOOLS.find(x => x.id === b.dataset.tool); if (t) { t.run(); syncPalette(); } });
+  el.addEventListener('contextmenu', e => { const b = e.target.closest('.ptool'); if (!b) return; e.preventDefault(); paletteFav(b.dataset.tool); });
+  el.addEventListener('pointerdown', e => { const b = e.target.closest('.ptool'); if (!b || e.pointerType === 'mouse') return; lp = setTimeout(() => { lp = null; paletteFav(b.dataset.tool); }, 500); });
+  ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => el.addEventListener(t, () => { if (lp) { clearTimeout(lp); lp = null; } })); }
+buildPalette();
+
 document.querySelectorAll('#vpLay button').forEach(b => b.addEventListener('click', () => setVp(b.dataset.vp)));
 // F6 / Shift+F6 move between the areas (header, stage, panel, shot strip), as in desktop apps (user decision)
 document.addEventListener('keydown', e => { if (e.key !== 'F6') return; e.preventDefault();

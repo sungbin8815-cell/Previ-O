@@ -44,7 +44,7 @@ test('export menu opens, toggles and closes', { timeout: 180_000 }, async () => 
   await btn.click(); await p.waitForTimeout(300); out.thirdClick = [await st(), await ax()];
   await p.mouse.click(500, 400); await p.waitForTimeout(300); out.outside = [await st(), await ax()];
   await btn.click(); await p.waitForTimeout(300);
-  await p.getByRole('button', { name: '편집' }).or(p.getByRole('radio', { name: '편집' })).first().click(); await p.waitForTimeout(300); out.otherControl = await st();
+  await p.click('#palette [data-group="camera"] [data-tool="wider"]'); /* another control: the edit switch now sits under the open menu */ await p.waitForTimeout(300); out.otherControl = await st();
   out.haspopup = await btn.getAttribute('aria-haspopup');
   assert.deepEqual(out.firstClick, [true, 'true']); assert.deepEqual(out.secondClick, [false, 'false']); assert.deepEqual(out.thirdClick, [true, 'true']); assert.deepEqual(out.outside, [false, 'false']); assert.equal(out.otherControl, false); assert.equal(out.haspopup, 'menu'); assert.deepEqual(errs, []);
 });
