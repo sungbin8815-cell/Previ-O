@@ -5,3 +5,5 @@
 tests/e2e/node_modules/
 tests/e2e/out/
 node_modules/
+# superpowers work ledgers and test logs
+.superpowers/
