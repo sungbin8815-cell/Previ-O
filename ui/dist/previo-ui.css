@@ -3946,3 +3946,6 @@
 /* controls that float on the 3D picture keep a solid plate behind them */
 #modeSeg + .ax-host > *, .ov-tl > .ax-host > *{background:#0B0B0C;border-radius:0;padding:2px}
 .ax-dot{display:inline-block;flex:none}
+
+/* the shot strip's delete reads as danger, without a filled block */
+.ax-host[data-for="delBtn"] button{color:#E5675C}

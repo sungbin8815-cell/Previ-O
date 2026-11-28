@@ -35,7 +35,7 @@ const reg = new Map();   // legacy element -> { host, kind }
 // One theme for every control: lens (matte black, lime accent, SUIT), dark only.
 const themeFor = () => 'lens';
 function adopt(el, kind) {
-  const host = document.createElement('span'); host.className = 'ax-host ax-' + kind; host.dataset.astryxTheme = themeFor(el); host.dataset.theme = 'dark';
+  const host = document.createElement('span'); host.className = 'ax-host ax-' + kind; host.dataset.astryxTheme = themeFor(el); host.dataset.theme = 'dark'; if (el.id) host.dataset.for = el.id;
   el.before(host); el.classList.add('ax-legacy'); el.setAttribute('aria-hidden', 'true'); el.tabIndex = -1;
   // the component's own click (and the input / change of its inner fields) must not also reach the app's listeners on the
   // parent, or they would run twice: the action is handed to the legacy element instead, whose event bubbles as it always
@@ -81,7 +81,8 @@ function LegacyButton({ el }) {
   const label = labelOf(el), text = textOf(el), icon = iconOf(el), common = { label: label || '버튼', icon, isIconOnly: !text && !!icon, isDisabled: el.disabled, size: size(el), ...ariaOf(el) };
   if (el.hasAttribute('aria-pressed') && !el.classList.contains('primary'))
     return <ToggleButton {...common} isPressed={pressed(el)} onPressedChange={() => el.click()}>{text || undefined}</ToggleButton>;
-  const variant = el.classList.contains('primary') ? 'primary' : el.classList.contains('ghost') ? 'ghost' : el.classList.contains('warn') ? 'destructive' : el.classList.contains('fab') ? 'ghost' : 'secondary';
+  // one lime button per screen (export): '+ 샷' is drawn as a secondary button; the shot delete reads as danger (text only)
+  const variant = el.id === 'addBtn' ? 'secondary' : el.id === 'delBtn' ? 'ghost' : el.classList.contains('primary') ? 'primary' : el.classList.contains('ghost') ? 'ghost' : el.classList.contains('warn') ? 'destructive' : el.classList.contains('fab') ? 'ghost' : 'secondary';
   return <Button {...common} variant={variant} onClick={() => el.click()}>{text || undefined}</Button>;
 }
 function LegacySeg({ el }) {
