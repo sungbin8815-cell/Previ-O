@@ -1,0 +1,14 @@
+{
+  "name": "previo-e2e",
+  "private": true,
+  "scripts": {
+    "test": "node --test --test-concurrency=1 specs/*.test.js"
+  },
+  "devDependencies": {
+    "@pixiv/three-vrm": "2.1.0",
+    "es-module-shims": "1.10.0",
+    "lz-string": "1.4.4",
+    "sortablejs": "1.15.0",
+    "three": "0.160.0"
+  }
+}

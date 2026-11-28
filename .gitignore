@@ -2,3 +2,6 @@
 .design-team/
 # design-taste-frontend skill build state
 .taste-skill/
+tests/e2e/node_modules/
+tests/e2e/out/
+node_modules/
