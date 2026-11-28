@@ -1782,10 +1782,10 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .plist{display:flex;flex-direction:column;gap:1px}
   .ptool{position:relative;display:flex;align-items:center;gap:8px;height:32px;padding:0 8px;border:0;border-radius:6px;background:transparent;color:var(--ink);font:500 13px var(--f-body);text-align:left;white-space:nowrap}
   .ptool .pic{display:grid;place-items:center;flex:none;width:18px;height:18px}
-  .ptool .pname{overflow:hidden;text-overflow:ellipsis}
+  .ptool .plabel{overflow:hidden;text-overflow:ellipsis}
   .ptool:disabled{color:var(--muted);cursor:default}
   .ptool[aria-pressed="true"]{color:var(--accent)} .ptool[aria-pressed="true"]::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;background:var(--accent)}
-  .app.palnarrow .pname,.app.palnarrow .phead{font-size:0} .app.palnarrow .phead{height:8px} .app.palnarrow .phead::after{display:none} .app.palnarrow .ptool{justify-content:center;padding:0}
+  .app.palnarrow .plabel,.app.palnarrow .phead{font-size:0} .app.palnarrow .phead{height:8px} .app.palnarrow .phead::after{display:none} .app.palnarrow .ptool{justify-content:center;padding:0}
   #camBar{display:none!important}
   .app.vpm #worldwrap{bottom:0} .app.vpm .ov-bc{bottom:12px}
   .app.vp3 #worldwrap{bottom:calc(50% + 4px)} .app.vp3 .ov-bc{bottom:calc(50% + 16px)}
@@ -8365,7 +8365,7 @@ function palTools() {
     { id: 'path', group: 'note', name: '인물 동선', icon: ic('<path d="M4 18c3-6 5 2 8-4s5-4 8-8"/><circle cx="4" cy="18" r="1.5"/><circle cx="20" cy="6" r="1.5"/>'), run: press('#kfAdd') },
   ];
 }
-function toolBtn(t) { return `<button class="ptool" type="button" data-tool="${t.id}" title="${t.name}${t.key ? ` (${t.key})` : ''}" aria-pressed="false"><span class="pic">${t.icon}</span><span class="pname">${t.name}</span></button>`; }
+function toolBtn(t) { return `<button class="ptool" type="button" data-tool="${t.id}" title="${t.name}${t.key ? ` (${t.key})` : ''}" aria-pressed="false"><span class="pic">${t.icon}</span><span class="plabel">${t.name}</span></button>`; }
 function buildPalette() {
   const el = $('#palette'); if (!el) return; TOOLS = palTools(); palFavs = palGet('previo.favs', []).filter(id => TOOLS.some(t => t.id === id)); palFolded = palGet('previo.palgroups', []);
   const narrow = palGet('previo.palette', 'wide') === 'narrow'; $('#app').classList.toggle('palnarrow', narrow);
