@@ -26,7 +26,7 @@ test('shortcut, slider, kit, board and add shot through Astryx', { timeout: 180_
   await p.getByRole('radio', { name: '편집' }).click(); await p.waitForTimeout(600);
   await p.getByRole('button', { name: '내보내기' }).click(); await p.waitForTimeout(400); out.menu = await p.evaluate(() => !document.querySelector('#xMenu').hidden);
   await p.mouse.click(500, 400); await p.waitForTimeout(300);
-  out.cover = await p.evaluate(() => { const e = [...document.querySelectorAll('.ax-host button')].find(x => x.textContent.includes('샷') && x.dataset.variant === 'primary'); const q = e.getBoundingClientRect(); const t = document.elementFromPoint(q.x + q.width / 2, q.y + q.height / 2); return t.tagName + '.' + String(t.className).slice(0, 40) + ' #' + t.id + ' menu ' + !document.querySelector('#xMenu').hidden; });
+  out.cover = await p.evaluate(() => { const e = [...document.querySelectorAll('.ax-host button')].find(x => x.closest('.ax-host').dataset.for === 'addBtn'); const q = e.getBoundingClientRect(); const t = document.elementFromPoint(q.x + q.width / 2, q.y + q.height / 2); return t.tagName + '.' + String(t.className).slice(0, 40) + ' #' + t.id + ' menu ' + !document.querySelector('#xMenu').hidden; });
   await p.screenshot({ path: path.join(OUT, 'astryx-func.png') });
   // add a shot
   const n0 = await p.evaluate(() => state.shots.length); await p.getByRole('button', { name: '＋ 샷' }).click({ timeout: 5000 }).catch(e => out.shotErr = 1); await p.waitForTimeout(600); out.shots = [n0, await p.evaluate(() => state.shots.length)];

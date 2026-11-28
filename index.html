@@ -1352,7 +1352,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:#fff;borde
 .fsbtn[aria-pressed="true"]{color:var(--accent)}
 @media (pointer:coarse){ .fsbtn{width:44px;height:44px} }
 .app.fullscr{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;grid-template-areas:"stage"!important}
-.app.fullscr > .bar,.app.fullscr > .rail,.app.fullscr > .shots,.app.fullscr > .drawer{display:none!important}
+.app.fullscr > .bar,.app.fullscr > .rail,.app.fullscr > .shots,.app.fullscr > .drawer,.app.fullscr > .palette{display:none!important}
 .app.fullscr #camBar,.app.fullscr #kfBar{display:none}
 /* inspector header: the five tools as tabs; the panel title stays for screen readers only */
 .dh{gap:8px;padding:8px 8px 0 8px;align-items:flex-end;border-bottom:1px solid var(--line)}
@@ -1759,15 +1759,15 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 
 /* ---------- desktop workspace (step 3) ---------- */
 .shots .tlview{margin-left:auto;flex:none}
-/* storyboard view on a computer: the timeline bar stays, holding only the edit / storyboard switch, so there is always a way back */
-@media (min-width:1000px) and (min-height:560px){
+/* storyboard view on anything but a phone (phones have their own board tab): the timeline bar stays, holding only the edit / storyboard switch, so there is always a way back */
+@media (min-width:720px),(orientation:landscape){ @media (min-height:521px),(orientation:portrait){
   .app.boarding .shots{display:flex!important;grid-column:1/-1;grid-row:3/4} .app.boarding .shots > :not(.tlview):not(.ax-host){display:none!important}
   .app.boarding .shots > .ax-host:not(:has(+ .tlview)){display:none!important}
   .app.boarding .boardov{grid-row:2/3}
-}
+} }
 
 /* tool palette: computer only; phones keep their own layout */
-.palette{display:none} .tlhead,.tlresize{display:none}
+.palette{display:none} .tlhead,.tlresize,.insptarget{display:none}
 @media (min-width:1000px) and (min-height:560px){
   .app,.app.paneon{grid-template-columns:var(--palw,168px) minmax(0,1fr) auto auto;grid-template-areas:"bar bar bar bar" "palette stage drawer rail" "palette shots drawer rail"}
   .app.palnarrow{--palw:52px}
@@ -1788,7 +1788,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .app.palnarrow .plabel,.app.palnarrow .phead{font-size:0} .app.palnarrow .phead{height:8px} .app.palnarrow .phead::after{display:none} .app.palnarrow .ptool{justify-content:center;padding:0}
 
   /* timeline: header for the picked shot, height from the drag handle */
-  .shots{position:relative;height:var(--tlh,auto)}
+  .shots{position:relative;height:var(--tlh,auto);min-height:min-content} .shots.folded{height:auto} .shots.folded .tlresize{display:none}
   .tlresize{display:block;position:absolute;left:0;right:0;top:-3px;height:6px;cursor:row-resize;z-index:3}
   .tlresize:hover,.tlresize:focus-visible{background:var(--line-strong);outline:0}
   .tlhead{display:flex;align-items:center;gap:16px;order:-1;flex:1 0 100%;min-width:0;font:500 13px var(--f-body);color:var(--ink2)}
@@ -1807,8 +1807,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   .rail .rg,.rail .questb,.rail kbd,.rail .ax-rail-t{display:none!important}
   #rail .ax-rail button{min-height:40px;padding:4px}
   .app.paneon .rail{display:none!important}
-  .insptarget{font:500 12px/16px var(--f-body);color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-
+  .insptarget{display:block;font:500 12px/16px var(--f-body);color:var(--ink2);padding:6px 12px;border-bottom:1px solid var(--line);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 /* ---------- lens design system (first design meeting, rules 1 and 2): solid panels, three button kinds, one focus ring ---------- */
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
@@ -1937,7 +1936,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
   </div>
 
   <aside class="drawer" id="drawer" hidden aria-labelledby="drawerTitle">
-    <div class="dh"><div class="ico" id="drawerIcon"></div><div class="tt"><h3 id="drawerTitle"></h3><div class="insptarget" id="inspTarget" aria-live="polite"></div></div><nav class="dtabs" id="dTabs" aria-label="도구 전환"><button data-dpane="cam">카메라</button><button data-dpane="rig" data-pro>장비</button><button data-dpane="light">조명</button><button data-dpane="set">세트</button><button data-dpane="shot">샷</button></nav><button class="xbtn" id="drawerClose" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="dh"><div class="ico" id="drawerIcon"></div><div class="tt"><h3 id="drawerTitle"></h3></div><nav class="dtabs" id="dTabs" aria-label="도구 전환"><button data-dpane="cam">카메라</button><button data-dpane="rig" data-pro>장비</button><button data-dpane="light">조명</button><button data-dpane="set">세트</button><button data-dpane="shot">샷</button></nav><button class="xbtn" id="drawerClose" aria-label="닫기"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="insptarget" id="inspTarget"></div>
     <div class="db">
       <section class="pane" data-pane="cam" hidden>
         <div class="ptabs seg kr" role="tablist"><button data-tab="lens">렌즈</button><button data-tab="focus" data-pro>초점</button><button data-tab="expo" data-pro>노출</button><button data-tab="dist" data-pro>거리</button><button data-tab="fmt"><span data-pro>센서</span><span data-simple>화면비</span></button></div>
@@ -7854,7 +7853,7 @@ function setView(v) { if (play) stopPlay(); if (v === 'board') kfReset(); view =
   if (v === 'board') buildBoard(); else { vsz = null; wsz = null; renderAll(); } }
 $('#boardBtn').onclick = () => setView('board'); $('#editBtn').onclick = () => setView('edit');
 // one menu for everything that leaves the app: copy, CSV, print, link, files, plus help and reset
-function xMenu(open = $('#xMenu').hidden) { if (open) { if (play) stopPlay(); kfReset(); syncKfBar(); } $('#xMenu').hidden = !open; $('#exportBtn').setAttribute('aria-expanded', open); if (!open) $('#copyFallback').hidden = true; }
+function xMenu(open = $('#xMenu').hidden) { if (open) { if (typeof appMenu === 'function' && !$('#appMenu').hidden) appMenu(false); if (play) stopPlay(); kfReset(); syncKfBar(); } $('#xMenu').hidden = !open; $('#exportBtn').setAttribute('aria-expanded', open); if (!open) $('#copyFallback').hidden = true; }
 $('#exportBtn').onclick = e => { e.stopPropagation(); xMenu(); };
 $('#xMenu').addEventListener('click', e => { if (e.target.closest('button') && !['resetBtn'].includes(e.target.closest('button').id)) setTimeout(() => { if ($('#copyFallback').hidden) xMenu(false); }, 0); });
 document.addEventListener('pointerdown', e => { if (!$('#xMenu').hidden && !e.target.closest('#xMenu,#exportBtn')) xMenu(false); });
@@ -8359,12 +8358,14 @@ new MutationObserver(reTheme).observe(document.documentElement, { attributes: tr
    or panel tab runs; nothing here is a new action. Groups fold, the palette narrows to icons, favourites are kept on the device. ---------- */
 // the inspector names what it shows: the camera when nothing is picked, else the picked light, person or object
 function inspTargetName() { try {
-  if (selObj && selObj.kind === 'light') { const l = shotLights().find(x => x.id === selObj.id); return l ? FIX(l.fx).name : '조명'; }
-  if (selObj && selObj.kind === 'subj') return '인물 ' + castName(selObj.k);
-  if (selObj && selObj.kind === 'prop') { const o = state.set.props.find(x => x.id === selObj.id); return o ? ((PROPS[o.type] && PROPS[o.type].name) || o.type) : '가구'; }
-  if (selObj) return '고른 것';
-  return '카메라'; } catch (e) { return '카메라'; } }
-function syncInspTarget() { const el = $('#inspTarget'); if (el) el.textContent = inspTargetName(); }
+  if (!selObj) return '카메라';
+  if (selObj.id === 'SUN') return '햇빛';
+  const o = findObj(selObj.id); if (!o) return '카메라';
+  if (selObj.kind === 'subj') return '인물 ' + castLabel(selObj.k);
+  if (selObj.kind === 'prop') return (PROPS[o.type] && PROPS[o.type].name) || '가구';
+  if (selObj.kind === 'light') return lightLabel(o);
+  return '고른 것'; } catch (e) { return '카메라'; } }
+function syncInspTarget() { const el = $('#inspTarget'), t = inspTargetName(); if (el && el.textContent !== t) el.textContent = t; }
 var TOOLS = null, palFavs = [], palFolded = [], palReady = false;
 const palGet = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } }, palSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 const PAL_GROUPS = [['fav', '즐겨찾기'], ['move', '선택·이동'], ['rotate', '회전'], ['camera', '카메라'], ['light', '조명'], ['set', '세트'], ['object', '오브젝트'], ['measure', '측정'], ['note', '주석']];
@@ -8416,8 +8417,11 @@ function paletteFav(id) { palFavs = palFavs.includes(id) ? palFavs.filter(x => x
   el.addEventListener('click', e => { const h = e.target.closest('.phead'); if (h) { const g = h.parentElement.dataset.group; palFolded = palFolded.includes(g) ? palFolded.filter(x => x !== g) : [...palFolded, g]; palSet('previo.palgroups', palFolded); buildPalette(); return; }
     if (e.target.closest('#paletteWidth')) { palSet('previo.palette', $('#app').classList.contains('palnarrow') ? 'wide' : 'narrow'); buildPalette(); wsz = null; vsz = null; requestAnimationFrame(() => renderAll()); return; }
     const b = e.target.closest('.ptool'); if (!b || b.disabled) return; const t = TOOLS.find(x => x.id === b.dataset.tool); if (t) { t.run(); syncPalette(); } });
-  el.addEventListener('contextmenu', e => { const b = e.target.closest('.ptool'); if (!b) return; e.preventDefault(); paletteFav(b.dataset.tool); });
-  el.addEventListener('pointerdown', e => { const b = e.target.closest('.ptool'); if (!b || e.pointerType === 'mouse') return; lp = setTimeout(() => { lp = null; paletteFav(b.dataset.tool); }, 500); });
+  // a long press on touch toggles the favourite once: the contextmenu and click that some browsers send after it are swallowed
+  let lpDone = false;
+  el.addEventListener('contextmenu', e => { const b = e.target.closest('.ptool'); if (!b) return; e.preventDefault(); if (lpDone) return; paletteFav(b.dataset.tool); });
+  el.addEventListener('click', e => { if (lpDone) { lpDone = false; e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+  el.addEventListener('pointerdown', e => { const b = e.target.closest('.ptool'); lpDone = false; if (!b || e.pointerType === 'mouse') return; lp = setTimeout(() => { lp = null; lpDone = true; paletteFav(b.dataset.tool); }, 500); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(t => el.addEventListener(t, () => { if (lp) { clearTimeout(lp); lp = null; } })); }
 buildPalette();
 
@@ -8430,14 +8434,15 @@ $('#tlMove').innerHTML = MOVES.map(m => `<option value="${m.k}">${m.ko}</option>
 $('#tlMove').addEventListener('change', e => { const b = document.querySelector(`#moves [data-move="${e.target.value}"]`); if (b) b.click(); });
 $('#tlDurM').onclick = () => $('#durM').click(); $('#tlDurP').onclick = () => $('#durP').click();
 $('#tlNote').addEventListener('input', e => { const f = $('#fNote'); f.value = e.target.value; f.dispatchEvent(new Event('input', { bubbles: true })); });
+$('#fNote').addEventListener('input', e => { const t = $('#tlNote'); if (t && document.activeElement !== t) t.value = e.target.value; });
 $('#tlNote').addEventListener('change', () => $('#fNote').dispatchEvent(new Event('change', { bubbles: true })));
 // timeline height: drag the top edge (96–360 px), kept on the device
-{ const app = $('#app'), clampH = h => Math.max(96, Math.min(360, Math.round(h)));
+{ const app = $('#app'), clampH = h => Math.max(96, Math.min(360, Math.round(innerHeight * .45), Math.round(h)));
   try { const v = +localStorage.getItem('previo.tlh'); if (v) app.style.setProperty('--tlh', clampH(v) + 'px'); } catch (e) {}
   let drag = null; const el = $('#tlResize'), setH = h => { app.style.setProperty('--tlh', clampH(h) + 'px'); wsz = null; vsz = null; };
   el.addEventListener('pointerdown', e => { drag = { y: e.clientY, h: $('.shots').getBoundingClientRect().height }; el.setPointerCapture(e.pointerId); e.preventDefault(); });
   el.addEventListener('pointermove', e => { if (drag) setH(drag.h + drag.y - e.clientY); });
-  el.addEventListener('pointerup', () => { if (!drag) return; drag = null; try { localStorage.setItem('previo.tlh', parseInt(getComputedStyle(app).getPropertyValue('--tlh'))); } catch (e) {} renderAll(); });
+  el.addEventListener('pointerup', () => { if (!drag) return; drag = null; if (!app.style.getPropertyValue('--tlh')) return; try { localStorage.setItem('previo.tlh', parseInt(getComputedStyle(app).getPropertyValue('--tlh'))); } catch (e) {} renderAll(); });
   el.addEventListener('keydown', e => { if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return; e.preventDefault(); setH($('.shots').getBoundingClientRect().height + (e.key === 'ArrowUp' ? 16 : -16)); try { localStorage.setItem('previo.tlh', parseInt(getComputedStyle(app).getPropertyValue('--tlh'))); } catch (er) {} renderAll(); }); }
 document.querySelectorAll('#vpLay button').forEach(b => b.addEventListener('click', () => setVp(b.dataset.vp)));
 // F6 / Shift+F6 move between the areas (header, stage, panel, shot strip), as in desktop apps (user decision)

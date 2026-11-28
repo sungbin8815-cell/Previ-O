@@ -28,3 +28,28 @@ test('app menu holds mode, tutorial, focus practice and key help', { timeout: 18
   assert.equal(await p.evaluate(() => document.getElementById('keyHelp').hidden), false);
   assert.deepEqual(errs, []);
 });
+
+test('storyboard view keeps a way back on a tablet-sized window', { timeout: 180_000 }, async () => {
+  const { b, p, errs } = await open({ viewport: { width: 900, height: 700 } }); after(() => b.close());
+  await blank(p, true); await hideCoach(p);
+  await p.evaluate(() => document.getElementById('boardBtn').click()); await p.waitForTimeout(500);
+  assert.equal(await p.evaluate(() => view), 'board');
+  await p.getByRole('radio', { name: '편집' }).click({ timeout: 5000 }); await p.waitForTimeout(500);
+  assert.equal(await p.evaluate(() => view), 'edit');
+  assert.deepEqual(errs, []);
+});
+
+test('full screen on a computer gives the stage the whole window', { timeout: 180_000 }, async () => {
+  const { b, p } = await open(W); after(() => b.close());
+  await blank(p, true); await hideCoach(p);
+  await p.evaluate(() => document.getElementById('app').classList.add('fullscr')); await p.waitForTimeout(400);
+  const r = await p.evaluate(() => { const s = document.getElementById('stage').getBoundingClientRect(); return { w: Math.round(s.width), h: Math.round(s.height) }; });
+  assert.deepEqual(r, { w: 1440, h: 900 });
+});
+
+test('lens rules reach phones too: the toast is solid with light text', { timeout: 180_000 }, async () => {
+  const { b, p } = await open({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true }); after(() => b.close());
+  await blank(p, true); await hideCoach(p);
+  const c = await p.evaluate(() => { const t = document.getElementById('toast') || document.querySelector('.toast'); const cs = getComputedStyle(t); return { bg: cs.backgroundColor, ink: cs.color }; });
+  assert.equal(c.bg, 'rgb(28, 29, 32)'); assert.equal(c.ink, 'rgb(236, 237, 238)');
+});

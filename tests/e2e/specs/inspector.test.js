@@ -12,8 +12,10 @@ test('picking switches the inspector and names the target', { timeout: 180_000 }
   await p.waitForTimeout(600);
   await p.evaluate(() => { selObj = null; camSel = false; syncBars(); openPane('cam'); }); await p.waitForTimeout(200);
   await p.evaluate(() => { selObj = { id: shotLights()[0].id, kind: 'light' }; syncBars(); }); await p.waitForTimeout(300);
-  const lit = await p.evaluate(() => ({ pane, name: document.getElementById('inspTarget').textContent.trim() }));
-  assert.equal(lit.pane, 'light'); assert.ok(lit.name.length > 0);
+  const lit = await p.evaluate(() => { const el = document.getElementById('inspTarget'), r = el.getBoundingClientRect(); return { pane, name: el.textContent.trim(), want: lightLabel(findObj(selObj.id)), w: r.width, h: r.height }; });
+  assert.equal(lit.pane, 'light'); assert.equal(lit.name, lit.want); assert.ok(lit.w > 40 && lit.h >= 12, 'target name is visible');
+  await p.evaluate(() => { selObj = { id: 'SUN', kind: 'light' }; syncBars(); }); await p.waitForTimeout(200);
+  assert.equal(await p.evaluate(() => document.getElementById('inspTarget').textContent.trim()), '햇빛');
   await p.evaluate(() => { selObj = null; camSel = false; syncBars(); }); await p.waitForTimeout(300);
   assert.equal(await p.evaluate(() => document.getElementById('inspTarget').textContent.trim()), '카메라');
   assert.deepEqual(errs, []);
