@@ -92,8 +92,8 @@ export const lensTheme = {
     "--_astryx-pre-tempo-duration-slow": "700ms",
     "--_astryx-pre-tempo-duration-slow-max": "935ms",
     "--_astryx-motion-tempo": "1",
-    "--font-family-body": "\"IBM Plex Sans KR\", system-ui, sans-serif",
-    "--font-family-heading": "\"IBM Plex Sans KR\", system-ui, sans-serif",
+    "--font-family-body": "\"SUIT Variable\", system-ui, sans-serif",
+    "--font-family-heading": "\"SUIT Variable\", system-ui, sans-serif",
     "--font-family-code": "ui-monospace, \"SF Mono\", Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
     "--color-syntax-keyword": "light-dark(#6b187c, #efa8ff)",
     "--color-syntax-string": "light-dark(#0b5615, #a4d6a3)",
@@ -126,7 +126,7 @@ export const lensTheme = {
     "--color-overlay-hover": "light-dark(#0000000d, #ffffff0d)",
     "--color-overlay-pressed": "light-dark(#0000001a, #ffffff1a)",
     "--color-text-primary": "light-dark(#000000, #ffffff)",
-    "--color-text-secondary": "light-dark(#43464c, #999ca2)",
+    "--color-text-secondary": "light-dark(#43464c, #a3a6ab)",
     "--color-text-disabled": "light-dark(#8a8d94, #4e5056)",
     "--color-text-accent": "light-dark(#5b6600, #c9dd4f)",
     "--color-on-dark": "light-dark(#ffffff, #ffffff)",
@@ -156,8 +156,8 @@ export const lensTheme = {
     "--color-success-muted": "light-dark(#bce0bb, #90ca903D)",
     "--color-error-muted": "light-dark(#ffc4be, #ff98903D)",
     "--color-warning-muted": "light-dark(#fae19e, #e2b6233D)",
-    "--color-border": "light-dark(#00000014, #ffffff1a)",
-    "--color-border-emphasized": "light-dark(#d3d4d7, #4e5056)",
+    "--color-border": "light-dark(#00000014, #686b70)",
+    "--color-border-emphasized": "light-dark(#d3d4d7, #686b70)",
     "--color-skeleton": "light-dark(#d3d4d7, #4e5056)",
     "--color-shadow": "light-dark(#0000001A, #0000004D)",
     "--color-tint-hover": "light-dark(#000000, #ffffff)",
@@ -217,7 +217,7 @@ export const lensTheme = {
     "--shadow-inset-warning": "inset 0px 0px 0px 2px #f8d36a4D",
     "--shadow-inset-error": "inset 0px 0px 0px 2px #de47454D",
     "--color-background-inverted": "light-dark(#1a1b1f, #f0f1f2)",
-    "--focus-outline-color": "light-dark(#7f8d13, #c9dd4f)"
+    "--focus-outline-color": "light-dark(#7f8d13, #ecedee)"
   },
   localTokens: {
     "--astryx-theme-neutral-color-status-fill-accent": "light-dark(#0074e2, #6d9cfe)"
@@ -346,6 +346,9 @@ export const lensTheme = {
       "variant:destructive": {
         "backgroundColor": "var(--color-error-muted)",
         "color": "var(--color-on-error-muted)"
+      },
+      "base": {
+        "--radius-element": "6px"
       }
     },
     "badge": {
@@ -401,7 +404,7 @@ export const lensTheme = {
     },
     "segmented-control-item": {
       "base": {
-        "--color-text-secondary": "light-dark(#43464c, #c5c6ca)"
+        "--color-text-secondary": "light-dark(#43464c, #b7b9bd)"
       },
       "size:sm": {
         "height": "calc(var(--size-element-sm) - 8px)"
@@ -436,7 +439,8 @@ export const lensTheme = {
     },
     "card": {
       "base": {
-        "padding": "var(--spacing-3)"
+        "padding": "var(--spacing-3)",
+        "borderRadius": "4px"
       },
       "variant:blue": {
         "--color-text-secondary": "light-dark(#43464c, #b7b9bd)"
@@ -469,6 +473,90 @@ export const lensTheme = {
     "section": {
       "base": {
         "padding": "var(--spacing-3)"
+      }
+    },
+    "text-input": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "text-area": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "number-input": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "date-input": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "time-input": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "date-time-input": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "date-range-input": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "selector": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "multi-selector": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "complex-selector": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "typeahead": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
+      }
+    },
+    "tokenizer": {
+      "base": {
+        ":focus-within": {
+          "boxShadow": "inset 0 0 0 2px #ecedee"
+        }
       }
     }
   },
@@ -522,11 +610,11 @@ export const lensTheme = {
         "ratio": 1.2
       },
       "body": {
-        "family": "IBM Plex Sans KR",
+        "family": "SUIT Variable",
         "fallbacks": "system-ui, sans-serif"
       },
       "heading": {
-        "family": "IBM Plex Sans KR",
+        "family": "SUIT Variable",
         "fallbacks": "system-ui, sans-serif",
         "weights": {
           "3": "bold",

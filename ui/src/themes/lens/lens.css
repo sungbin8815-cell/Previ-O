@@ -170,8 +170,8 @@
     --_astryx-pre-tempo-duration-slow: 700ms;
     --_astryx-pre-tempo-duration-slow-max: 935ms;
     --_astryx-motion-tempo: 1;
-    --font-family-body: "IBM Plex Sans KR", system-ui, sans-serif;
-    --font-family-heading: "IBM Plex Sans KR", system-ui, sans-serif;
+    --font-family-body: "SUIT Variable", system-ui, sans-serif;
+    --font-family-heading: "SUIT Variable", system-ui, sans-serif;
     --font-family-code: ui-monospace, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --color-syntax-keyword: light-dark(#6b187c, #efa8ff);
     --color-syntax-string: light-dark(#0b5615, #a4d6a3);
@@ -204,7 +204,7 @@
     --color-overlay-hover: light-dark(#0000000d, #ffffff0d);
     --color-overlay-pressed: light-dark(#0000001a, #ffffff1a);
     --color-text-primary: light-dark(#000000, #ffffff);
-    --color-text-secondary: light-dark(#43464c, #999ca2);
+    --color-text-secondary: light-dark(#43464c, #a3a6ab);
     --color-text-disabled: light-dark(#8a8d94, #4e5056);
     --color-text-accent: light-dark(#5b6600, #c9dd4f);
     --color-on-dark: light-dark(#ffffff, #ffffff);
@@ -234,8 +234,8 @@
     --color-success-muted: light-dark(#bce0bb, #90ca903D);
     --color-error-muted: light-dark(#ffc4be, #ff98903D);
     --color-warning-muted: light-dark(#fae19e, #e2b6233D);
-    --color-border: light-dark(#00000014, #ffffff1a);
-    --color-border-emphasized: light-dark(#d3d4d7, #4e5056);
+    --color-border: light-dark(#00000014, #686b70);
+    --color-border-emphasized: light-dark(#d3d4d7, #686b70);
     --color-skeleton: light-dark(#d3d4d7, #4e5056);
     --color-shadow: light-dark(#0000001A, #0000004D);
     --color-tint-hover: light-dark(#000000, #ffffff);
@@ -295,7 +295,7 @@
     --shadow-inset-warning: inset 0px 0px 0px 2px #f8d36a4D;
     --shadow-inset-error: inset 0px 0px 0px 2px #de47454D;
     --color-background-inverted: light-dark(#1a1b1f, #f0f1f2);
-    --focus-outline-color: light-dark(#7f8d13, #c9dd4f);
+    --focus-outline-color: light-dark(#7f8d13, #ecedee);
     --color-icon-info: var(--color-text-info);
     --color-icon-success: var(--color-text-success);
     --color-icon-warning: var(--color-text-warning);
@@ -441,6 +441,10 @@
     color: var(--color-on-error-muted);
   }
 
+  .astryx-button {
+    --radius-element: 6px;
+  }
+
   .astryx-badge[data-variant="neutral"] {
     background-color: var(--color-background-gray);
     color: var(--color-text-gray);
@@ -502,7 +506,7 @@
   }
 
   .astryx-segmented-control-item {
-    --color-text-secondary: light-dark(#43464c, #c5c6ca);
+    --color-text-secondary: light-dark(#43464c, #b7b9bd);
   }
 
   .astryx-segmented-control-item[data-size="sm"] {
@@ -538,7 +542,17 @@
   }
 
   .astryx-card {
+    border-radius: 4px;
     --astryx-card-padding: var(--spacing-3);
+    --_card-radius: 4px;
+    --_card-radius-top-left: 4px;
+    --_card-radius-top-right: 4px;
+    --_card-radius-bottom-right: 4px;
+    --_card-radius-bottom-left: 4px;
+    --_card-radius-start-start: initial;
+    --_card-radius-start-end: initial;
+    --_card-radius-end-start: initial;
+    --_card-radius-end-end: initial;
   }
 
   .astryx-card[data-variant="blue"] {
@@ -579,6 +593,54 @@
 
   .astryx-section {
     --astryx-section-padding: var(--spacing-3);
+  }
+
+  .astryx-text-input:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-text-area:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-number-input:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-date-input:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-time-input:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-date-time-input:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-date-range-input:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-selector:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-multi-selector:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-complex-selector:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-typeahead:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
+  }
+
+  .astryx-tokenizer:focus-within {
+    box-shadow: inset 0 0 0 2px #ecedee;
   }
 
   .astryx-text[data-color="primary"] { color: var(--color-text-primary); }
@@ -707,8 +769,8 @@
     --text-display-3-size: var(--font-size-3xl);
     --text-display-3-weight: var(--font-weight-normal);
     --text-display-3-leading: 1.4667;
-    --font-family-body: "IBM Plex Sans KR", system-ui, sans-serif;
-    --font-family-heading: "IBM Plex Sans KR", system-ui, sans-serif;
+    --font-family-body: "SUIT Variable", system-ui, sans-serif;
+    --font-family-heading: "SUIT Variable", system-ui, sans-serif;
     --font-family-code: ui-monospace, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   }
   }

@@ -15,8 +15,45 @@
     },
     {
       "thing": "font",
-      "value": "\"IBM Plex Sans KR\"",
+      "value": "\"SUIT Variable\"",
       "source": "dial"
+    },
+    {
+      "thing": "--color-border",
+      "value": "#686b70",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "border-radius",
+      "value": "6px",
+      "source": "property",
+      "on": "button"
+    },
+    {
+      "thing": "border-radius",
+      "value": "4px",
+      "source": "property",
+      "on": "card"
+    },
+    {
+      "thing": "--focus-outline-color",
+      "value": "#ecedee",
+      "source": "token",
+      "mode": "dark"
+    },
+    {
+      "thing": "box-shadow",
+      "value": "inset 0 0 0 2px #ecedee",
+      "source": "property",
+      "on": "inputs",
+      "state": "focus-within"
+    },
+    {
+      "thing": "--color-text-secondary",
+      "value": "#a3a6ab",
+      "source": "token",
+      "mode": "dark"
     }
   ],
   "lifted": [],

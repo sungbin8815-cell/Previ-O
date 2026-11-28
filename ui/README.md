@@ -18,13 +18,12 @@ What is upgraded, and what is left alone on purpose, is the `SPECS` / `SKIP` lis
 
 ## Theme
 
-Two themes made with the Astryx theme editor, as the "monitor cart" design asks: `themes/cart/` (aluminium-grey body, ink
-accent, SUIT, light only) for every control on the grey chrome, and `themes/well/` (black wells, white accent, dark only) for
-the controls that sit on the stage. `themeFor()` in `src/main.jsx` picks one per control. `themes/lens/` is the old theme,
-kept for reference and no longer built.
+`themes/lens/` is the one theme (matte black surfaces, lime `#C9DD4F` accent, SUIT, dark only), made with the Astryx theme
+editor from the first design meeting's values (secondary text, borders `#686B70`, corners 6 on buttons / 4 on cards, a 2px
+`#ECEDEE` focus ring). `themes/cart/` and `themes/well/` are an abandoned grey pass, kept for reference and not built.
 
-    npx @astryxdesign/cli@0.7.17 experimental theme editor show cart --png
-    npx @astryxdesign/cli@0.7.17 experimental theme editor set cart <thing> <value>
+    npx @astryxdesign/cli@0.7.17 experimental theme editor show lens --png
+    npx @astryxdesign/cli@0.7.17 experimental theme editor set lens <thing> <value>
 
 ## Build
 
